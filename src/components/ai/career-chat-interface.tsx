@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   Send,
   Sparkles,
@@ -12,6 +12,9 @@ import {
   ArrowRight,
   RotateCcw,
   CheckCircle2,
+  Mic,
+  MicOff,
+  Volume2,
 } from "lucide-react";
 import { GlassCard } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -26,12 +29,24 @@ interface CareerChatInterfaceProps {
   onSendMessage: (message: string) => Promise<{ reply: string; suggestedPrompts?: string[]; contextBadges?: string[] }>;
 }
 
+interface ISpeechRecognition {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start: () => void;
+  stop: () => void;
+  onstart: (() => void) | null;
+  onresult: ((event: { results: { 0: { transcript: string } }[] }) => void) | null;
+  onerror: ((event: { error: string }) => void) | null;
+  onend: (() => void) | null;
+}
+
 export function CareerChatInterface({ report, onSendMessage }: CareerChatInterfaceProps) {
   const [messages, setMessages] = useState<AIChatMessage[]>([
     {
       id: "msg-welcome",
       role: "assistant",
-      content: `Hello **${report.userId === "usr-demo-student-01" ? "Aarav" : "Candidate"}**! I am your **AI Career Intelligence Copilot**.\n\nI have loaded your live assessment records for **${report.targetRole.title}** (Readiness: **${report.overallReadinessScore}%**).\n\nAsk me how to bridge your priority skill gaps, architect high-impact projects, or accelerate your placement readiness!`,
+      content: `Hello **${report.userId === "usr-demo-student-01" ? "Aarav" : "Candidate"}**! I am your **AI Career Intelligence Copilot**.\n\nI have loaded your live assessment records for **${report.targetRole.title}** (Readiness: **${report.overallReadinessScore}%**).\n\n🎙️ **Voice Command Enabled!** Speak via mic or type your questions on how to bridge your priority skill gaps, architect high-impact projects, or accelerate placement readiness!`,
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       suggestedPrompts: [
         "What skill should I focus on next?",
@@ -43,7 +58,52 @@ export function CareerChatInterface({ report, onSendMessage }: CareerChatInterfa
   ]);
   const [inputPrompt, setInputPrompt] = useState("");
   const [isThinking, setIsThinking] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const recognitionRef = useRef<ISpeechRecognition | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const SpeechConstructor =
+        (window as unknown as { SpeechRecognition?: new () => ISpeechRecognition; webkitSpeechRecognition?: new () => ISpeechRecognition }).SpeechRecognition ||
+        (window as unknown as { webkitSpeechRecognition?: new () => ISpeechRecognition }).webkitSpeechRecognition;
+
+      if (SpeechConstructor) {
+        const recognition = new SpeechConstructor();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.lang = "en-IN";
+
+        recognition.onstart = () => setIsListening(true);
+        recognition.onresult = (event) => {
+          const transcript = Array.from(event.results)
+            .map((result) => result[0].transcript)
+            .join("");
+          setInputPrompt(transcript);
+        };
+        recognition.onerror = () => setIsListening(false);
+        recognition.onend = () => setIsListening(false);
+        recognitionRef.current = recognition;
+      }
+    }
+  }, []);
+
+  const toggleListening = () => {
+    if (!recognitionRef.current) {
+      alert("Speech recognition is not supported in this browser.");
+      return;
+    }
+    if (isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    } else {
+      try {
+        recognitionRef.current.start();
+      } catch (err) {
+        console.warn("Speech recognition error:", err);
+      }
+    }
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -56,6 +116,11 @@ export function CareerChatInterface({ report, onSendMessage }: CareerChatInterfa
   const handleSend = async (textToSend?: string) => {
     const query = textToSend || inputPrompt;
     if (!query.trim() || isThinking) return;
+
+    if (isListening && recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    }
 
     const userMessage: AIChatMessage = {
       id: `user-${Date.now()}`,
@@ -101,40 +166,69 @@ export function CareerChatInterface({ report, onSendMessage }: CareerChatInterfa
             </div>
           </div>
 
-          {/* Context Metric Cards */}
-          <div className="space-y-2.5 text-xs">
-            <div className="p-3 rounded-xl bg-black/40 border border-white/5 space-y-1">
-              <span className="text-[10px] uppercase font-mono text-muted-foreground">Active Target Role</span>
-              <p className="font-bold text-foreground text-xs leading-tight">{report.targetRole.title}</p>
+          <div className="space-y-3 text-xs">
+            <div className="flex justify-between items-center py-1 border-b border-white/[0.04]">
+              <span className="text-muted-foreground">Target Role</span>
+              <span className="font-semibold text-cyan-400 font-mono text-right">{report.targetRole.title}</span>
             </div>
-
-            <div className="p-3 rounded-xl bg-black/40 border border-white/5 flex items-center justify-between">
-              <span className="text-[10px] uppercase font-mono text-muted-foreground">Readiness Index</span>
-              <span className="font-mono font-bold text-cyan-400">{report.overallReadinessScore}%</span>
+            <div className="flex justify-between items-center py-1 border-b border-white/[0.04]">
+              <span className="text-muted-foreground">Career Readiness</span>
+              <span className="font-bold text-emerald-400 font-mono">{report.overallReadinessScore}%</span>
             </div>
-
-            <div className="p-3 rounded-xl bg-black/40 border border-white/5 space-y-1">
-              <span className="text-[10px] uppercase font-mono text-muted-foreground">Primary Superpower</span>
-              <p className="font-semibold text-emerald-400 text-xs">
-                {report.strongSkills[0]?.skillName || "Web Systems"}
-              </p>
+            <div className="flex justify-between items-center py-1 border-b border-white/[0.04]">
+              <span className="text-muted-foreground">Primary Skill Gap</span>
+              <span className="font-medium text-amber-400 text-right">{report.skillGaps[0]?.skillName || "Edge Inference"}</span>
             </div>
+          </div>
 
-            <div className="p-3 rounded-xl bg-black/40 border border-white/5 space-y-1">
-              <span className="text-[10px] uppercase font-mono text-muted-foreground">Priority Gap Focus</span>
-              <p className="font-semibold text-amber-400 text-xs">
-                {report.skillGaps[0]?.skillName || "Distributed Architecture"}
-              </p>
+          <div className="pt-2 border-t border-white/[0.06]">
+            <span className="text-[11px] text-muted-foreground font-semibold block mb-2">Available Actions</span>
+            <div className="space-y-1.5">
+              <Button
+                variant="glass"
+                size="sm"
+                className="w-full justify-start text-xs text-muted-foreground hover:text-cyan-300"
+                onClick={() => handleSend("Generate a personalized study roadmap for my missing skills")}
+                leftIcon={<BookOpen className="h-3.5 w-3.5 text-cyan-400" />}
+              >
+                Request Study Plan
+              </Button>
+              <Button
+                variant="glass"
+                size="sm"
+                className="w-full justify-start text-xs text-muted-foreground hover:text-emerald-300"
+                onClick={() => handleSend("What are the top 3 interview questions I should prepare for?")}
+                leftIcon={<Zap className="h-3.5 w-3.5 text-emerald-400" />}
+              >
+                Simulate Interview Questions
+              </Button>
             </div>
           </div>
         </GlassCard>
       </div>
 
-      {/* Right Main Chat Interface */}
-      <div className="lg:col-span-3 space-y-4">
-        <GlassCard className="h-[600px] flex flex-col justify-between p-4 sm:p-6 border-white/10 relative overflow-hidden">
-          {/* Messages Scroll Area */}
-          <div className="flex-1 overflow-y-auto space-y-4 pr-2 cyber-scrollbar">
+      {/* Main Conversation Window */}
+      <div className="lg:col-span-3">
+        <GlassCard className="p-6 h-[640px] flex flex-col justify-between border-white/10" glow>
+          {/* Header */}
+          <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
+            <div className="flex items-center gap-2">
+              <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shadow-glow-sm" />
+              <span className="text-xs font-mono text-muted-foreground">COPILOT CONVERSATION STREAM</span>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setMessages([messages[0]])}
+              className="text-xs text-muted-foreground hover:text-foreground"
+              leftIcon={<RotateCcw className="h-3.5 w-3.5" />}
+            >
+              Reset Chat
+            </Button>
+          </div>
+
+          {/* Messages Stream */}
+          <div className="flex-1 overflow-y-auto py-4 space-y-4 pr-2 cyber-scrollbar">
             {messages.map((msg) => {
               const isUser = msg.role === "user";
               return (
@@ -231,9 +325,24 @@ export function CareerChatInterface({ report, onSendMessage }: CareerChatInterfa
             }}
             className="flex items-center gap-2 pt-2 border-t border-white/[0.08]"
           >
+            <Button
+              type="button"
+              variant={isListening ? "destructive" : "glass"}
+              size="icon"
+              className={`h-11 w-11 shrink-0 rounded-xl transition-all ${
+                isListening
+                  ? "bg-rose-600 text-white shadow-[0_0_15px_rgba(244,63,94,0.6)] animate-pulse"
+                  : "border-cyan-500/40 text-cyan-400 hover:bg-cyan-500/20"
+              }`}
+              onClick={toggleListening}
+              title={isListening ? "Stop Listening" : "Voice Command (Speak Query)"}
+            >
+              {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+            </Button>
+
             <input
               type="text"
-              placeholder="Ask contextual questions on your skills, roadmap, or target role..."
+              placeholder={isListening ? "Listening... Speak your question now..." : "Ask contextual questions or speak via mic..."}
               value={inputPrompt}
               onChange={(e) => setInputPrompt(e.target.value)}
               disabled={isThinking}

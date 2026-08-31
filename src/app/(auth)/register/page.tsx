@@ -26,6 +26,7 @@ import { useAuth } from "@/lib/auth/auth-context";
 import { registerSchema, RegisterInput } from "@/lib/auth/schemas";
 import { PublicRole } from "@/lib/auth/types";
 import { FadeIn, SlideUp } from "@/components/animations/motion-wrapper";
+import { KaushalSetuIcon } from "@/components/ui/logo";
 import { cn } from "@/lib/utils";
 
 const roleCards: Array<{
@@ -107,15 +108,14 @@ export default function RegisterPage() {
       <Container size="md">
         <FadeIn>
           <div className="flex flex-col items-center text-center mb-8 space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-mono shadow-glow-sm mb-1">
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>SIH 2026 RECRUITMENT & INTELLIGENCE MATRIX</span>
+            <div className="flex items-center justify-center mb-2">
+              <KaushalSetuIcon size={56} />
             </div>
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
-              Create Your TECH-TITAN Account
+              Join <span className="text-cyan-400">Kaushal</span><span className="text-emerald-400">Setu</span>
             </h1>
             <p className="text-sm text-muted-foreground max-w-md">
-              Select your ecosystem identity and embark on your personalized onboarding experience.
+              Connecting skills to opportunities and building next-generation verified careers.
             </p>
           </div>
         </FadeIn>
@@ -240,7 +240,7 @@ export default function RegisterPage() {
                     {...register("agreeTerms")}
                   />
                   <span>
-                    I agree to the SIH 2026 TECH-TITAN Terms of Platform Access and verify the accuracy of my academic/institutional affiliation.
+                    I agree to the SIH 2026 KaushalSetu Terms of Platform Access and verify the accuracy of my academic/institutional affiliation.
                   </span>
                 </label>
                 {errors.agreeTerms && (
@@ -263,7 +263,7 @@ export default function RegisterPage() {
 
             <div className="pt-4 border-t border-white/[0.06] text-center">
               <p className="text-sm text-muted-foreground">
-                Already registered with TECH-TITAN?{" "}
+                Already registered with KaushalSetu?{" "}
                 <Link
                   href="/login"
                   className="font-semibold text-cyan-400 hover:text-cyan-300 transition-colors"

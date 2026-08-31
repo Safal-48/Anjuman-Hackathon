@@ -1,14 +1,14 @@
 export const SITE_CONFIG = {
-  name: "TECH-TITAN",
-  shortName: "Titan",
-  tagline: "Next-Generation Intelligence & Systems Architecture",
+  name: "KaushalSetu",
+  shortName: "KaushalSetu",
+  tagline: "Connecting Skills. Bridging Opportunities.",
   description:
-    "Enterprise-grade AI ecosystem and telemetry command center built for SIH 2026 Problem Statement 26044.",
+    "Bridging the gap between what students learn, and what industry needs. Turning skills into opportunities, and potential into careers.",
   sih: {
     year: "2026",
     problemStatementId: "26044",
     category: "Software / AI & Emerging Technologies",
-    teamName: "TECH-TITAN",
+    teamName: "KaushalSetu",
   },
   links: {
     github: "https://github.com",

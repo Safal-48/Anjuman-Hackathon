@@ -4,11 +4,6 @@ import { getInstitutionAnalytics } from "@/lib/analytics/role-analytics";
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession();
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const { searchParams } = new URL(req.url);
     const department = searchParams.get("department") || undefined;
     const academicYear = searchParams.get("academicYear") || undefined;

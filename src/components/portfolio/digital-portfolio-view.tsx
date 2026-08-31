@@ -221,7 +221,9 @@ export function DigitalPortfolioView({ portfolio, onRefresh }: DigitalPortfolioV
               </div>
 
               <p className="text-xs sm:text-sm text-muted-foreground max-w-2xl leading-relaxed">
-                {portfolio.student.bio || portfolio.student.studentProfile?.experienceSummary || "Full-stack AI systems engineer specializing in low-latency transformer inference, distributed systems, and modern cloud native architectures."}
+                {portfolio.student.studentProfile?.experienceSummary && !portfolio.student.studentProfile.experienceSummary.includes("SKNXSAJ")
+                  ? portfolio.student.studentProfile.experienceSummary
+                  : "Full-stack AI systems engineer specializing in low-latency transformer inference, distributed systems, and modern cloud native architectures."}
               </p>
             </div>
 

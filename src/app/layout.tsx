@@ -7,6 +7,10 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { SITE_CONFIG } from "@/lib/constants";
 
+import { GlobalWarpBackground } from "@/components/layout/global-warp-background";
+import { NexoraFloatingBot } from "@/components/ai/nexora-floating-bot";
+import { ClickEffects } from "@/components/effects/click-effects";
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -29,10 +33,11 @@ export const metadata: Metadata = {
     "Smart India Hackathon 2026",
     "SIH 2026",
     "Problem Statement 26044",
-    "TECH-TITAN",
-    "Next.js Architecture",
-    "Modern AI Platform",
-    "Production Ready",
+    "KaushalSetu",
+    "Kaushal Setu",
+    "Connecting Skills Bridging Opportunities",
+    "Employability & Mentorship Platform",
+    "AI Career Copilot",
   ],
   authors: [{ name: SITE_CONFIG.sih.teamName }],
   creator: SITE_CONFIG.sih.teamName,
@@ -43,7 +48,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "#030712" },
+    { media: "(prefers-color-scheme: dark)", color: "#02040A" },
     { media: "(prefers-color-scheme: light)", color: "#f8fafc" },
   ],
   width: "device-width",
@@ -58,7 +63,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${jetbrainsMono.variable}`}>
-      <body className="min-h-screen bg-titan-bg font-sans text-foreground bg-radial-glow antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
+      <body className="min-h-screen bg-[#02040A] font-sans text-foreground antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -66,11 +71,16 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            <div className="relative flex min-h-screen flex-col bg-cyber-grid bg-[size:40px_40px]">
+            <GlobalWarpBackground />
+            {/* Global Interactive Click / Hover Effect Overlay */}
+            <ClickEffects color="#06b6d4" interactionMode="sniper" effectSize={80} duration={0.45} />
+            <div className="relative flex min-h-screen flex-col">
               <Navbar />
               <main className="flex-1">{children}</main>
               <Footer />
             </div>
+            {/* Global Nexora.ai RAG Chatbot */}
+            <NexoraFloatingBot />
           </AuthProvider>
         </ThemeProvider>
       </body>

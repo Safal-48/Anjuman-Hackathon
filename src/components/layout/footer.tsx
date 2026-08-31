@@ -1,96 +1,224 @@
 import * as React from "react";
 import Link from "next/link";
-import { Cpu, ShieldCheck, Activity, Terminal, ArrowUpRight } from "lucide-react";
+import { Mail, Phone, Instagram, ArrowUpRight, Sparkles, Activity } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/constants";
 import { Container } from "./container";
-import { Badge } from "@/components/ui/badge";
+import { KaushalSetuLogo } from "@/components/ui/logo";
 
 export function Footer() {
   return (
-    <footer className="border-t border-white/[0.08] bg-slate-950/80 backdrop-blur-xl relative overflow-hidden">
+    <footer className="border-t border-white/[0.08] bg-slate-950/90 backdrop-blur-2xl relative overflow-hidden text-sm">
       {/* Subtle top glow line */}
       <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
 
       <Container size="xl" className="py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-          {/* Col 1: Brand & Overview */}
-          <div className="md:col-span-2 space-y-4">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
-                <Cpu className="h-4 w-4" />
-              </div>
-              <span className="font-bold text-foreground tracking-tight text-lg">
-                {SITE_CONFIG.name}
-              </span>
-              <Badge variant="cyber" size="sm">
-                SIH {SITE_CONFIG.sih.year}
-              </Badge>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-10 mb-12">
+          {/* Brand & Mission Column (Span 2) */}
+          <div className="lg:col-span-2 space-y-4">
+            <Link href="/" className="inline-block">
+              <KaushalSetuLogo size="md" showTagline={false} />
+            </Link>
+            
+            <div className="space-y-2">
+              <p className="font-semibold text-foreground text-base tracking-tight">
+                Bridging Skills with Opportunity.
+              </p>
+              <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
+                An intelligent ecosystem connecting students, academia and industry.
+              </p>
             </div>
-            <p className="text-sm text-muted-foreground max-w-md leading-relaxed">
-              {SITE_CONFIG.description}
-            </p>
-            <div className="flex items-center gap-3 pt-1">
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-mono">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
-                <span>ALL SYSTEMS OPERATIONAL</span>
-              </div>
+
+            <div className="flex items-center gap-2 pt-2 text-xs text-muted-foreground font-mono">
+              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#10b981]" />
+              <span className="text-emerald-400 font-semibold tracking-wider">ALL SYSTEMS OPERATIONAL</span>
             </div>
           </div>
 
-          {/* Col 2: Architecture Layers */}
+          {/* Col 1: PLATFORM */}
           <div className="space-y-3">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-foreground">
-              Architecture
+            <h4 className="text-xs font-bold uppercase tracking-wider text-foreground font-mono">
+              Platform
             </h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <ul className="space-y-2.5 text-sm text-muted-foreground">
               <li>
-                <span className="hover:text-cyan-400 transition-colors">Next.js 14 (App Router)</span>
+                <Link href="/#platform-highlights" className="hover:text-cyan-400 transition-colors flex items-center gap-1.5">
+                  <span className="text-cyan-500/60">•</span>
+                  <span>Skill Intelligence</span>
+                </Link>
               </li>
               <li>
-                <span className="hover:text-cyan-400 transition-colors">Tailwind CSS + shadcn</span>
+                <Link href="/#platform-highlights" className="hover:text-cyan-400 transition-colors flex items-center gap-1.5">
+                  <span className="text-cyan-500/60">•</span>
+                  <span>Career Readiness</span>
+                </Link>
               </li>
               <li>
-                <span className="hover:text-cyan-400 transition-colors">Framer Motion Kinetics</span>
+                <Link href="/#platform-highlights" className="hover:text-cyan-400 transition-colors flex items-center gap-1.5">
+                  <span className="text-cyan-500/60">•</span>
+                  <span>Smart Opportunity Matching</span>
+                </Link>
               </li>
               <li>
-                <span className="hover:text-cyan-400 transition-colors">Supabase / PostgreSQL</span>
+                <Link href="/opportunities" className="hover:text-cyan-400 transition-colors flex items-center gap-1.5">
+                  <span className="text-cyan-500/60">•</span>
+                  <span>Opportunities</span>
+                </Link>
               </li>
               <li>
-                <span className="hover:text-cyan-400 transition-colors">Three.js / React Three Fiber</span>
+                <Link href="/portfolio" className="hover:text-cyan-400 transition-colors flex items-center gap-1.5">
+                  <span className="text-cyan-500/60">•</span>
+                  <span>Digital Portfolio</span>
+                </Link>
               </li>
             </ul>
           </div>
 
-          {/* Col 3: Project Metadata */}
+          {/* Col 2: ECOSYSTEM */}
           <div className="space-y-3">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-foreground">
-              Hackathon Context
+            <h4 className="text-xs font-bold uppercase tracking-wider text-foreground font-mono">
+              Ecosystem
             </h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li className="flex items-center justify-between">
-                <span>Problem Statement</span>
-                <span className="font-mono text-cyan-400 font-semibold">{SITE_CONFIG.sih.problemStatementId}</span>
+            <ul className="space-y-2.5 text-sm text-muted-foreground">
+              <li>
+                <Link href="/#ecosystem-3d" className="hover:text-emerald-400 transition-colors flex items-center gap-1.5">
+                  <span className="text-emerald-500/60">•</span>
+                  <span>Students & Aspirants</span>
+                </Link>
               </li>
-              <li className="flex items-center justify-between">
-                <span>Category</span>
-                <span className="text-xs text-foreground/80">{SITE_CONFIG.sih.category}</span>
+              <li>
+                <Link href="/#ecosystem-3d" className="hover:text-emerald-400 transition-colors flex items-center gap-1.5">
+                  <span className="text-emerald-500/60">•</span>
+                  <span>Colleges & Institutions</span>
+                </Link>
               </li>
-              <li className="flex items-center justify-between">
-                <span>Team</span>
-                <span className="font-medium text-foreground">{SITE_CONFIG.sih.teamName}</span>
+              <li>
+                <Link href="/#ecosystem-3d" className="hover:text-emerald-400 transition-colors flex items-center gap-1.5">
+                  <span className="text-emerald-500/60">•</span>
+                  <span>Industry & Recruiters</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/#ecosystem-3d" className="hover:text-emerald-400 transition-colors flex items-center gap-1.5">
+                  <span className="text-emerald-500/60">•</span>
+                  <span>Academicians</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/#ecosystem-3d" className="hover:text-emerald-400 transition-colors flex items-center gap-1.5">
+                  <span className="text-emerald-500/60">•</span>
+                  <span>Mentorship</span>
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Col 3: RESOURCES */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-foreground font-mono">
+              Resources
+            </h4>
+            <ul className="space-y-2.5 text-sm text-muted-foreground">
+              <li>
+                <Link href="/#platform-highlights" className="hover:text-purple-400 transition-colors flex items-center gap-1.5">
+                  <span className="text-purple-500/60">•</span>
+                  <span>How It Works</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/#overview" className="hover:text-purple-400 transition-colors flex items-center gap-1.5">
+                  <span className="text-purple-500/60">•</span>
+                  <span>About KaushalSetu</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/#faqs" className="hover:text-purple-400 transition-colors flex items-center gap-1.5">
+                  <span className="text-purple-500/60">•</span>
+                  <span>FAQs</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy" className="hover:text-purple-400 transition-colors flex items-center gap-1.5">
+                  <span className="text-purple-500/60">•</span>
+                  <span>Privacy Policy</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" className="hover:text-purple-400 transition-colors flex items-center gap-1.5">
+                  <span className="text-purple-500/60">•</span>
+                  <span>Terms of Use</span>
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Col 4: CONNECT WITH US (Direct Clickable Action Links) */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-foreground font-mono">
+              Connect With Us
+            </h4>
+            <ul className="space-y-3 text-sm text-muted-foreground">
+              {/* Email link (mailto) */}
+              <li>
+                <a
+                  href="mailto:kaushalsetu.edu@gmail.com"
+                  className="flex items-start gap-2.5 text-muted-foreground hover:text-cyan-400 transition-colors group"
+                  title="Send an email to KaushalSetu"
+                >
+                  <div className="h-7 w-7 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0 group-hover:scale-110 transition-transform">
+                    <Mail className="h-3.5 w-3.5" />
+                  </div>
+                  <span className="break-all text-xs font-medium pt-1">
+                    kaushalsetu.edu@gmail.com
+                  </span>
+                </a>
+              </li>
+
+              {/* Phone link (tel) */}
+              <li>
+                <a
+                  href="tel:+919158470655"
+                  className="flex items-center gap-2.5 text-muted-foreground hover:text-emerald-400 transition-colors group"
+                  title="Call KaushalSetu"
+                >
+                  <div className="h-7 w-7 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 group-hover:scale-110 transition-transform">
+                    <Phone className="h-3.5 w-3.5" />
+                  </div>
+                  <span className="text-xs font-medium font-mono">
+                    +91 91584 70655
+                  </span>
+                </a>
+              </li>
+
+              {/* Instagram link */}
+              <li>
+                <a
+                  href="https://www.instagram.com/kaushal_setu?igsi=a2ZmajhtZmw1Mndh"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2.5 text-muted-foreground hover:text-pink-400 transition-colors group"
+                  title="Open KaushalSetu on Instagram"
+                >
+                  <div className="h-7 w-7 rounded-lg bg-pink-500/10 border border-pink-500/30 flex items-center justify-center text-pink-400 shrink-0 group-hover:scale-110 transition-transform">
+                    <Instagram className="h-3.5 w-3.5" />
+                  </div>
+                  <span className="text-xs font-medium font-mono">
+                    @kaushal_setu
+                  </span>
+                  <ArrowUpRight className="h-3 w-3 text-muted-foreground/60 group-hover:text-pink-400 transition-colors" />
+                </a>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="pt-8 border-t border-white/[0.05] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
-          <p>© {new Date().getFullYear()} {SITE_CONFIG.name}. Developed for Smart India Hackathon {SITE_CONFIG.sih.year}.</p>
+        {/* Bottom copyright bar */}
+        <div className="pt-8 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
+          <p className="text-center sm:text-left">
+            © 2026 <span className="text-foreground font-semibold">KaushalSetu</span>. Built to bridge the gap between skills and opportunity.
+          </p>
           <div className="flex items-center gap-6">
-            <Link href="/api/health" className="hover:text-cyan-400 flex items-center gap-1 transition-colors">
-              <Activity className="h-3.5 w-3.5" />
-              <span>Health Endpoint</span>
-              <ArrowUpRight className="h-3 w-3" />
+            <Link href="/#overview" className="hover:text-cyan-400 transition-colors">
+              Back to Top ↑
             </Link>
           </div>
         </div>
@@ -98,3 +226,5 @@ export function Footer() {
     </footer>
   );
 }
+
+export default Footer;

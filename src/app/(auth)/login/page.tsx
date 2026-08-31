@@ -27,6 +27,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/auth/auth-context";
 import { loginSchema, LoginInput } from "@/lib/auth/schemas";
 import { FadeIn, SlideUp } from "@/components/animations/motion-wrapper";
+import { KaushalSetuIcon } from "@/components/ui/logo";
 
 export default function LoginPage() {
   const { login, isLoading } = useAuth();
@@ -65,14 +66,14 @@ export default function LoginPage() {
       <Container size="sm">
         <FadeIn>
           <div className="flex flex-col items-center text-center mb-8 space-y-2">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 shadow-glow-sm mb-2">
-              <Lock className="h-6 w-6" />
+            <div className="flex items-center justify-center mb-2">
+              <KaushalSetuIcon size={56} />
             </div>
             <h1 className="text-3xl font-bold tracking-tight text-foreground">
-              Sign In to TECH-TITAN
+              Sign In to <span className="text-cyan-400">Kaushal</span><span className="text-emerald-400">Setu</span>
             </h1>
             <p className="text-sm text-muted-foreground max-w-sm">
-              Access the Next-Gen Intelligence & Systems command center.
+              Connecting Skills. Bridging Opportunities.
             </p>
           </div>
         </FadeIn>

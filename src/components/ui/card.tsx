@@ -57,14 +57,14 @@ const MetricCard = React.forwardRef<
         </div>
       )}
     </div>
-    <div className="mt-4 flex items-baseline justify-between">
-      <div className="text-3xl font-bold tracking-tight text-foreground">
+    <div className="mt-4 flex flex-col gap-2">
+      <div className="text-xl sm:text-2xl font-bold tracking-tight text-foreground leading-snug">
         {value}
       </div>
       {change && (
         <span
           className={cn(
-            "text-xs font-medium px-2 py-0.5 rounded-full border",
+            "text-xs font-medium px-2.5 py-0.5 rounded-full border w-fit font-mono tracking-tight",
             isPositive
               ? "text-emerald-400 border-emerald-500/30 bg-emerald-500/10"
               : "text-rose-400 border-rose-500/30 bg-rose-500/10"
