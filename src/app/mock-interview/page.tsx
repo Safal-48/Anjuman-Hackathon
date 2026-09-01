@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { InterviewSetupModal } from "@/components/ai/interview/interview-setup-modal";
 import { InterviewSessionRoom } from "@/components/ai/interview/interview-session-room";
+import { InterviewCompletionPopup } from "@/components/ai/interview/interview-completion-popup";
 import {
   InterviewConfig,
   InterviewQuestion,
@@ -247,76 +248,18 @@ export default function DedicatedMockInterviewPage() {
           )}
 
         {/* ========================================================================= */}
-        {/* COMPLETION SUMMARY MODAL POPUP (Direct Link to Full Report Page)          */}
+        {/* INTERVIEW COMPLETION PERFORMANCE POPUP (Quick Summary Modal)              */}
         {/* ========================================================================= */}
-        {showCompletionPopup && completedReport && (
-          <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-            <GlassCard className="w-full max-w-lg p-6 sm:p-8 space-y-6 border-cyan-500/40 shadow-2xl text-center relative" glow>
-              <div className="h-16 w-16 mx-auto rounded-2xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
-                <Award className="h-8 w-8" />
-              </div>
-
-              <div className="space-y-1.5">
-                <Badge variant="emerald" size="sm" className="font-mono text-xs">
-                  INTERVIEW SESSION COMPLETE
-                </Badge>
-                <h3 className="text-2xl font-black text-foreground tracking-tight">
-                  Performance Synthesized!
-                </h3>
-                <p className="text-xs text-muted-foreground">
-                  Evaluated by {completedReport.interviewer.name} across 7 competency dimensions.
-                </p>
-              </div>
-
-              {/* Score Snapshot */}
-              <div className="p-4 rounded-2xl bg-black/60 border border-white/10 flex items-center justify-around">
-                <div>
-                  <span className="text-[10px] font-mono text-muted-foreground uppercase block">
-                    Composite Score
-                  </span>
-                  <span className="text-3xl font-black font-mono text-cyan-400">
-                    {completedReport.overallScore}%
-                  </span>
-                </div>
-                <div className="h-8 w-px bg-white/10" />
-                <div>
-                  <span className="text-[10px] font-mono text-muted-foreground uppercase block">
-                    Benchmark Result
-                  </span>
-                  <span className="text-xs font-bold font-mono text-emerald-400">
-                    {completedReport.performanceGrade}
-                  </span>
-                </div>
-              </div>
-
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Your full breakdown, category-wise radar, weak question analysis, and personalized practice drills are ready on the dedicated results page.
-              </p>
-
-              <div className="flex flex-col sm:flex-row items-center gap-3">
-                <Button
-                  type="button"
-                  variant="glass"
-                  size="default"
-                  onClick={handleRetakeInterview}
-                  className="w-full sm:flex-1 text-xs font-mono"
-                >
-                  Back to Setup
-                </Button>
-                <Button
-                  type="button"
-                  variant="glow"
-                  size="default"
-                  onClick={handleNavigateToResults}
-                  rightIcon={<ArrowRight className="h-4 w-4" />}
-                  className="w-full sm:flex-1 text-xs font-mono font-bold shadow-[0_0_20px_rgba(6,182,212,0.4)]"
-                >
-                  View Full Report →
-                </Button>
-              </div>
-            </GlassCard>
-          </div>
-        )}
+        <InterviewCompletionPopup
+          isOpen={showCompletionPopup}
+          report={completedReport}
+          onClose={() => setShowCompletionPopup(false)}
+          onViewDetails={(sessionId) => {
+            setShowCompletionPopup(false);
+            router.push(`/mock-interview/results/${sessionId}`);
+          }}
+          onRetry={handleRetakeInterview}
+        />
 
         {/* ========================================================================= */}
         {/* PREVIOUS ATTEMPTS MODAL / DRAWER                                          */}

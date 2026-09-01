@@ -1056,3 +1056,56 @@ export function getAllInterviewAttempts(): FinalInterviewReport[] {
     (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
   );
 }
+
+/**
+ * Configurable Interview Readiness Parameters & Thresholds
+ */
+export const INTERVIEW_READINESS_CONFIG = {
+  defaultReadinessThreshold: 70, // 70% or 7.0 / 10
+  readinessThresholdScore10: 7.0,
+  readinessBadgeReady: "INTERVIEW READY",
+  readinessBadgeImprovement: "NEEDS IMPROVEMENT",
+};
+
+/**
+ * Calculate dynamic performance status based on configured threshold
+ */
+export function getInterviewPerformanceStatus(
+  overallScore: number,
+  threshold = INTERVIEW_READINESS_CONFIG.defaultReadinessThreshold
+): "INTERVIEW READY" | "NEEDS IMPROVEMENT" {
+  return overallScore >= threshold ? "INTERVIEW READY" : "NEEDS IMPROVEMENT";
+}
+
+/**
+ * Generate a single concise AI performance insight grounded in actual evaluation metrics
+ */
+export function generatePerformanceInsight(report: FinalInterviewReport): string {
+  const { overallScore, categoryRatings, overallStrengths, overallWeaknesses } = report;
+  const tech = categoryRatings?.technicalKnowledge ?? overallScore;
+  const comm = categoryRatings?.communication ?? overallScore;
+  const quality = categoryRatings?.answerQuality ?? overallScore;
+  const conf = categoryRatings?.confidenceIndicators ?? overallScore;
+
+  if (overallScore >= 88) {
+    return "Exceptional command of core system architecture with clear, confident delivery. Ready for high-bar technical interviews.";
+  }
+  if (tech >= 75 && (comm < 70 || quality < 70)) {
+    return "Your technical knowledge was strong, but your answers could be more structured and concise.";
+  }
+  if (comm >= 75 && tech < 70) {
+    return "Great communication flow and poise, but focus on deepening technical precision and concrete trade-offs.";
+  }
+  if (conf < 70) {
+    return "Solid technical grounding; practice eliminating filler phrases and leading with direct conclusions.";
+  }
+  if (overallStrengths && overallStrengths.length > 0 && overallWeaknesses && overallWeaknesses.length > 0) {
+    const strengthSample = overallStrengths[0].replace(/\.$/, "");
+    const weakSample = overallWeaknesses[0].replace(/\.$/, "");
+    return `Strong ${strengthSample.toLowerCase()}, but prioritize addressing ${weakSample.toLowerCase()}.`;
+  }
+  if (overallScore >= INTERVIEW_READINESS_CONFIG.defaultReadinessThreshold) {
+    return "Balanced performance across competency areas; refine delivery pacing to reach top-tier readiness.";
+  }
+  return "Fundamental concepts demonstrated; continue focused practice drills on system trade-offs to reach interview-ready status.";
+}
