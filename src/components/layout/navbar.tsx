@@ -118,22 +118,6 @@ export function Navbar({ onMenuToggle }: { onMenuToggle?: () => void }) {
           <div className="flex items-center gap-2">
             <ThemeToggle />
 
-            {/* Quick Nexora.ai Trigger */}
-            <Button
-              variant="glass"
-              size="sm"
-              className="flex items-center gap-1.5 border-cyan-500/40 text-cyan-300 bg-cyan-950/40 hover:bg-cyan-500/20 font-mono text-xs shadow-glow-sm"
-              onClick={() => {
-                if (typeof window !== "undefined") {
-                  window.dispatchEvent(new CustomEvent("open-nexora-chat"));
-                }
-              }}
-              title="Open Nexora.ai Copilot"
-            >
-              <Sparkles className="h-3.5 w-3.5 text-cyan-400 animate-pulse" />
-              <span>Nexora.ai</span>
-            </Button>
-
             {isAuthenticated && user ? (
               <div className="flex items-center gap-2">
                 <NotificationBell />
