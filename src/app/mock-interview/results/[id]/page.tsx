@@ -32,6 +32,8 @@ import {
   Sliders,
   AlertCircle,
   Code2,
+  Eye,
+  CameraOff,
 } from "lucide-react";
 import { Container } from "@/components/layout/container";
 import { GlassCard } from "@/components/ui/card";
@@ -569,6 +571,120 @@ export default function DedicatedInterviewResultsPage() {
               ))}
             </ul>
           </GlassCard>
+        </div>
+
+        {/* ========================================================================= */}
+        {/* SECTION 4.5: ATTENTION & INTERVIEW PRESENCE (OBSERVATIONAL TELEMETRY)     */}
+        {/* ========================================================================= */}
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/[0.08] pb-3">
+            <div>
+              <h2 className="text-lg sm:text-xl font-bold text-foreground flex items-center gap-2 font-mono">
+                <Eye className="h-5 w-5 text-cyan-400" />
+                <span>Attention & Interview Presence</span>
+              </h2>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Local browser-derived observational telemetry for screen-facing orientation and presence engagement.
+              </p>
+            </div>
+
+            <Badge variant="outline" size="sm" className="font-mono text-[10px] text-cyan-300 border-cyan-500/30 self-start sm:self-center">
+              LOCAL CLIENT TELEMETRY
+            </Badge>
+          </div>
+
+          {report.attentionSummary?.isAvailable ? (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Focus Maintained */}
+                <GlassCard className="p-5 space-y-2 border-cyan-500/20 bg-slate-900/60" glow>
+                  <span className="text-[11px] font-mono text-muted-foreground uppercase font-bold">
+                    Focus Maintained
+                  </span>
+                  <div className="text-2xl sm:text-3xl font-black font-mono text-cyan-400">
+                    {report.attentionSummary.focusPercentage}%
+                  </div>
+                  <p className="text-[10px] text-muted-foreground leading-tight">
+                    Screen-facing orientation detected for ~{report.attentionSummary.focusPercentage}% of the interview.
+                  </p>
+                </GlassCard>
+
+                {/* Attention Alerts */}
+                <GlassCard className="p-5 space-y-2 border-amber-500/20 bg-slate-900/60" glow>
+                  <span className="text-[11px] font-mono text-muted-foreground uppercase font-bold">
+                    Attention Alerts
+                  </span>
+                  <div className="text-2xl sm:text-3xl font-black font-mono text-amber-400">
+                    {report.attentionSummary.attentionAlertsCount}
+                  </div>
+                  <p className="text-[10px] text-muted-foreground leading-tight">
+                    Sustained head orientation deviation instances recorded.
+                  </p>
+                </GlassCard>
+
+                {/* Total Alert Duration */}
+                <GlassCard className="p-5 space-y-2 border-purple-500/20 bg-slate-900/60" glow>
+                  <span className="text-[11px] font-mono text-muted-foreground uppercase font-bold">
+                    Total Deviation Time
+                  </span>
+                  <div className="text-2xl sm:text-3xl font-black font-mono text-purple-400">
+                    {report.attentionSummary.totalAlertDurationSeconds}s
+                  </div>
+                  <p className="text-[10px] text-muted-foreground leading-tight">
+                    Combined seconds spent looking away from screen center.
+                  </p>
+                </GlassCard>
+
+                {/* Longest Alert */}
+                <GlassCard className="p-5 space-y-2 border-emerald-500/20 bg-slate-900/60" glow>
+                  <span className="text-[11px] font-mono text-muted-foreground uppercase font-bold">
+                    Longest Deviation
+                  </span>
+                  <div className="text-2xl sm:text-3xl font-black font-mono text-emerald-400">
+                    {report.attentionSummary.longestAlertSeconds}s
+                  </div>
+                  <p className="text-[10px] text-muted-foreground leading-tight">
+                    Longest continuous single deviation recorded.
+                  </p>
+                </GlassCard>
+              </div>
+
+              {/* Observational Breakdown Notes */}
+              {report.attentionSummary.observationalNotes?.length > 0 && (
+                <div className="p-4 rounded-2xl bg-slate-900/60 border border-white/10 space-y-2">
+                  <span className="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider block">
+                    Telemetry Observations:
+                  </span>
+                  <ul className="space-y-1.5 text-xs text-muted-foreground font-mono">
+                    {report.attentionSummary.observationalNotes.map((note, idx) => (
+                      <li key={idx} className="flex items-start gap-2">
+                        <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 mt-1.5 shrink-0" />
+                        <span>{note}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          ) : (
+            <GlassCard className="p-6 border-white/10 text-center space-y-2 bg-slate-900/40" glow>
+              <CameraOff className="h-8 w-8 text-slate-500 mx-auto" />
+              <h4 className="text-sm font-bold text-foreground font-mono">
+                Attention Monitoring Was Unavailable
+              </h4>
+              <p className="text-xs text-muted-foreground max-w-md mx-auto leading-relaxed">
+                Camera access was not granted or was unavailable during this session. Attention presence metrics are marked <strong>N/A</strong> and did not affect your technical interview ratings.
+              </p>
+            </GlassCard>
+          )}
+
+          {/* Observational Notice */}
+          <div className="p-3.5 rounded-2xl bg-cyan-950/20 border border-cyan-500/20 text-[11px] font-mono text-cyan-300 flex items-start gap-2.5">
+            <ShieldCheck className="h-4 w-4 text-cyan-400 shrink-0 mt-0.5" />
+            <p className="leading-relaxed">
+              <strong>Observational Metric Notice:</strong> Attention presence metrics are processed locally in your browser to give self-awareness feedback. They are strictly observational and do NOT determine your technical competence score or imply misconduct.
+            </p>
+          </div>
         </div>
 
         {/* ========================================================================= */}

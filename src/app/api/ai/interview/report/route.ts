@@ -13,10 +13,12 @@ export async function POST(req: NextRequest) {
       sessionId,
       config,
       evaluations,
+      attentionSummary,
     }: {
       sessionId: string;
       config: InterviewConfig;
       evaluations: SingleQuestionEvaluation[];
+      attentionSummary?: any;
     } = body;
 
     if (!sessionId || !config || !evaluations || !evaluations.length) {
@@ -27,6 +29,9 @@ export async function POST(req: NextRequest) {
     }
 
     const report = generateFinalInterviewReport(sessionId, config, evaluations);
+    if (attentionSummary) {
+      report.attentionSummary = attentionSummary;
+    }
     // Save to global in-memory persistence store
     saveInterviewReport(report);
 

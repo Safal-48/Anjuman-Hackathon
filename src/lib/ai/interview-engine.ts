@@ -12,6 +12,8 @@
  * - Genuine, non-fabricating deterministic & semantic evaluation
  */
 
+import { AttentionSummary } from "@/lib/attention/attention-config";
+
 export type ExperienceLevel = "entry" | "junior" | "mid" | "senior";
 export type InterviewType = "technical" | "behavioral" | "mixed" | "system_design";
 export type InterviewLanguage = "en" | "hi" | "hinglish";
@@ -129,6 +131,7 @@ export interface FinalInterviewReport {
   }[];
   questionEvaluations: SingleQuestionEvaluation[];
   practiceDisclaimer: string;
+  attentionSummary?: AttentionSummary;
 }
 
 export const INTERVIEWER_PERSONAS: Record<string, InterviewerPersona> = {

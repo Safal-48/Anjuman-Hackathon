@@ -103,7 +103,10 @@ export default function DedicatedMockInterviewPage() {
   };
 
   // Handle Interview Completion (Redirect to dedicated results page)
-  const handleInterviewComplete = async (evaluations: SingleQuestionEvaluation[]) => {
+  const handleInterviewComplete = async (
+    evaluations: SingleQuestionEvaluation[],
+    attentionSummary?: any
+  ) => {
     if (!activeConfig || !activeSessionId) return;
 
     setIsCompilingReport(true);
@@ -115,6 +118,7 @@ export default function DedicatedMockInterviewPage() {
           sessionId: activeSessionId,
           config: activeConfig,
           evaluations,
+          attentionSummary,
         }),
       });
 

@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AssessmentQuestion, AssessmentSession, QuestionCategory } from "@/lib/supabase/types";
 import { FadeIn, SlideUp } from "@/components/animations/motion-wrapper";
+import { AttentionMonitor } from "@/components/interview/attention-monitor";
 
 interface AssessmentRunnerProps {
   questions: AssessmentQuestion[];
@@ -198,6 +199,9 @@ export function AssessmentRunner({
               </span>
             </div>
           </GlassCard>
+
+          {/* Optional Attention & Presence Monitor */}
+          <AttentionMonitor compact />
         </div>
 
         {/* Right Active Question Card */}

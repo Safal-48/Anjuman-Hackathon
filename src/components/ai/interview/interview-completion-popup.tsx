@@ -223,6 +223,19 @@ export function InterviewCompletionPopup({
                 </>
               )}
             </Badge>
+
+            {/* Observational Presence Pill */}
+            {report.attentionSummary?.isAvailable ? (
+              <div className="pt-1 text-[10px] font-mono text-emerald-400/90 flex items-center justify-center sm:justify-end gap-1">
+                <span>● Presence:</span>
+                <span className="font-bold">{report.attentionSummary.focusPercentage}% Focus</span>
+              </div>
+            ) : (
+              <div className="pt-1 text-[10px] font-mono text-slate-400 flex items-center justify-center sm:justify-end gap-1">
+                <span>● Presence:</span>
+                <span>Camera N/A</span>
+              </div>
+            )}
           </div>
         </div>
 

@@ -28,6 +28,8 @@ import {
   InterviewerPersona,
   SingleQuestionEvaluation,
 } from "@/lib/ai/interview-engine";
+import { AttentionSummary } from "@/lib/attention/attention-config";
+import { AttentionMonitor } from "@/components/interview/attention-monitor";
 import { InterviewerAvatarCard } from "@/components/ai/interview/interviewer-avatar-card";
 import { VoiceActivityState } from "@/components/ai/voice-wave-visualizer";
 import { SlideUp, FadeIn } from "@/components/animations/motion-wrapper";
@@ -37,7 +39,7 @@ interface InterviewSessionRoomProps {
   interviewer: InterviewerPersona;
   initialQuestion: InterviewQuestion;
   sessionId: string;
-  onInterviewComplete: (evaluations: SingleQuestionEvaluation[]) => void;
+  onInterviewComplete: (evaluations: SingleQuestionEvaluation[], attentionSummary?: AttentionSummary) => void;
   onCancelInterview: () => void;
 }
 
@@ -55,6 +57,11 @@ export function InterviewSessionRoom({
   const [evaluations, setEvaluations] = useState<SingleQuestionEvaluation[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showHint, setShowHint] = useState(false);
+
+  // Attention Monitoring State
+  const [isAttentionAlert, setIsAttentionAlert] = useState(false);
+  const [attentionAlertMsg, setAttentionAlertMsg] = useState("");
+  const [attentionSummary, setAttentionSummary] = useState<AttentionSummary | undefined>(undefined);
 
   // Timer state
   const [secondsElapsed, setSecondsElapsed] = useState(0);
@@ -189,8 +196,8 @@ export function InterviewSessionRoom({
       setEvaluations(updatedEvaluations);
 
       if (data.isComplete || !data.nextQuestion) {
-        // Interview complete! Trigger final report compilation
-        onInterviewComplete(updatedEvaluations);
+        // Interview complete! Trigger final report compilation with attention telemetry
+        onInterviewComplete(updatedEvaluations, attentionSummary);
       } else {
         // Move smoothly to next contextual follow-up question
         setCurrentQuestion(data.nextQuestion);
@@ -220,7 +227,7 @@ export function InterviewSessionRoom({
       if (answerText.trim()) {
         handleSubmitAnswer();
       } else {
-        onInterviewComplete(evaluations);
+        onInterviewComplete(evaluations, attentionSummary);
       }
     }
   };
@@ -234,7 +241,26 @@ export function InterviewSessionRoom({
   const wordCount = answerText.split(/\s+/).filter(Boolean).length;
 
   return (
-    <div className="space-y-6">
+    <div
+      className={`space-y-6 p-4 sm:p-6 rounded-3xl transition-all duration-500 border ${
+        isAttentionAlert
+          ? "border-rose-500/60 shadow-[0_0_35px_rgba(244,63,94,0.3)] bg-rose-950/[0.12]"
+          : "border-white/5 bg-transparent"
+      }`}
+    >
+      {/* Real-time Attention Deviation Alert Banner */}
+      {isAttentionAlert && (
+        <div className="p-3 px-4 rounded-2xl bg-rose-950/80 border border-rose-500/60 text-rose-200 flex items-center justify-between gap-3 shadow-[0_0_20px_rgba(244,63,94,0.35)] animate-pulse">
+          <div className="flex items-center gap-2.5 text-xs font-mono font-bold uppercase tracking-wide">
+            <AlertTriangle className="h-4 w-4 text-rose-400 shrink-0" />
+            <span>⚠ {attentionAlertMsg || "PLEASE LOOK TOWARDS THE SCREEN"}</span>
+          </div>
+          <span className="text-[10px] font-mono text-rose-300/80 hidden sm:inline">
+            Visual Presence Feedback
+          </span>
+        </div>
+      )}
+
       {/* Top Session Progress Bar */}
       <GlassCard className="p-4 border-white/10" glow>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -283,9 +309,9 @@ export function InterviewSessionRoom({
         </div>
       </GlassCard>
 
-      {/* Main Grid: Left Column (Interviewer + Live Question), Right Column (Candidate Workbench) */}
+      {/* Main Grid: Left Column (Interviewer + Live Question + Attention Monitor), Right Column (Candidate Workbench) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column: Interviewer Avatar & Question Box (5 cols) */}
+        {/* Left Column: Interviewer Avatar, Attention Monitor & Question Box (5 cols) */}
         <div className="lg:col-span-5 space-y-5">
           {/* Interviewer Persona Card */}
           <InterviewerAvatarCard
@@ -300,6 +326,17 @@ export function InterviewSessionRoom({
             language={config.language}
             status={voiceState}
             onStatusChange={setVoiceState}
+          />
+
+          {/* Real-time AI Attention & Presence Monitor */}
+          <AttentionMonitor
+            onAlertChange={(alertActive, msg) => {
+              setIsAttentionAlert(alertActive);
+              setAttentionAlertMsg(msg);
+            }}
+            onSummaryReady={(summary) => {
+              setAttentionSummary(summary);
+            }}
           />
 
           {/* Active Question Prompt Card */}
