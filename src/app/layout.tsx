@@ -74,7 +74,7 @@ export default function RootLayout({
             <GlobalWarpBackground />
             {/* Global Interactive Click / Hover Effect Overlay */}
             <ClickEffects color="#06b6d4" interactionMode="sniper" effectSize={80} duration={0.45} />
-            <div className="relative flex min-h-screen flex-col">
+            <div className="relative z-10 flex min-h-screen flex-col">
               <Navbar />
               <main className="flex-1">{children}</main>
               <Footer />
