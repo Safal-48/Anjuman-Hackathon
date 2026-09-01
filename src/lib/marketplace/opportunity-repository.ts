@@ -964,10 +964,6 @@ if (!globalMarketplaceStore._titanOpportunities) {
   globalMarketplaceStore._titanApplications = new Map<string, OpportunityApplicationEntity>();
   globalMarketplaceStore._titanNotifications = new Map<string, UserNotificationEntity>();
 
-  SEEDED_OPPORTUNITIES.forEach((opp) => {
-    globalMarketplaceStore._titanOpportunities!.set(opp.id, opp);
-  });
-
   // Pre-seed a sample application for the demo student
   const demoStudentId = DEMO_USERS["student@titan.ai"].id;
   const sampleOpp = SEEDED_OPPORTUNITIES[0];
@@ -995,7 +991,7 @@ if (!globalMarketplaceStore._titanOpportunities) {
     appliedAt: new Date(Date.now() - 86400000 * 2).toISOString(),
     updatedAt: new Date().toISOString(),
   };
-  globalMarketplaceStore._titanApplications!.set(sampleApp.id, sampleApp);
+  globalMarketplaceStore._titanApplications.set(sampleApp.id, sampleApp);
 
   // Pre-seed sample notification
   const sampleNotif: UserNotificationEntity = {
@@ -1008,8 +1004,15 @@ if (!globalMarketplaceStore._titanOpportunities) {
     isRead: false,
     createdAt: new Date().toISOString(),
   };
-  globalMarketplaceStore._titanNotifications!.set(sampleNotif.id, sampleNotif);
+  globalMarketplaceStore._titanNotifications.set(sampleNotif.id, sampleNotif);
 }
+
+// Always ensure all SEEDED_OPPORTUNITIES are populated
+SEEDED_OPPORTUNITIES.forEach((opp) => {
+  if (!globalMarketplaceStore._titanOpportunities!.has(opp.id)) {
+    globalMarketplaceStore._titanOpportunities!.set(opp.id, opp);
+  }
+});
 
 /**
  * Retrieve all opportunities with optional search, filter, and personalized match computation
