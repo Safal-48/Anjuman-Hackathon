@@ -241,20 +241,21 @@ if (!globalAssessmentStore._titanQuestions) {
   globalAssessmentStore._titanReports = new Map<string, SkillIntelligenceReport>();
   globalAssessmentStore._titanTargetRoles = [...DEFAULT_TARGET_ROLES];
 
-  // Pre-seed demo student skill evaluation
+  // Pre-seed demo student skill evaluation with realistic authentic performance
   const demoStudentId = DEMO_USERS["student@titan.ai"].id;
   const demoTargetRole = DEFAULT_TARGET_ROLES[0]; // AI Systems Engineer
 
+  // Realistic student baseline: Strong in Web Systems & PyTorch, developing in Distributed Systems & Algorithm complexity
   const initialResponses: Record<string, string> = {
-    "q-tech-01": "opt-1b",
-    "q-tech-02": "opt-2a",
-    "q-tech-03": "opt-3a",
-    "q-tech-04": "opt-4b",
-    "q-soft-01": "opt-5a",
-    "q-soft-02": "opt-6b",
-    "q-apt-01": "opt-7a",
-    "q-apt-02": "opt-8a",
-    "q-car-01": "opt-9a",
+    "q-tech-01": "opt-1b", // 1.0 (Next.js - Expert)
+    "q-tech-02": "opt-2a", // 1.0 (PyTorch - Expert)
+    "q-tech-03": "opt-3d", // 0.1 (Distributed Systems - Developing gap)
+    "q-tech-04": "opt-4b", // 1.0 (System Architecture - Advanced)
+    "q-soft-01": "opt-5a", // 1.0 (Team Collaboration - Strong)
+    "q-soft-02": "opt-6c", // 0.2 (Communication/Mentorship - Intermediate)
+    "q-apt-01": "opt-7c",  // 0.0 (Algorithms & Complexity - Priority Gap)
+    "q-apt-02": "opt-8a",  // 1.0 (Problem Solving & Logic - Advanced)
+    "q-car-01": "opt-9a",  // 1.0 (Career Domain Focus - Aligned)
   };
 
   const computed = computeAssessmentScores(DEFAULT_QUESTIONS, initialResponses);
@@ -277,6 +278,9 @@ if (!globalAssessmentStore._titanQuestions) {
   };
 
   globalAssessmentStore._titanReports!.set(demoStudentId, demoReport);
+  // Also pre-seed for generic student ID fallback
+  globalAssessmentStore._titanReports!.set("usr-demo-student-01", demoReport);
+  globalAssessmentStore._titanReports!.set("usr-student-01", demoReport);
 }
 
 /**
@@ -407,8 +411,13 @@ export async function getSkillIntelligenceReport(
 ): Promise<SkillIntelligenceReport | null> {
   let report = globalAssessmentStore._titanReports?.get(userId);
   if (!report) {
-    // Generate default baseline report for user
-    report = await submitAssessmentSession(userId, targetRoleId || "ai_systems_engineer");
+    const baseReport = globalAssessmentStore._titanReports?.get("usr-demo-student-01");
+    if (baseReport) {
+      report = { ...baseReport, id: `report-${Date.now()}`, userId };
+      globalAssessmentStore._titanReports!.set(userId, report);
+    } else {
+      report = await submitAssessmentSession(userId, targetRoleId || "ai_systems_engineer");
+    }
   }
 
   if (targetRoleId && report.targetRole.id !== targetRoleId) {
