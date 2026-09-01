@@ -71,9 +71,14 @@ export default function IndustryDashboardPage() {
               </div>
 
               <div className="flex flex-wrap items-center gap-3">
+                <Link href="/dashboard/industry/candidate-intelligence">
+                  <Button variant="glow" size="sm" leftIcon={<Sparkles className="h-4 w-4" />}>
+                    Candidate Intelligence
+                  </Button>
+                </Link>
                 <Link href="/opportunities/manage">
-                  <Button variant="glow" size="sm" leftIcon={<Plus className="h-4 w-4" />}>
-                    Manage Opportunities
+                  <Button variant="glass" size="sm" leftIcon={<Plus className="h-4 w-4" />}>
+                    Manage Roles
                   </Button>
                 </Link>
                 <Link href="/opportunities">

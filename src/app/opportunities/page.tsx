@@ -24,6 +24,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OpportunityCard } from "@/components/marketplace/opportunity-card";
 import { CompatibilityBreakdown } from "@/components/marketplace/compatibility-breakdown";
+import { ApplicationReadinessModal } from "@/components/marketplace/application-readiness-modal";
 import { OpportunityEntity, OpportunityType } from "@/lib/supabase/types";
 import { useAuth } from "@/lib/auth/auth-context";
 import { FadeIn, StaggerContainer, StaggerItem } from "@/components/animations/motion-wrapper";
@@ -48,8 +49,10 @@ export default function OpportunityMarketplacePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [minMatch, setMinMatch] = useState<number | undefined>(undefined);
 
-  // Selected Opportunity for Explainable Compatibility Modal
+  // Selected Opportunity for Modals
   const [selectedOppForModal, setSelectedOppForModal] = useState<OpportunityEntity | null>(null);
+  const [selectedOppForReadiness, setSelectedOppForReadiness] = useState<OpportunityEntity | null>(null);
+  const [isSubmittingApp, setIsSubmittingApp] = useState(false);
 
   const fetchOpportunities = useCallback(async () => {
     setIsLoading(true);
@@ -76,18 +79,29 @@ export default function OpportunityMarketplacePage() {
     fetchOpportunities();
   }, [fetchOpportunities]);
 
-  const handleQuickApply = async (opp: OpportunityEntity) => {
+  const handleOpenReadiness = (opp: OpportunityEntity) => {
+    setSelectedOppForReadiness(opp);
+  };
+
+  const handleFinalSubmitApplication = async (coverNote: string) => {
+    if (!selectedOppForReadiness) return;
+    setIsSubmittingApp(true);
     try {
-      const res = await fetch(`/api/marketplace/opportunities/${opp.id}/apply`, {
+      const res = await fetch(`/api/marketplace/opportunities/${selectedOppForReadiness.id}/apply`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ coverNote: "Quick apply via TECH-TITAN Opportunity Marketplace" }),
+        body: JSON.stringify({ coverNote: coverNote.trim() || "Applied with verified KaushalSetu Profile" }),
       });
       if (res.ok) {
-        alert(`Application for "${opp.title}" submitted successfully!`);
+        alert(`Application for "${selectedOppForReadiness.title}" submitted successfully!`);
+        setSelectedOppForReadiness(null);
+      } else {
+        alert("Failed to submit application. Please try again.");
       }
     } catch (err) {
-      console.error("Quick apply failed:", err);
+      console.error("Application error:", err);
+    } finally {
+      setIsSubmittingApp(false);
     }
   };
 
@@ -103,95 +117,84 @@ export default function OpportunityMarketplacePage() {
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <Badge variant="cyber" dot dotColor="cyan">
-                    AI MATCHING CORE
+                    OPPORTUNITIES MARKETPLACE
                   </Badge>
-                  <span className="text-xs text-muted-foreground font-mono">
-                    {opportunities.length} VERIFIED LISTINGS
+                  <span className="text-xs font-mono text-muted-foreground">
+                    {opportunities.length} Active Positions
                   </span>
                 </div>
-                <h1 className="text-2xl sm:text-4xl font-extrabold text-foreground tracking-tight">
-                  Opportunity Marketplace
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
+                  Discover AI-Matched Career Opportunities
                 </h1>
                 <p className="text-xs sm:text-sm text-muted-foreground max-w-2xl leading-relaxed">
-                  Discover internships, high-impact industry projects, apprenticeships, and mentorship tracks matched against your verified skills with explainable compatibility scoring.
+                  Transparent, explainable matching connects candidates directly with industrial internships, verified hiring pipelines, and funded projects.
                 </p>
               </div>
 
-              <div className="flex flex-wrap items-center gap-3">
-                <Link href="/applications">
-                  <Button variant="glass" size="sm">
-                    My Applications
+              {isRecruiter && (
+                <Link href="/opportunities/manage">
+                  <Button variant="glow" size="sm" leftIcon={<Plus className="h-4 w-4" />}>
+                    Post New Opportunity
                   </Button>
                 </Link>
-                {isRecruiter && (
-                  <Link href="/opportunities/manage">
-                    <Button variant="glow" size="sm" leftIcon={<Plus className="h-4 w-4" />}>
-                      Post Opportunity
-                    </Button>
-                  </Link>
-                )}
-              </div>
+              )}
             </div>
           </GlassCard>
         </FadeIn>
 
-        {/* Search & Multi-Filters Toolbar */}
+        {/* Filters */}
         <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row gap-3">
-            {/* Search Input */}
-            <div className="relative flex-1">
+          <div className="flex flex-col sm:flex-row items-center gap-3">
+            <div className="relative flex-1 w-full">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Search by title, organization, required skill (e.g. PyTorch, Docker)..."
+              <Input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-11 w-full rounded-xl border border-white/10 bg-slate-900/90 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground/60 focus:ring-1 focus:ring-cyan-500 outline-none"
+                placeholder="Search by title, required skills, technology, or company name..."
+                className="pl-10 text-xs bg-slate-900/60 border-white/10"
               />
             </div>
 
-            {/* Location Filter */}
-            <select
-              className="h-11 rounded-xl border border-white/10 bg-slate-900 px-4 text-xs font-semibold text-foreground focus:ring-1 focus:ring-cyan-500 cursor-pointer"
-              value={locationType}
-              onChange={(e) => setLocationType(e.target.value)}
-            >
-              <option value="all">All Locations</option>
-              <option value="remote">Remote Only</option>
-              <option value="hybrid">Hybrid</option>
-              <option value="onsite">Onsite</option>
-            </select>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <select
+                value={locationType}
+                onChange={(e) => setLocationType(e.target.value)}
+                className="px-3 py-2 rounded-xl text-xs bg-slate-900 border border-white/10 text-foreground outline-none font-mono"
+              >
+                <option value="all">All Locations</option>
+                <option value="remote">Remote Only</option>
+                <option value="hybrid">Hybrid</option>
+                <option value="onsite">On-Site</option>
+              </select>
 
-            {/* Min Match Filter */}
-            <select
-              className="h-11 rounded-xl border border-white/10 bg-slate-900 px-4 text-xs font-semibold text-cyan-300 focus:ring-1 focus:ring-cyan-500 cursor-pointer"
-              value={minMatch || ""}
-              onChange={(e) => setMinMatch(e.target.value ? Number(e.target.value) : undefined)}
-            >
-              <option value="">Any Match %</option>
-              <option value="85">≥ 85% High Match</option>
-              <option value="75">≥ 75% Solid Match</option>
-              <option value="60">≥ 60% Developing</option>
-            </select>
+              <select
+                value={minMatch || ""}
+                onChange={(e) => setMinMatch(e.target.value ? Number(e.target.value) : undefined)}
+                className="px-3 py-2 rounded-xl text-xs bg-slate-900 border border-white/10 text-foreground outline-none font-mono"
+              >
+                <option value="">Any Match %</option>
+                <option value="80">≥ 80% Top Fit</option>
+                <option value="60">≥ 60% Good Fit</option>
+              </select>
+            </div>
           </div>
 
-          {/* Archetype Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 cyber-scrollbar">
+          {/* Type Tabs */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
             {TYPE_TABS.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeType === tab.id;
               return (
                 <button
                   key={tab.id}
-                  type="button"
                   onClick={() => setActiveType(tab.id)}
-                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                  className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-mono whitespace-nowrap transition-all ${
                     isActive
-                      ? "bg-cyan-500/15 text-cyan-300 border border-cyan-500/40 shadow-glow-sm"
-                      : "text-muted-foreground hover:text-foreground hover:bg-white/[0.03] border border-transparent"
+                      ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-glow-sm"
+                      : "bg-white/5 border border-white/5 text-muted-foreground hover:text-foreground hover:bg-white/10"
                   }`}
                 >
-                  <Icon className={`h-3.5 w-3.5 ${isActive ? "text-cyan-400" : "text-muted-foreground"}`} />
+                  <Icon className="h-3.5 w-3.5" />
                   <span>{tab.label}</span>
                 </button>
               );
@@ -199,11 +202,11 @@ export default function OpportunityMarketplacePage() {
           </div>
         </div>
 
-        {/* Opportunity Listings Grid */}
+        {/* Opportunity Cards Listing */}
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <Skeleton key={i} className="h-80 w-full rounded-2xl" />
+              <Skeleton key={i} className="h-80 rounded-2xl" />
             ))}
           </div>
         ) : opportunities.length === 0 ? (
@@ -221,7 +224,7 @@ export default function OpportunityMarketplacePage() {
                 <OpportunityCard
                   opportunity={opp}
                   onOpenCompatibility={(o) => setSelectedOppForModal(o)}
-                  onQuickApply={handleQuickApply}
+                  onQuickApply={handleOpenReadiness}
                 />
               </StaggerItem>
             ))}
@@ -236,10 +239,23 @@ export default function OpportunityMarketplacePage() {
         onClose={() => setSelectedOppForModal(null)}
         onApply={() => {
           if (selectedOppForModal) {
-            handleQuickApply(selectedOppForModal);
+            const opp = selectedOppForModal;
+            setSelectedOppForModal(null);
+            handleOpenReadiness(opp);
           }
         }}
       />
+
+      {/* Dedicated Application Readiness Pre-Submission Modal */}
+      {selectedOppForReadiness && (
+        <ApplicationReadinessModal
+          opportunity={selectedOppForReadiness}
+          isOpen={Boolean(selectedOppForReadiness)}
+          onClose={() => setSelectedOppForReadiness(null)}
+          onSubmitApplication={handleFinalSubmitApplication}
+          isSubmitting={isSubmittingApp}
+        />
+      )}
     </div>
   );
 }

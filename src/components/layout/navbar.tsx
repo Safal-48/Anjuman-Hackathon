@@ -14,6 +14,9 @@ import {
   Users,
   ShieldCheck,
   User,
+  FileText,
+  Zap,
+  Bot,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -39,17 +42,24 @@ export function Navbar({ onMenuToggle }: { onMenuToggle?: () => void }) {
 
   const loggedInNavItems = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { label: "AI Coach", href: "/career-coach", icon: Bot },
+    { label: "Readiness", href: "/career-readiness", icon: Zap },
+    { label: "AI Interview", href: "/mock-interview", icon: Sparkles },
+    { label: "AI GD Room", href: "/group-discussion", icon: Users },
+    { label: "Resume ATS", href: "/resume-analyzer", icon: FileText },
     { label: "Opportunities", href: "/opportunities", icon: Compass },
     { label: "Skills", href: "/skills", icon: Brain },
-    { label: "Mentorship", href: "/mentorship", icon: Users },
     { label: "Portfolio", href: "/portfolio", icon: ShieldCheck },
   ];
 
   const publicNavItems = [
     { label: "Overview", href: "/#overview" },
-    { label: "How It Works", href: "/#platform-highlights" },
+    { label: "AI Career Coach", href: "/career-coach" },
+    { label: "Career Readiness", href: "/career-readiness" },
+    { label: "AI Mock Interview", href: "/mock-interview" },
+    { label: "AI GD Room", href: "/group-discussion" },
+    { label: "Resume Analyzer", href: "/resume-analyzer" },
     { label: "Ecosystem", href: "/#ecosystem-3d" },
-    { label: "Our Advantage", href: "/#platform-highlights" },
   ];
 
   return (

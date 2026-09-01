@@ -1,33 +1,70 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "@/lib/auth/session";
-import { analyzeResumeText } from "@/lib/ai/resume-analyzer";
-import { getCandidateContext } from "@/lib/ai/career-context";
+import {
+  analyzeResumeATS,
+  TARGET_JOB_TEMPLATES,
+  SAMPLE_RESUMES,
+} from "@/lib/ai/resume-analyzer";
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await getServerSession();
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const body = await req.json();
-    const { resumeText, targetRoleId } = body;
+    const body = await req.json().catch(() => ({}));
+    const {
+      resumeText,
+      targetJobId,
+      customJobTitle,
+      customJobSkills = [],
+      customJobDescription,
+    } = body;
 
     if (!resumeText || typeof resumeText !== "string") {
-      return NextResponse.json({ error: "Resume text content is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Resume text content is required" },
+        { status: 400 }
+      );
     }
 
-    const context = await getCandidateContext(session.id, targetRoleId);
-    const targetTitle = context?.intelligence.targetRole.title || "AI Systems & LLM Platform Engineer";
-    const targetSkills = context?.intelligence.targetRole.requiredSkills.map((s) => s.skillName) || [
-      "Python", "PyTorch", "Distributed Systems", "Next.js", "Docker", "Algorithms"
-    ];
+    // Resolve target job template or custom JD
+    let targetJob: { title: string; requiredSkills: string[]; description?: string } | undefined = undefined;
 
-    const extracted = analyzeResumeText(resumeText, targetTitle, targetSkills);
+    if (customJobTitle) {
+      targetJob = {
+        title: customJobTitle,
+        requiredSkills: Array.isArray(customJobSkills) ? customJobSkills : [],
+        description: customJobDescription || "",
+      };
+    } else if (targetJobId) {
+      const found = TARGET_JOB_TEMPLATES.find((t) => t.id === targetJobId);
+      if (found) {
+        targetJob = {
+          title: found.title,
+          requiredSkills: found.requiredSkills,
+          description: found.description,
+        };
+      }
+    } else {
+      // Default to AI systems engineer template
+      const defaultJob = TARGET_JOB_TEMPLATES[0];
+      targetJob = {
+        title: defaultJob.title,
+        requiredSkills: defaultJob.requiredSkills,
+        description: defaultJob.description,
+      };
+    }
 
-    return NextResponse.json({ analysis: extracted }, { status: 200 });
+    const analysis = analyzeResumeATS(resumeText, targetJob);
+
+    return NextResponse.json(
+      {
+        success: true,
+        analysis,
+        targetJobTemplates: TARGET_JOB_TEMPLATES,
+        sampleResumes: Object.values(SAMPLE_RESUMES),
+      },
+      { status: 200 }
+    );
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Internal server error";
+    console.error("Resume Analyze Error:", error);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

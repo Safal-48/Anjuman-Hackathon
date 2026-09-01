@@ -34,28 +34,46 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Col 1: PLATFORM */}
+          {/* Col 1: PLATFORM SUITE */}
           <div className="space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-foreground font-mono">
-              Platform
+              Intelligence Suite
             </h4>
-            <ul className="space-y-2.5 text-sm text-muted-foreground">
+            <ul className="space-y-2 text-xs text-muted-foreground font-mono">
               <li>
-                <Link href="/#platform-highlights" className="hover:text-cyan-400 transition-colors flex items-center gap-1.5">
+                <Link href="/career-coach" className="hover:text-cyan-400 transition-colors flex items-center gap-1.5">
                   <span className="text-cyan-500/60">•</span>
-                  <span>Skill Intelligence</span>
+                  <span>AI Career Coach</span>
                 </Link>
               </li>
               <li>
-                <Link href="/#platform-highlights" className="hover:text-cyan-400 transition-colors flex items-center gap-1.5">
+                <Link href="/career-readiness" className="hover:text-cyan-400 transition-colors flex items-center gap-1.5">
                   <span className="text-cyan-500/60">•</span>
                   <span>Career Readiness</span>
                 </Link>
               </li>
               <li>
-                <Link href="/#platform-highlights" className="hover:text-cyan-400 transition-colors flex items-center gap-1.5">
+                <Link href="/mock-interview" className="hover:text-cyan-400 transition-colors flex items-center gap-1.5">
                   <span className="text-cyan-500/60">•</span>
-                  <span>Smart Opportunity Matching</span>
+                  <span>AI Mock Interview</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/group-discussion" className="hover:text-cyan-400 transition-colors flex items-center gap-1.5">
+                  <span className="text-cyan-500/60">•</span>
+                  <span>AI GD Roundtable</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/resume-analyzer" className="hover:text-cyan-400 transition-colors flex items-center gap-1.5">
+                  <span className="text-cyan-500/60">•</span>
+                  <span>Resume ATS Studio</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/skills" className="hover:text-cyan-400 transition-colors flex items-center gap-1.5">
+                  <span className="text-cyan-500/60">•</span>
+                  <span>Skill Intelligence</span>
                 </Link>
               </li>
               <li>
@@ -65,9 +83,9 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/portfolio" className="hover:text-cyan-400 transition-colors flex items-center gap-1.5">
+                <Link href="/dashboard/industry/candidate-intelligence" className="hover:text-cyan-400 transition-colors flex items-center gap-1.5">
                   <span className="text-cyan-500/60">•</span>
-                  <span>Digital Portfolio</span>
+                  <span>Recruiter Intel</span>
                 </Link>
               </li>
             </ul>

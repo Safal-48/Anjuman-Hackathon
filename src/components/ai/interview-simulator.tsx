@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import {
   Brain,
   Sparkles,
@@ -18,6 +19,7 @@ import {
   HelpCircle,
   Code2,
   FileCheck2,
+  ExternalLink,
 } from "lucide-react";
 import { GlassCard } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -26,15 +28,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { VoiceWaveVisualizer, VoiceActivityState } from "@/components/ai/voice-wave-visualizer";
 import {
   InterviewQuestion,
-  InterviewEvaluationReport,
+  SingleQuestionEvaluation,
+  AVAILABLE_ROLES,
 } from "@/lib/ai/interview-engine";
 import { FadeIn, SlideUp } from "@/components/animations/motion-wrapper";
-
-const ROLES = [
-  { id: "ai_systems_engineer", label: "AI Systems & LLM Architect" },
-  { id: "cloud_sre_architect", label: "Cloud Native SRE & Distributed Systems" },
-  { id: "fullstack_architect", label: "Full-Stack Web & Systems Architect" },
-];
 
 export function InterviewSimulator() {
   const [selectedRoleId, setSelectedRoleId] = useState("ai_systems_engineer");
@@ -43,7 +40,7 @@ export function InterviewSimulator() {
   const [answerText, setAnswerText] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [isEvaluating, setIsEvaluating] = useState(false);
-  const [evaluation, setEvaluation] = useState<InterviewEvaluationReport | null>(null);
+  const [evaluation, setEvaluation] = useState<SingleQuestionEvaluation | null>(null);
   const [showHint, setShowHint] = useState(false);
 
   // Voice Dictation State
@@ -58,11 +55,11 @@ export function InterviewSimulator() {
       const res = await fetch("/api/ai/interview/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ roleId }),
+        body: JSON.stringify({ roleId, totalQuestions: 3 }),
       });
       if (res.ok) {
         const data = await res.json();
-        setQuestions(data.questions || []);
+        setQuestions(data.initialQuestion ? [data.initialQuestion] : []);
         setActiveQuestionIndex(0);
       }
     } catch (err) {
@@ -147,6 +144,7 @@ export function InterviewSimulator() {
         body: JSON.stringify({
           questionId: activeQuestion.id,
           answerText,
+          responseTimeSeconds: 60,
         }),
       });
       if (res.ok) {
@@ -176,41 +174,57 @@ export function InterviewSimulator() {
 
   return (
     <div className="space-y-6">
-      {/* Role Selection & Disclaimer Banner */}
-      <GlassCard className="p-6 space-y-4 border-white/10" glow>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.06] pb-4">
+      {/* Banner with Dedicated Module CTA */}
+      <GlassCard className="p-6 space-y-4 border-cyan-500/20" glow>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.08] pb-4">
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-400 flex items-center justify-center">
-              <Brain className="h-5 w-5" />
+            <div className="h-10 w-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 flex items-center justify-center">
+              <Brain className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="font-bold text-base text-foreground">AI Mock Interview Simulator</h3>
+              <div className="flex items-center gap-2">
+                <h3 className="font-bold text-base text-foreground">AI Mock Interview Mini Simulator</h3>
+                <Badge variant="cyber" size="sm">QUICK DRILL</Badge>
+              </div>
               <p className="text-xs text-muted-foreground">
-                Practice role-specific system design & technical trade-offs with multi-vector AI evaluation
+                Practice single question response evaluations or launch the full-featured multi-turn studio.
               </p>
             </div>
           </div>
 
-          {/* Role Picker */}
-          <select
-            value={selectedRoleId}
-            onChange={(e) => setSelectedRoleId(e.target.value)}
-            className="h-9 rounded-xl border border-white/10 bg-slate-900 px-3 text-xs font-semibold text-cyan-300 focus:ring-1 focus:ring-cyan-500 cursor-pointer"
-          >
-            {ROLES.map((r) => (
-              <option key={r.id} value={r.id}>
-                {r.label}
-              </option>
-            ))}
-          </select>
+          <Link href="/mock-interview">
+            <Button
+              variant="glow"
+              size="sm"
+              className="text-xs font-mono font-bold shadow-[0_0_15px_rgba(6,182,212,0.3)]"
+              rightIcon={<ExternalLink className="h-3.5 w-3.5" />}
+            >
+              Open Full Interview Studio →
+            </Button>
+          </Link>
         </div>
 
-        {/* Practice Notice */}
-        <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-xs text-cyan-200 flex items-start gap-2">
-          <ShieldAlert className="h-4 w-4 text-cyan-400 shrink-0 mt-0.5" />
-          <p className="leading-relaxed">
-            <strong>Self-Improvement Simulator:</strong> This tool is intended for practicing your responses and identifying key concepts. It is not an automated hiring screen.
-          </p>
+        {/* Role Selector & Practice Notice */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-mono text-muted-foreground">Role:</span>
+            <select
+              value={selectedRoleId}
+              onChange={(e) => setSelectedRoleId(e.target.value)}
+              className="h-8 rounded-xl border border-white/10 bg-slate-900 px-3 text-xs font-semibold text-cyan-300 focus:ring-1 focus:ring-cyan-500 cursor-pointer"
+            >
+              {AVAILABLE_ROLES.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="text-[11px] font-mono text-cyan-300 flex items-center gap-1.5">
+            <ShieldAlert className="h-3.5 w-3.5 text-cyan-400 shrink-0" />
+            <span>Practice mode • Deterministic multi-vector telemetry evaluation</span>
+          </div>
         </div>
       </GlassCard>
 
@@ -227,33 +241,12 @@ export function InterviewSimulator() {
             {/* Question Card */}
             <GlassCard className="p-6 space-y-4 border-white/10" glow>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Badge variant="cyber" size="sm">
-                    QUESTION {activeQuestionIndex + 1} OF {questions.length}
-                  </Badge>
-                  <span className="text-[11px] font-mono text-muted-foreground uppercase">
-                    {activeQuestion.category.replace("_", " ")}
-                  </span>
-                </div>
-
-                <div className="flex gap-1">
-                  {questions.map((_, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      onClick={() => {
-                        setActiveQuestionIndex(i);
-                        setEvaluation(null);
-                        setAnswerText("");
-                      }}
-                      className={`h-2 rounded-full transition-all ${
-                        activeQuestionIndex === i
-                          ? "w-6 bg-cyan-400"
-                          : "w-2 bg-white/20 hover:bg-white/40"
-                      }`}
-                    />
-                  ))}
-                </div>
+                <Badge variant="cyber" size="sm">
+                  SAMPLE PROMPT
+                </Badge>
+                <span className="text-[11px] font-mono text-muted-foreground uppercase">
+                  {activeQuestion.category.replace(/_/g, " ")}
+                </span>
               </div>
 
               <h3 className="font-bold text-base sm:text-lg text-foreground leading-snug">
@@ -268,7 +261,7 @@ export function InterviewSimulator() {
                   className="text-xs text-muted-foreground hover:text-cyan-300 flex items-center gap-1 font-mono transition-colors"
                 >
                   <HelpCircle className="h-3.5 w-3.5" />
-                  <span>{showHint ? "Hide Architectural Hint" : "Need a Hint?"}</span>
+                  <span>{showHint ? "Hide Architectural Hint" : "Need an Architectural Hint?"}</span>
                 </button>
                 {showHint && (
                   <p className="text-xs text-muted-foreground bg-black/40 p-3 rounded-xl border border-white/5 mt-2 italic leading-relaxed">
@@ -282,7 +275,7 @@ export function InterviewSimulator() {
             <GlassCard className="p-6 space-y-4 border-white/10" glow>
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-muted-foreground uppercase font-mono">
-                  Your Technical Response
+                  Your Response
                 </span>
                 <button
                   type="button"
@@ -297,7 +290,7 @@ export function InterviewSimulator() {
                 rows={6}
                 value={answerText}
                 onChange={(e) => setAnswerText(e.target.value)}
-                placeholder="Structure your answer with: Problem Analysis → Architecture → Trade-offs → Quantifiable Impact..."
+                placeholder="Structure your answer with: Analysis → Architecture → Trade-offs → Quantifiable Impact..."
                 className="w-full rounded-xl border border-white/10 bg-slate-900/90 p-3 text-xs text-foreground placeholder:text-muted-foreground/60 focus:ring-1 focus:ring-cyan-500 outline-none leading-relaxed"
               />
 
@@ -334,183 +327,86 @@ export function InterviewSimulator() {
                     disabled={!answerText.trim()}
                     leftIcon={<Sparkles className="h-4 w-4" />}
                   >
-                    Evaluate Response
+                    Evaluate Single Response
                   </Button>
                 </div>
               </div>
             </GlassCard>
           </div>
 
-          {/* Right Column: Live Multi-Vector Feedback Report */}
+          {/* Right Column: Mini Feedback */}
           <div className="space-y-5">
             {!evaluation ? (
-              <GlassCard className="h-full min-h-[380px] p-8 flex flex-col items-center justify-center text-center space-y-3 border-white/10" glow>
+              <GlassCard className="h-full min-h-[380px] p-8 flex flex-col items-center justify-center text-center space-y-4 border-white/10" glow>
                 <div className="p-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
                   <Brain className="h-8 w-8" />
                 </div>
                 <h4 className="font-bold text-base text-foreground">Awaiting Response Submission</h4>
                 <p className="text-xs text-muted-foreground max-w-sm leading-relaxed">
-                  Type or voice dictate your answer, then click <strong>Evaluate Response</strong> to view your Technical, Communication, and Completeness breakdown.
+                  Type or voice dictate your answer, then click <strong>Evaluate Single Response</strong>.
                 </p>
+                <Link href="/mock-interview">
+                  <Button variant="cyber" size="sm" className="text-xs font-mono">
+                    Start Multi-Turn Interview Instead →
+                  </Button>
+                </Link>
               </GlassCard>
             ) : (
               <SlideUp>
                 <GlassCard className="p-6 space-y-5 border-emerald-500/30 shadow-2xl relative" glow>
-                  {/* Score Header */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.06] pb-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.08] pb-4">
                     <div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="emerald" size="sm">
-                          AI PRACTICE REPORT
-                        </Badge>
-                        <span className="text-xs text-muted-foreground font-mono">
-                          {evaluation.roleTitle}
-                        </span>
-                      </div>
+                      <Badge variant="emerald" size="sm">
+                        DRILL EVALUATION
+                      </Badge>
                       <h3 className="font-extrabold text-xl text-foreground pt-1">
-                        Evaluation Breakdown
+                        Score: {evaluation.scores.overall}%
                       </h3>
                     </div>
 
-                    <div className="p-3 rounded-2xl bg-black/60 border border-emerald-500/40 text-center">
-                      <span className="font-mono text-[10px] text-muted-foreground block">
-                        OVERALL SCORE
-                      </span>
-                      <span className="font-extrabold text-2xl font-mono text-emerald-400">
-                        {evaluation.overallPracticeScore}%
-                      </span>
-                    </div>
+                    <Link href="/mock-interview">
+                      <Button variant="glow" size="sm" className="text-xs font-mono">
+                        Launch Full Studio →
+                      </Button>
+                    </Link>
                   </div>
 
-                  {/* 4 Multi-Vector Metric Progress Bars */}
                   <div className="grid grid-cols-2 gap-3 text-xs font-mono">
-                    <div className="p-3 rounded-xl bg-black/30 border border-white/5 space-y-1.5">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Technical Relevance:</span>
-                        <span className="font-bold text-cyan-400">
-                          {evaluation.metricScores.technicalRelevance}%
-                        </span>
-                      </div>
-                      <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-cyan-400 rounded-full"
-                          style={{ width: `${evaluation.metricScores.technicalRelevance}%` }}
-                        />
-                      </div>
+                    <div className="p-2.5 rounded-xl bg-black/30 border border-white/5 space-y-1">
+                      <span className="text-muted-foreground text-[10px]">Technical Knowledge:</span>
+                      <div className="font-bold text-cyan-400">{evaluation.scores.technicalKnowledge}%</div>
                     </div>
-
-                    <div className="p-3 rounded-xl bg-black/30 border border-white/5 space-y-1.5">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Completeness:</span>
-                        <span className="font-bold text-violet-400">
-                          {evaluation.metricScores.completeness}%
-                        </span>
-                      </div>
-                      <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-violet-400 rounded-full"
-                          style={{ width: `${evaluation.metricScores.completeness}%` }}
-                        />
-                      </div>
+                    <div className="p-2.5 rounded-xl bg-black/30 border border-white/5 space-y-1">
+                      <span className="text-muted-foreground text-[10px]">Relevance:</span>
+                      <div className="font-bold text-emerald-400">{evaluation.scores.relevance}%</div>
                     </div>
-
-                    <div className="p-3 rounded-xl bg-black/30 border border-white/5 space-y-1.5">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Communication:</span>
-                        <span className="font-bold text-emerald-400">
-                          {evaluation.metricScores.communicationClarity}%
-                        </span>
-                      </div>
-                      <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-emerald-400 rounded-full"
-                          style={{ width: `${evaluation.metricScores.communicationClarity}%` }}
-                        />
-                      </div>
+                    <div className="p-2.5 rounded-xl bg-black/30 border border-white/5 space-y-1">
+                      <span className="text-muted-foreground text-[10px]">Communication:</span>
+                      <div className="font-bold text-violet-400">{evaluation.scores.communication}%</div>
                     </div>
-
-                    <div className="p-3 rounded-xl bg-black/30 border border-white/5 space-y-1.5">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Confidence Metric:</span>
-                        <span className="font-bold text-amber-400">
-                          {evaluation.metricScores.confidenceDelivery}%
-                        </span>
-                      </div>
-                      <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-amber-400 rounded-full"
-                          style={{ width: `${evaluation.metricScores.confidenceDelivery}%` }}
-                        />
-                      </div>
+                    <div className="p-2.5 rounded-xl bg-black/30 border border-white/5 space-y-1">
+                      <span className="text-muted-foreground text-[10px]">Confidence Metric:</span>
+                      <div className="font-bold text-amber-400">{evaluation.scores.confidenceIndicators}%</div>
                     </div>
                   </div>
 
-                  {/* Strengths & Improvement Suggestions */}
-                  <div className="space-y-3 pt-2 text-xs">
-                    <div className="space-y-1.5">
-                      <span className="font-bold text-emerald-400 flex items-center gap-1.5">
-                        <CheckCircle2 className="h-3.5 w-3.5" /> What You Did Well:
-                      </span>
-                      <ul className="list-disc pl-5 text-muted-foreground space-y-1">
-                        {evaluation.strengths.map((s, i) => (
-                          <li key={i}>{s}</li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div className="space-y-1.5 pt-1">
-                      <span className="font-bold text-amber-400 flex items-center gap-1.5">
-                        <AlertTriangle className="h-3.5 w-3.5" /> Key Areas to Deepen:
-                      </span>
-                      <ul className="list-disc pl-5 text-muted-foreground space-y-1">
-                        {evaluation.areasForImprovement.map((a, i) => (
-                          <li key={i}>{a}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-
-                  {/* Keyword Coverage Tags */}
-                  <div className="p-3 rounded-xl bg-black/40 border border-white/5 space-y-2 text-xs">
-                    <span className="text-[10px] font-mono text-muted-foreground uppercase">
-                      Domain Keyword Coverage ({evaluation.keywordCoverage.coveragePercentage}%)
+                  <div className="space-y-2 text-xs">
+                    <span className="font-bold text-emerald-400 flex items-center gap-1.5">
+                      <CheckCircle2 className="h-3.5 w-3.5" /> Strengths:
                     </span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {evaluation.keywordCoverage.matchedKeywords.map((k) => (
-                        <span
-                          key={k}
-                          className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
-                        >
-                          ✓ {k}
-                        </span>
+                    <ul className="list-disc pl-5 text-muted-foreground space-y-1">
+                      {evaluation.strengths.map((s, i) => (
+                        <li key={i}>{s}</li>
                       ))}
-                      {evaluation.keywordCoverage.missingKeywords.map((k) => (
-                        <span
-                          key={k}
-                          className="text-[10px] font-mono px-2 py-0.5 rounded bg-rose-500/15 text-rose-300 border border-rose-500/30"
-                        >
-                          ✗ {k}
-                        </span>
-                      ))}
-                    </div>
+                    </ul>
                   </div>
 
-                  {/* Next Question CTA */}
-                  {activeQuestionIndex < questions.length - 1 && (
-                    <Button
-                      variant="glow"
-                      size="sm"
-                      className="w-full"
-                      onClick={() => {
-                        setActiveQuestionIndex(activeQuestionIndex + 1);
-                        setEvaluation(null);
-                        setAnswerText("");
-                      }}
-                      rightIcon={<ArrowRight className="h-4 w-4" />}
-                    >
-                      Next Question: {questions[activeQuestionIndex + 1].category.replace("_", " ")}
-                    </Button>
-                  )}
+                  <div className="space-y-2 text-xs pt-1">
+                    <span className="font-bold text-amber-400 flex items-center gap-1.5">
+                      <AlertTriangle className="h-3.5 w-3.5" /> Improvement Tip:
+                    </span>
+                    <p className="text-muted-foreground">{evaluation.improvementTip}</p>
+                  </div>
                 </GlassCard>
               </SlideUp>
             )}
