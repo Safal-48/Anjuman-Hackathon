@@ -390,7 +390,7 @@ export let memoryCollaborationEvents: CollaborationEventEntity[] = [
     hostSpeaker: "Prof. Devendra Joshi (Fellow IEEE)",
     date: "Oct 15, 2026 - Jan 15, 2027",
     time: "Mentored Research Cohort",
-    mode: "Virtual + Lab Visits",
+    mode: "Hybrid",
     seatsAvailable: 8,
     topicsCovered: ["Paper Publishing", "NeurIPS Benchmarks", "FP4 Quantization", "Graph Neural Networks"],
     actionCta: "Submit Research Abstract",
