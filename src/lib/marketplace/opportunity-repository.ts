@@ -360,11 +360,20 @@ export async function applyForOpportunity(
   opportunityId: string,
   coverNote?: string
 ): Promise<OpportunityApplicationEntity> {
-  const student = await getFullProfile(studentId);
+  let student = await getFullProfile(studentId);
   const opp = globalMarketplaceStore._titanOpportunities!.get(opportunityId);
 
-  if (!student || !opp) {
-    throw new Error("Student or Opportunity not found");
+  if (!opp) {
+    throw new Error("Opportunity not found");
+  }
+
+  if (!student) {
+    const demoStudentId = DEMO_USERS["student@titan.ai"].id;
+    student = await getFullProfile(demoStudentId);
+  }
+
+  if (!student) {
+    throw new Error("Student profile could not be resolved");
   }
 
   // Check if already applied
