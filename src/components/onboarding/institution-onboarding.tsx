@@ -22,8 +22,11 @@ import { institutionOnboardingSchema, InstitutionOnboardingInput } from "@/lib/a
 import { useAuth } from "@/lib/auth/auth-context";
 import { OnboardingLayout } from "./onboarding-layout";
 
+import { useRouter } from "next/navigation";
+
 export function InstitutionOnboarding() {
   const { user, updateOnboarding, isLoading } = useAuth();
+  const router = useRouter();
   const [step, setStep] = useState(1);
   const [serverError, setServerError] = useState<string | null>(null);
 
@@ -48,6 +51,7 @@ export function InstitutionOnboarding() {
   });
 
   const handleNextStep = async () => {
+    setServerError(null);
     const isValid = await trigger([
       "institutionName",
       "institutionType",
@@ -56,7 +60,25 @@ export function InstitutionOnboarding() {
       "city",
       "state",
     ]);
-    if (isValid) setStep(2);
+    if (isValid) {
+      setStep(2);
+    } else {
+      setServerError("Please complete the required institutional registry fields.");
+    }
+  };
+
+  const onFormError = () => {
+    const err =
+      errors.institutionName?.message ||
+      errors.registrationCode?.message ||
+      errors.address?.message ||
+      errors.city?.message ||
+      errors.state?.message ||
+      errors.representativeName?.message ||
+      errors.representativeDesignation?.message ||
+      errors.representativeEmail?.message ||
+      "Please fill out all required institutional fields.";
+    setServerError(err);
   };
 
   const onSubmit = async (data: InstitutionOnboardingInput) => {
@@ -65,7 +87,13 @@ export function InstitutionOnboarding() {
       role: "institution",
       data,
     });
-    if (!res.success) {
+    if (res.success) {
+      router.push("/dashboard");
+      router.refresh();
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 600);
+    } else {
       setServerError(res.error || "Failed to finalize institution profile");
     }
   };
@@ -79,7 +107,7 @@ export function InstitutionOnboarding() {
       totalSteps={2}
       stepTitles={stepTitles}
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit, onFormError)} className="space-y-6">
         {serverError && (
           <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-sm">
             {serverError}

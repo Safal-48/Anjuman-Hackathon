@@ -39,8 +39,11 @@ const popularResearch = [
   "Post-Quantum Cryptography",
 ];
 
+import { useRouter } from "next/navigation";
+
 export function AcademicianOnboarding() {
   const { user, updateOnboarding, isLoading } = useAuth();
+  const router = useRouter();
   const [step, setStep] = useState(1);
   const [newExp, setNewExp] = useState("");
   const [newRes, setNewRes] = useState("");
@@ -74,6 +77,7 @@ export function AcademicianOnboarding() {
     if (trimmed && !expertiseList.includes(trimmed)) {
       setValue("expertise", [...expertiseList, trimmed], { shouldValidate: true });
       setNewExp("");
+      setServerError(null);
     }
   };
 
@@ -90,6 +94,7 @@ export function AcademicianOnboarding() {
     if (trimmed && !researchList.includes(trimmed)) {
       setValue("researchInterests", [...researchList, trimmed], { shouldValidate: true });
       setNewRes("");
+      setServerError(null);
     }
   };
 
@@ -102,8 +107,24 @@ export function AcademicianOnboarding() {
   };
 
   const handleNextStep = async () => {
+    setServerError(null);
     const isValid = await trigger(["institution", "department", "designation", "experienceYears"]);
-    if (isValid) setStep(2);
+    if (isValid) {
+      setStep(2);
+    } else {
+      setServerError("Please complete the required academic affiliation fields.");
+    }
+  };
+
+  const onFormError = () => {
+    const err =
+      errors.institution?.message ||
+      errors.department?.message ||
+      errors.designation?.message ||
+      errors.expertise?.message ||
+      errors.researchInterests?.message ||
+      "Please fill out all required academic fields.";
+    setServerError(err);
   };
 
   const onSubmit = async (data: AcademicianOnboardingInput) => {
@@ -112,7 +133,13 @@ export function AcademicianOnboarding() {
       role: "academician",
       data,
     });
-    if (!res.success) {
+    if (res.success) {
+      router.push("/dashboard");
+      router.refresh();
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 600);
+    } else {
       setServerError(res.error || "Failed to finalize academician profile");
     }
   };
@@ -126,7 +153,7 @@ export function AcademicianOnboarding() {
       totalSteps={2}
       stepTitles={stepTitles}
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit, onFormError)} className="space-y-6">
         {serverError && (
           <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-sm">
             {serverError}

@@ -4,7 +4,7 @@ export const publicRoles = ["student", "industry", "academician", "institution"]
 
 export const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.string().optional().or(z.literal("")),
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;
@@ -40,20 +40,19 @@ export const studentOnboardingSchema = z.object({
   academicYear: z.string().min(1, "Academic year is required (e.g. 3rd Year)"),
   skills: z.array(z.string()).min(1, "Select or add at least 1 technical skill"),
   interests: z.array(z.string()).min(1, "Add at least 1 field of interest"),
-  careerGoal: z.string().min(10, "Career goal must be at least 10 characters"),
-  experience: z.string().min(5, "Summarize your background or experience level (e.g. Fresher, 1 internship)"),
-  projects: z
-    .array(
-      z.object({
-        title: z.string().min(2, "Project title is required"),
-        description: z.string().min(10, "Project description must be at least 10 characters"),
-        link: z.string().url("Must be a valid URL").optional().or(z.literal("")),
-      })
-    )
-    .min(1, "Please provide at least 1 key project"),
+  careerGoal: z.string().min(2, "Please share a brief career goal or ambition"),
+  experience: z.string().optional().or(z.literal("")),
+  projects: z.array(
+    z.object({
+      title: z.string().optional().or(z.literal("")),
+      description: z.string().optional().or(z.literal("")),
+      link: z.string().optional().or(z.literal("")),
+    })
+  ),
   certifications: z.array(z.string()),
-  resumeUrl: z.string().optional(),
-  resumeFileName: z.string().optional(),
+  resumeUrl: z.string().optional().or(z.literal("")),
+  resumeFileName: z.string().optional().or(z.literal("")),
+  resumeFileSize: z.string().optional().or(z.literal("")),
 });
 
 export type StudentOnboardingInput = z.infer<typeof studentOnboardingSchema>;

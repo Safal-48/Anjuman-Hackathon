@@ -31,8 +31,11 @@ const popularHiringDomains = [
   "Embedded Systems",
 ];
 
+import { useRouter } from "next/navigation";
+
 export function IndustryOnboarding() {
   const { user, updateOnboarding, isLoading } = useAuth();
+  const router = useRouter();
   const [step, setStep] = useState(1);
   const [newDomain, setNewDomain] = useState("");
   const [serverError, setServerError] = useState<string | null>(null);
@@ -66,6 +69,7 @@ export function IndustryOnboarding() {
     if (trimmed && !hiringInterests.includes(trimmed)) {
       setValue("hiringInterests", [...hiringInterests, trimmed], { shouldValidate: true });
       setNewDomain("");
+      setServerError(null);
     }
   };
 
@@ -78,6 +82,7 @@ export function IndustryOnboarding() {
   };
 
   const handleNextStep = async () => {
+    setServerError(null);
     const isValid = await trigger([
       "organizationName",
       "industryDomain",
@@ -85,7 +90,24 @@ export function IndustryOnboarding() {
       "organizationDescription",
       "website",
     ]);
-    if (isValid) setStep(2);
+    if (isValid) {
+      setStep(2);
+    } else {
+      setServerError("Please complete the required organization profile fields.");
+    }
+  };
+
+  const onFormError = () => {
+    const err =
+      errors.organizationName?.message ||
+      errors.industryDomain?.message ||
+      errors.website?.message ||
+      errors.organizationDescription?.message ||
+      errors.recruiterName?.message ||
+      errors.recruiterDesignation?.message ||
+      errors.recruiterEmail?.message ||
+      "Please fill out all required fields.";
+    setServerError(err);
   };
 
   const onSubmit = async (data: IndustryOnboardingInput) => {
@@ -94,7 +116,13 @@ export function IndustryOnboarding() {
       role: "industry",
       data,
     });
-    if (!res.success) {
+    if (res.success) {
+      router.push("/dashboard");
+      router.refresh();
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 600);
+    } else {
       setServerError(res.error || "Failed to finalize industry profile");
     }
   };
@@ -108,7 +136,7 @@ export function IndustryOnboarding() {
       totalSteps={2}
       stepTitles={stepTitles}
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit, onFormError)} className="space-y-6">
         {serverError && (
           <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-sm">
             {serverError}

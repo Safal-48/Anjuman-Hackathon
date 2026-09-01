@@ -17,6 +17,7 @@ import {
   Mic,
   MicOff,
   Languages,
+  Activity,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -48,7 +49,7 @@ export function NexoraFloatingBot() {
     {
       id: "welcome-1",
       sender: "assistant",
-      text: "👋 Namaste! I am **Nexora.ai**, your AI Career & Skill Intelligence Assistant for **KaushalSetu**.\n\n🎙️ **Voice Command & Text Enabled!** Speak via mic or type your questions about:\n- 🎯 **Skill-Gap Diagnostics & Assessment**\n- 🗺️ **Personalized Career Roadmaps** (Full Stack, AI/ML, Cloud)\n- ⚡ **Explainable AI Opportunity Matching**\n- 🏛️ **College & Recruiter Features**",
+      text: "👋 Namaste! I am **Nexora.ai**, your AI Career & Skill Intelligence Assistant for **KaushalSetu**.\n\n🎙️ **ElevenLabs Human Voice & Bilingual Enabled (English & हिन्दी)!**\n\nAsk me anything about:\n- 🎯 **Skill-Gap Diagnostics & Assessment**\n- 🗺️ **Personalized Career Roadmaps** (Full Stack, AI/ML, Cloud)\n- ⚡ **Explainable AI Opportunity Matching**\n- 🎙️ **Bilingual Mock Interview Simulator**\n- 🏛️ **College & Recruiter Features**",
       timestamp: "Just now",
       citations: ["KaushalSetu Core Architecture • SIH PS #26044"],
       suggestedPrompts: [
@@ -70,6 +71,7 @@ export function NexoraFloatingBot() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const recognitionRef = useRef<ISpeechRecognition | null>(null);
+  const currentAudioRef = useRef<HTMLAudioElement | null>(null);
 
   // Auto scroll to bottom
   const scrollToBottom = () => {
@@ -82,26 +84,104 @@ export function NexoraFloatingBot() {
     }
   }, [messages, isOpen, isMinimized, isLoading, isListening]);
 
-  // Text-To-Speech Output
-  const speakText = useCallback((text: string) => {
-    if (typeof window === "undefined" || !ttsEnabled) return;
-    try {
-      window.speechSynthesis?.cancel();
-      const cleanText = text.replace(/[*#_`[\]]/g, "");
-      const utterance = new SpeechSynthesisUtterance(cleanText);
-      utterance.rate = 1.05;
-      utterance.pitch = 1.0;
-      utterance.lang = speechLang === "hi-IN" ? "hi-IN" : "en-IN";
-
-      utterance.onstart = () => setIsSpeaking(true);
-      utterance.onend = () => setIsSpeaking(false);
-      utterance.onerror = () => setIsSpeaking(false);
-
-      window.speechSynthesis?.speak(utterance);
-    } catch (e) {
-      console.warn("TTS not available:", e);
+  // Stop active speech playback
+  const stopSpeech = useCallback(() => {
+    if (currentAudioRef.current) {
+      currentAudioRef.current.pause();
+      currentAudioRef.current.currentTime = 0;
+      currentAudioRef.current = null;
     }
-  }, [ttsEnabled, speechLang]);
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+    setIsSpeaking(false);
+  }, []);
+
+  // Text-To-Speech with ElevenLabs and Neural Browser Fallback
+  const speakText = useCallback(async (text: string) => {
+    if (typeof window === "undefined" || !ttsEnabled) return;
+    stopSpeech();
+
+    const cleanText = text
+      .replace(/[*#_`~[\]()]/g, "")
+      .replace(/https?:\/\/\S+/g, "")
+      .replace(/[\n\r]+/g, " ")
+      .trim();
+
+    if (!cleanText) return;
+
+    // Detect if text is primarily Hindi / Hinglish
+    const isHindiText = /[\u0900-\u097F]|namaste|kya|kaise|batao|karna|chahiye|hai|hain|shukriya/.test(cleanText.toLowerCase());
+
+    setIsSpeaking(true);
+
+    try {
+      // 1. Try ElevenLabs API endpoint
+      const response = await fetch("/api/ai/voice/elevenlabs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text: cleanText,
+          // Rachel voice supports bilingual English & Hindi via eleven_multilingual_v2
+          voiceId: "21m00Tcm4TlvDq8ikWAM",
+          modelId: "eleven_multilingual_v2",
+        }),
+      });
+
+      const contentType = response.headers.get("content-type") || "";
+
+      if (response.ok && contentType.includes("audio/mpeg")) {
+        const blob = await response.blob();
+        const audioUrl = URL.createObjectURL(blob);
+        const audio = new Audio(audioUrl);
+        currentAudioRef.current = audio;
+
+        audio.onended = () => {
+          setIsSpeaking(false);
+          URL.revokeObjectURL(audioUrl);
+          currentAudioRef.current = null;
+        };
+        audio.onerror = () => {
+          setIsSpeaking(false);
+          URL.revokeObjectURL(audioUrl);
+          currentAudioRef.current = null;
+        };
+
+        await audio.play();
+        return;
+      }
+    } catch {
+      // Proceed to fallback
+    }
+
+    // 2. High-Quality Web Speech Synthesis Fallback
+    try {
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(cleanText.slice(0, 400));
+        utterance.rate = 1.0;
+        utterance.pitch = 1.05;
+        utterance.lang = isHindiText || speechLang === "hi-IN" ? "hi-IN" : "en-IN";
+
+        // Try to pick a natural human voice
+        const voices = window.speechSynthesis.getVoices();
+        const preferredVoice = voices.find(
+          (v) =>
+            (isHindiText ? v.lang.includes("hi") : v.lang.includes("en-IN") || v.lang.includes("en")) &&
+            (v.name.includes("Google") || v.name.includes("Natural") || v.name.includes("Neural"))
+        );
+        if (preferredVoice) utterance.voice = preferredVoice;
+
+        utterance.onstart = () => setIsSpeaking(true);
+        utterance.onend = () => setIsSpeaking(false);
+        utterance.onerror = () => setIsSpeaking(false);
+
+        window.speechSynthesis.speak(utterance);
+      }
+    } catch {
+      setIsSpeaking(false);
+    }
+  }, [ttsEnabled, speechLang, stopSpeech]);
 
   const handleSendMessage = useCallback(async (customText?: string) => {
     const textToSend = customText || inputMessage;
@@ -111,6 +191,8 @@ export function NexoraFloatingBot() {
       recognitionRef.current.stop();
       setIsListening(false);
     }
+
+    stopSpeech();
 
     const userMsg: ChatMessage = {
       id: `user-${Date.now()}`,
@@ -157,7 +239,7 @@ export function NexoraFloatingBot() {
     } finally {
       setIsLoading(false);
     }
-  }, [inputMessage, isLoading, isListening, ttsEnabled, speakText]);
+  }, [inputMessage, isLoading, isListening, ttsEnabled, speakText, stopSpeech]);
 
   // Global event listener to open Nexora from anywhere (e.g. "Launch AI Copilot" button)
   useEffect(() => {
@@ -200,7 +282,8 @@ export function NexoraFloatingBot() {
           setInputMessage(transcript);
         };
 
-        recognition.onerror = () => {
+        recognition.onerror = (event) => {
+          console.warn("Speech recognition error:", event.error);
           setIsListening(false);
         };
 
@@ -211,12 +294,17 @@ export function NexoraFloatingBot() {
         recognitionRef.current = recognition;
       }
     }
+
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
   }, [speechLang]);
 
-  // Toggle Voice Input
   const toggleListening = () => {
     if (!recognitionRef.current) {
-      alert("Speech recognition is not supported in this browser. Please use Google Chrome or Edge.");
+      alert("Voice recognition is not supported in this browser. Please use Chrome or Edge.");
       return;
     }
 
@@ -224,42 +312,35 @@ export function NexoraFloatingBot() {
       recognitionRef.current.stop();
       setIsListening(false);
     } else {
+      stopSpeech();
       try {
         recognitionRef.current.lang = speechLang;
         recognitionRef.current.start();
-      } catch (err) {
-        console.warn("Speech recognition start error:", err);
+      } catch (e) {
+        console.warn("Recognition already started:", e);
       }
     }
   };
 
-  const stopSpeaking = () => {
-    if (typeof window !== "undefined") {
-      window.speechSynthesis?.cancel();
-      setIsSpeaking(false);
-    }
-  };
-
   const handleCopy = (id: string, text: string) => {
-    if (typeof navigator !== "undefined") {
-      navigator.clipboard.writeText(text);
-      setCopiedId(id);
-      setTimeout(() => setCopiedId(null), 2000);
-    }
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const handleClearChat = () => {
-    stopSpeaking();
+  const clearChat = () => {
+    stopSpeech();
     setMessages([
       {
         id: `welcome-${Date.now()}`,
         sender: "assistant",
-        text: "✨ Conversation cleared! How can I assist you with your career or skill journey today?",
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        text: "✨ Chat cleared! I am **Nexora.ai**. How can I help your career journey on **KaushalSetu** today?",
+        timestamp: "Just now",
         suggestedPrompts: [
           "How does KaushalSetu work?",
           "Generate 3-month AI Roadmap",
           "What is Explainable Matching?",
+          "Benefits for Colleges & Academia",
         ],
       },
     ]);
@@ -267,281 +348,265 @@ export function NexoraFloatingBot() {
 
   return (
     <>
-      {/* Floating Bottom-Right Trigger Launcher */}
-      {!isOpen && (
-        <motion.div
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0, opacity: 0 }}
-          className="fixed bottom-6 right-6 z-50 flex items-center gap-3"
-        >
+      {/* Floating Launcher Button */}
+      <AnimatePresence>
+        {!isOpen && (
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.8 }}
-            className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-cyan-500/40 shadow-glow-md backdrop-blur-md cursor-pointer hover:border-cyan-400 transition-all"
-            onClick={() => setIsOpen(true)}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            className="fixed bottom-6 right-6 z-50 flex items-center gap-3"
           >
-            <div className="h-2 w-2 rounded-full bg-cyan-400 animate-ping" />
-            <span className="text-xs font-mono font-semibold text-cyan-300">
-              Ask Nexora.ai
-            </span>
+            <motion.div
+              initial={{ x: 10, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-cyan-500/30 text-xs text-cyan-300 shadow-xl backdrop-blur-md cursor-pointer hover:border-cyan-400 transition-colors"
+              onClick={() => setIsOpen(true)}
+            >
+              <Sparkles className="h-3.5 w-3.5 text-cyan-400 animate-pulse" />
+              <span>Ask Nexora.ai (Voice Enabled)</span>
+            </motion.div>
+
+            <button
+              type="button"
+              onClick={() => setIsOpen(true)}
+              className="relative group p-4 rounded-full bg-gradient-to-r from-cyan-500 via-teal-500 to-indigo-600 text-white shadow-xl shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:scale-105 active:scale-95 transition-all duration-300 border border-white/20"
+              aria-label="Open Nexora.ai Copilot"
+            >
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-400 to-emerald-400 rounded-full blur opacity-50 group-hover:opacity-100 transition duration-300 animate-pulse" />
+              <div className="relative flex items-center justify-center">
+                <Bot className="h-6 w-6 text-white" />
+                <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500" />
+                </span>
+              </div>
+            </button>
           </motion.div>
+        )}
+      </AnimatePresence>
 
-          <button
-            onClick={() => setIsOpen(true)}
-            aria-label="Open Nexora.ai Copilot"
-            className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-tr from-cyan-600 via-blue-600 to-violet-600 p-[1.5px] shadow-[0_0_25px_rgba(6,182,212,0.45)] hover:shadow-[0_0_35px_rgba(6,182,212,0.7)] hover:scale-105 transition-all duration-300 cursor-pointer group"
-          >
-            <div className="flex h-full w-full items-center justify-center rounded-[14px] bg-slate-950/95 backdrop-blur-sm group-hover:bg-slate-900/80 transition-colors">
-              <Bot className="h-7 w-7 text-cyan-400 group-hover:scale-110 transition-transform duration-300 animate-pulse" />
-            </div>
-
-            {/* Glowing Notification Dot */}
-            <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-cyan-500 border-2 border-slate-950" />
-            </span>
-          </button>
-        </motion.div>
-      )}
-
-      {/* Floating Chat Drawer Window */}
+      {/* Floating Chat Window */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{
               opacity: 1,
-              y: 0,
               scale: 1,
-              height: isMinimized ? "64px" : "600px",
+              y: 0,
+              height: isMinimized ? "auto" : "590px",
             }}
-            exit={{ opacity: 0, y: 50, scale: 0.95 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className={`fixed bottom-6 right-4 sm:right-6 z-50 w-[94vw] sm:w-[440px] max-w-[480px] bg-slate-950/95 border border-cyan-500/30 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.8)] backdrop-blur-2xl flex flex-col overflow-hidden transition-[height] duration-300`}
+            className="fixed bottom-6 right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[420px] rounded-2xl bg-slate-950/95 border border-cyan-500/30 shadow-2xl shadow-cyan-950/50 backdrop-blur-xl flex flex-col overflow-hidden"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 bg-slate-900/80 border-b border-white/[0.08]">
+            <div className="px-4 py-3 bg-gradient-to-r from-slate-900/90 via-cyan-950/40 to-slate-900/90 border-b border-white/[0.08] flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="relative flex h-8 w-8 items-center justify-center rounded-xl bg-cyan-500/15 border border-cyan-500/30">
-                  <Bot className="h-4 w-4 text-cyan-400" />
-                  {isSpeaking && (
-                    <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
-                  )}
+                <div className="relative h-8 w-8 rounded-lg bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-300">
+                  <Bot className="h-4 w-4" />
+                  <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-slate-950" />
                 </div>
                 <div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
                     <h3 className="font-bold text-sm text-foreground leading-none">Nexora.ai</h3>
-                    <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-                      RAG COGNITIVE
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 uppercase tracking-wider font-semibold">
+                      ElevenLabs Voice
                     </span>
                   </div>
-                  <span className="text-[10px] text-muted-foreground font-mono">
+                  <p className="text-[11px] text-muted-foreground mt-0.5">
                     KaushalSetu Intelligence Assistant
-                  </span>
+                  </p>
                 </div>
               </div>
 
-              {/* Action Controls */}
+              {/* Header Action Buttons */}
               <div className="flex items-center gap-1">
-                {/* Language Mode Toggle (EN / HI) */}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 px-2 text-[10px] font-mono text-muted-foreground hover:text-cyan-300"
-                  onClick={() => setSpeechLang((prev) => (prev === "en-IN" ? "hi-IN" : "en-IN"))}
-                  title={`Speech Language: ${speechLang === "en-IN" ? "English" : "Hindi / Hinglish"}`}
-                >
-                  <Languages className="h-3 w-3 mr-1 text-cyan-400" />
-                  {speechLang === "en-IN" ? "EN" : "HI"}
-                </Button>
+                {/* Speaking Indicator */}
+                {isSpeaking && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-cyan-500/20 border border-cyan-500/40 text-[10px] font-mono text-cyan-300"
+                  >
+                    <Activity className="h-3 w-3 animate-pulse text-cyan-400" />
+                    <span>Speaking</span>
+                  </motion.div>
+                )}
 
-                {/* TTS Audio Voice Output Toggle */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={`h-7 w-7 ${
-                    ttsEnabled ? "text-cyan-400 hover:text-cyan-300" : "text-muted-foreground hover:text-white"
-                  }`}
+                {/* Voice Lang Toggle */}
+                <button
+                  type="button"
+                  onClick={() => setSpeechLang((prev) => (prev === "en-IN" ? "hi-IN" : "en-IN"))}
+                  className="p-1.5 rounded-lg text-muted-foreground hover:text-cyan-300 hover:bg-white/[0.05] transition-colors text-xs font-mono flex items-center gap-1"
+                  title={`Current Voice Lang: ${speechLang === "en-IN" ? "English (India)" : "हिन्दी (Hindi)"}`}
+                >
+                  <Languages className="h-3.5 w-3.5" />
+                  <span className="text-[10px] font-bold">{speechLang === "en-IN" ? "EN" : "HI"}</span>
+                </button>
+
+                {/* TTS Toggle */}
+                <button
+                  type="button"
                   onClick={() => {
-                    if (ttsEnabled && isSpeaking) {
-                      stopSpeaking();
-                    }
+                    if (isSpeaking) stopSpeech();
                     setTtsEnabled(!ttsEnabled);
                   }}
-                  title={ttsEnabled ? "Voice Narration Enabled (Click to Mute)" : "Voice Narration Muted"}
+                  className={`p-1.5 rounded-lg transition-colors ${
+                    ttsEnabled ? "text-cyan-400 hover:bg-cyan-500/10" : "text-muted-foreground hover:bg-white/[0.05]"
+                  }`}
+                  title={ttsEnabled ? "Voice Output Active (Click to Mute)" : "Voice Muted"}
                 >
-                  {ttsEnabled ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}
-                </Button>
+                  {ttsEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+                </button>
 
                 {/* Clear Chat */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 text-muted-foreground hover:text-rose-400"
-                  onClick={handleClearChat}
-                  title="Clear Chat History"
+                <button
+                  type="button"
+                  onClick={clearChat}
+                  className="p-1.5 rounded-lg text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                  title="Clear Chat"
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </Button>
+                  <Trash2 className="h-4 w-4" />
+                </button>
 
-                {/* Minimize Button */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 text-muted-foreground hover:text-white"
+                {/* Minimize / Maximize */}
+                <button
+                  type="button"
                   onClick={() => setIsMinimized(!isMinimized)}
+                  className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/[0.05] transition-colors"
                   title={isMinimized ? "Expand" : "Minimize"}
                 >
-                  {isMinimized ? <Maximize2 className="h-3.5 w-3.5" /> : <Minimize2 className="h-3.5 w-3.5" />}
-                </Button>
+                  {isMinimized ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
+                </button>
 
                 {/* Close Button */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 text-muted-foreground hover:text-white"
+                <button
+                  type="button"
                   onClick={() => {
-                    stopSpeaking();
-                    if (isListening && recognitionRef.current) {
-                      recognitionRef.current.stop();
-                    }
+                    stopSpeech();
                     setIsOpen(false);
                   }}
+                  className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/[0.05] transition-colors"
                   title="Close"
                 >
                   <X className="h-4 w-4" />
-                </Button>
+                </button>
               </div>
             </div>
 
-            {/* Chat Body (Hidden when minimized) */}
+            {/* Chat Body (Hidden when Minimized) */}
             {!isMinimized && (
               <>
-                <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs cyber-scrollbar">
+                <div className="flex-1 p-4 overflow-y-auto space-y-4 text-xs">
                   {messages.map((msg) => (
-                    <div
+                    <motion.div
                       key={msg.id}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
                       className={`flex flex-col ${msg.sender === "user" ? "items-end" : "items-start"}`}
                     >
                       <div
-                        className={`max-w-[88%] rounded-2xl p-3.5 leading-relaxed relative group ${
+                        className={`max-w-[88%] p-3.5 rounded-2xl relative group ${
                           msg.sender === "user"
-                            ? "bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-br-none shadow-[0_0_15px_rgba(6,182,212,0.3)]"
-                            : "bg-slate-900/90 border border-white/10 text-foreground/90 rounded-bl-none shadow-md"
+                            ? "bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-br-none shadow-md shadow-cyan-950/40"
+                            : "bg-slate-900/90 text-foreground border border-white/[0.08] rounded-bl-none shadow-md shadow-black/40"
                         }`}
                       >
-                        {/* Copy & Replay TTS Button */}
+                        {/* Message Content */}
+                        <div className="space-y-2 whitespace-pre-wrap leading-relaxed">
+                          {msg.text.split("\n\n").map((para, i) => (
+                            <p key={i}>
+                              {para.split("**").map((chunk, j) =>
+                                j % 2 === 1 ? (
+                                  <strong key={j} className="font-semibold text-cyan-300">
+                                    {chunk}
+                                  </strong>
+                                ) : (
+                                  chunk
+                                )
+                              )}
+                            </p>
+                          ))}
+                        </div>
+
+                        {/* Citations if available */}
+                        {msg.citations && msg.citations.length > 0 && (
+                          <div className="mt-2.5 pt-2 border-t border-white/[0.08] text-[10px] text-cyan-300/80 font-mono flex items-center gap-1">
+                            <Sparkles className="h-2.5 w-2.5 shrink-0" />
+                            <span>Source: {msg.citations.join(" • ")}</span>
+                          </div>
+                        )}
+
+                        {/* Copy & Speak Controls on Assistant Messages */}
                         {msg.sender === "assistant" && (
-                          <div className="absolute top-2 right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-slate-900/90 p-1 rounded-md border border-white/10">
                             <button
+                              type="button"
                               onClick={() => speakText(msg.text)}
-                              className="p-1 rounded bg-black/50 text-muted-foreground hover:text-cyan-400"
-                              title="Listen to Voice"
+                              className="p-1 hover:text-cyan-400 text-muted-foreground transition-colors"
+                              title="Listen to response"
                             >
                               <Volume2 className="h-3 w-3" />
                             </button>
                             <button
+                              type="button"
                               onClick={() => handleCopy(msg.id, msg.text)}
-                              className="p-1 rounded bg-black/50 text-muted-foreground hover:text-white"
-                              title="Copy response"
+                              className="p-1 hover:text-cyan-400 text-muted-foreground transition-colors"
+                              title="Copy text"
                             >
-                              {copiedId === msg.id ? (
-                                <Check className="h-3 w-3 text-emerald-400" />
-                              ) : (
-                                <Copy className="h-3 w-3" />
-                              )}
+                              {copiedId === msg.id ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
                             </button>
-                          </div>
-                        )}
-
-                        {/* Formatted Markdown Content */}
-                        <div className="space-y-1.5 whitespace-pre-wrap font-sans">
-                          {msg.text.split("\n").map((line, idx) => {
-                            if (line.startsWith("### ")) {
-                              return (
-                                <div key={idx} className="font-bold text-cyan-400 text-sm pt-1 pb-0.5">
-                                  {line.replace("### ", "")}
-                                </div>
-                              );
-                            }
-                            if (line.startsWith("#### ")) {
-                              return (
-                                <div key={idx} className="font-semibold text-violet-300 pt-0.5">
-                                  {line.replace("#### ", "")}
-                                </div>
-                              );
-                            }
-                            if (line.startsWith("- ")) {
-                              return (
-                                <div key={idx} className="flex items-start gap-1.5 pl-1 text-[11.5px]">
-                                  <span className="text-cyan-400 mt-0.5">•</span>
-                                  <span>{line.replace("- ", "")}</span>
-                                </div>
-                              );
-                            }
-                            return <p key={idx} className="text-[11.5px]">{line}</p>;
-                          })}
-                        </div>
-
-                        {/* RAG Source Citation Badge */}
-                        {msg.citations && msg.citations.length > 0 && (
-                          <div className="mt-2.5 pt-2 border-t border-white/[0.08] flex items-center gap-1.5 text-[9px] text-muted-foreground font-mono">
-                            <Sparkles className="h-2.5 w-2.5 text-cyan-400 shrink-0" />
-                            <span className="truncate">Source: {msg.citations[0]}</span>
                           </div>
                         )}
                       </div>
 
                       {/* Timestamp */}
-                      <span className="text-[9px] text-muted-foreground/60 px-1 mt-1 font-mono">
+                      <span className="text-[10px] text-muted-foreground mt-1 px-1 font-mono">
                         {msg.timestamp}
                       </span>
 
-                      {/* Suggested Prompts Pills */}
-                      {msg.suggestedPrompts && msg.suggestedPrompts.length > 0 && (
+                      {/* Suggested Follow-up Prompts */}
+                      {msg.suggestedPrompts && (
                         <div className="flex flex-wrap gap-1.5 mt-2 max-w-[95%]">
                           {msg.suggestedPrompts.map((prompt, pIdx) => (
                             <button
                               key={pIdx}
+                              type="button"
                               onClick={() => handleSendMessage(prompt)}
-                              className="text-[10px] px-2.5 py-1 rounded-full bg-cyan-950/40 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20 hover:border-cyan-400 transition-colors text-left flex items-center gap-1 shadow-sm"
+                              className="text-[11px] px-2.5 py-1 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 transition-all text-left"
                             >
-                              <span>⚡</span>
-                              <span>{prompt}</span>
+                              ⚡ {prompt}
                             </button>
                           ))}
                         </div>
                       )}
-                    </div>
+                    </motion.div>
                   ))}
-
-                  {/* Listening Indicator */}
-                  {isListening && (
-                    <div className="flex items-center gap-2 p-3 rounded-2xl bg-rose-950/40 border border-rose-500/30 text-rose-400 w-fit animate-pulse">
-                      <Mic className="h-4 w-4 text-rose-400 animate-bounce" />
-                      <span className="text-[11px] font-mono">
-                        Listening in {speechLang === "en-IN" ? "English" : "Hindi"}... Speak your query
-                      </span>
-                    </div>
-                  )}
 
                   {/* Loading Indicator */}
                   {isLoading && (
-                    <div className="flex items-center gap-2 p-3 rounded-2xl bg-slate-900/90 border border-white/10 text-cyan-400 w-fit">
-                      <Bot className="h-4 w-4 animate-spin" />
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="flex items-center gap-2 text-muted-foreground"
+                    >
+                      <div className="h-6 w-6 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+                        <Bot className="h-3.5 w-3.5 animate-spin" />
+                      </div>
                       <span className="text-[11px] font-mono animate-pulse">
-                        Nexora is searching knowledge base...
+                        Nexora is searching knowledge base & synthesizing response...
                       </span>
-                    </div>
+                    </motion.div>
                   )}
 
                   <div ref={messagesEndRef} />
                 </div>
 
-                {/* Input Bar (Voice & Text) */}
-                <div className="p-3 border-t border-white/[0.08] bg-slate-900/95 space-y-2">
+                {/* Input Controls */}
+                <div className="p-3 bg-slate-900/60 border-t border-white/[0.08]">
                   <form
                     onSubmit={(e) => {
                       e.preventDefault();
@@ -549,22 +614,21 @@ export function NexoraFloatingBot() {
                     }}
                     className="flex items-center gap-2"
                   >
-                    {/* Voice Microphone Command Button */}
-                    <Button
+                    {/* Voice Dictation Button */}
+                    <button
                       type="button"
-                      variant={isListening ? "destructive" : "glass"}
-                      size="icon"
-                      className={`h-9 w-9 shrink-0 rounded-xl transition-all ${
-                        isListening
-                          ? "bg-rose-600 text-white shadow-[0_0_15px_rgba(244,63,94,0.6)] animate-pulse"
-                          : "border-cyan-500/40 text-cyan-400 hover:bg-cyan-500/20"
-                      }`}
                       onClick={toggleListening}
-                      title={isListening ? "Stop Listening" : "Voice Command (Speak Query)"}
+                      className={`p-2.5 rounded-xl border transition-all ${
+                        isListening
+                          ? "bg-rose-500/20 border-rose-500/50 text-rose-400 shadow-md shadow-rose-950 animate-pulse"
+                          : "bg-white/[0.03] border-white/10 text-muted-foreground hover:text-cyan-300 hover:border-cyan-500/40"
+                      }`}
+                      title={isListening ? "Listening... (Click to Stop)" : `Speak in ${speechLang === "en-IN" ? "English" : "हिन्दी"}`}
                     >
                       {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-                    </Button>
+                    </button>
 
+                    {/* Text Input */}
                     <input
                       ref={inputRef}
                       type="text"
@@ -572,28 +636,29 @@ export function NexoraFloatingBot() {
                       onChange={(e) => setInputMessage(e.target.value)}
                       placeholder={
                         isListening
-                          ? "Listening... Speak now..."
+                          ? "Listening... speak in English or Hindi..."
                           : "Ask Nexora or speak via mic..."
                       }
-                      className="flex-1 bg-black/50 border border-white/10 rounded-xl px-3.5 py-2 text-xs text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-cyan-500 transition-colors"
+                      className="flex-1 bg-slate-950/60 border border-white/10 focus:border-cyan-500/60 focus:outline-none rounded-xl px-3.5 py-2 text-xs text-foreground placeholder:text-muted-foreground/60 transition-colors"
                       disabled={isLoading}
                     />
 
+                    {/* Send Button */}
                     <Button
                       type="submit"
                       variant="glow"
-                      size="icon"
-                      className="h-9 w-9 shrink-0 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold"
+                      size="sm"
                       disabled={!inputMessage.trim() || isLoading}
+                      className="rounded-xl px-3"
                     >
-                      <Send className="h-4 w-4" />
+                      <Send className="h-3.5 w-3.5" />
                     </Button>
                   </form>
 
-                  <div className="flex items-center justify-between px-1 text-[9px] text-muted-foreground/60 font-mono">
-                    <span className="flex items-center gap-1">
-                      <Mic className="h-2.5 w-2.5 text-cyan-400" />
-                      Voice & Text Ready
+                  {/* Status subtext */}
+                  <div className="flex items-center justify-between px-1 mt-2 text-[10px] text-muted-foreground font-mono">
+                    <span className="flex items-center gap-1 text-cyan-400/80">
+                      <Mic className="h-3 w-3" /> Voice & Text (Bilingual EN/HI)
                     </span>
                     <span>Powered by KaushalSetu RAG</span>
                   </div>

@@ -10,16 +10,17 @@ export interface StudentProfileData {
   skills: string[];
   interests: string[];
   careerGoal: string;
-  experience: string;
-  projects: Array<{
-    title: string;
-    description: string;
+  experience?: string;
+  projects?: Array<{
+    title?: string;
+    description?: string;
     link?: string;
   }>;
-  certifications: string[];
+  certifications?: string[];
   readinessScore?: number;
   resumeUrl?: string;
   resumeFileName?: string;
+  resumeFileSize?: string;
 }
 
 export interface IndustryProfileData {

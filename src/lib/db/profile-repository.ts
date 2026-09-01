@@ -350,3 +350,49 @@ export async function deleteAchievement(userId: string, achievementId: string): 
   if (!achievement || achievement.userId !== userId) return false;
   return globalRelationalStore._titanAchievements!.delete(achievementId);
 }
+
+/**
+ * Add or update a user document (resume, certificate, portfolio, etc.)
+ */
+export async function addDocument(
+  userId: string,
+  data: { title: string; type: "resume" | "certificate" | "transcript" | "portfolio_doc" | "other"; fileUrl: string; fileSizeBytes?: number; mimeType?: string }
+): Promise<DocumentEntity> {
+  // If user already has a resume document and adds a new one, replace/update it
+  if (data.type === "resume") {
+    const existingResume = Array.from(globalRelationalStore._titanDocuments!.values()).find(
+      (d) => d.userId === userId && d.type === "resume"
+    );
+    if (existingResume) {
+      existingResume.title = data.title;
+      existingResume.fileUrl = data.fileUrl;
+      if (data.fileSizeBytes) existingResume.fileSizeBytes = data.fileSizeBytes;
+      if (data.mimeType) existingResume.mimeType = data.mimeType;
+      return existingResume;
+    }
+  }
+
+  const newDoc: DocumentEntity = {
+    id: `doc-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    userId,
+    title: data.title.trim(),
+    type: data.type,
+    fileUrl: data.fileUrl.trim(),
+    fileSizeBytes: data.fileSizeBytes || 250000,
+    mimeType: data.mimeType || (data.title.endsWith(".docx") ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document" : "application/pdf"),
+    createdAt: new Date().toISOString(),
+  };
+
+  globalRelationalStore._titanDocuments!.set(newDoc.id, newDoc);
+  return newDoc;
+}
+
+/**
+ * Delete a document
+ */
+export async function deleteDocument(userId: string, docId: string): Promise<boolean> {
+  const doc = globalRelationalStore._titanDocuments!.get(docId);
+  if (!doc || doc.userId !== userId) return false;
+  return globalRelationalStore._titanDocuments!.delete(docId);
+}
+

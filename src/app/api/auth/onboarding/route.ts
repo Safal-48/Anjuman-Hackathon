@@ -33,8 +33,61 @@ export async function POST(req: NextRequest) {
           const errs = val.error.errors.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ");
           return NextResponse.json({ error: `Validation error: ${errs}` }, { status: 400 });
         }
-        user.studentProfile = val.data as StudentProfileData;
+        
+        // Filter out completely blank project items
+        const validProjects = (val.data.projects || []).filter(
+          (p) => (p.title && p.title.trim().length > 0) || (p.description && p.description.trim().length > 0)
+        );
+
+        user.studentProfile = {
+          ...val.data,
+          projects: validProjects as Array<{ title: string; description: string; link?: string }>,
+        } as StudentProfileData;
         user.fullName = val.data.fullName;
+
+        // Automatically sync to relational entities for immediate dashboard access
+        try {
+          const { addStudentSkill, createProject, addCertification, addDocument } = await import("@/lib/db/profile-repository");
+          
+          if (val.data.skills && Array.isArray(val.data.skills)) {
+            val.data.skills.forEach((s) => {
+              if (s && s.trim()) addStudentSkill(user.id, { skillName: s.trim() });
+            });
+          }
+
+          validProjects.forEach((proj) => {
+            if (proj.title) {
+              createProject(user.id, {
+                title: proj.title,
+                summary: proj.description || proj.title,
+                repoUrl: proj.link,
+                isFeatured: true,
+              });
+            }
+          });
+
+          if (val.data.certifications && Array.isArray(val.data.certifications)) {
+            val.data.certifications.forEach((cert) => {
+              if (cert && cert.trim()) {
+                addCertification(user.id, {
+                  title: cert.trim(),
+                  issuingOrganization: "Verified Credential Provider",
+                });
+              }
+            });
+          }
+
+          if (val.data.resumeUrl || val.data.resumeFileName) {
+            addDocument(user.id, {
+              title: val.data.resumeFileName || "Student_Resume.pdf",
+              type: "resume",
+              fileUrl: val.data.resumeUrl || "https://storage.titan.ai/resumes/" + (val.data.resumeFileName || "resume.pdf"),
+            });
+          }
+        } catch {
+          // Relational sync is non-blocking
+        }
+
         break;
       }
       case "industry": {
