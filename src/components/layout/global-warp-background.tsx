@@ -32,10 +32,12 @@ export function GlobalWarpBackground() {
         <div className="absolute inset-0 bg-[#02040A]" />
       )}
 
-      {/* Cybernetic ambient grid and radial glow layer */}
-      <div className="absolute inset-0 bg-cyber-grid bg-[size:40px_40px] opacity-20 pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(6,182,212,0.12),rgba(255,255,255,0))] pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_80%_80%,rgba(99,102,241,0.08),rgba(255,255,255,0))] pointer-events-none" />
+      {/* Cybernetic ambient grid and radial glow layer with glowing light orbs */}
+      <div className="absolute inset-0 bg-cyber-grid bg-[size:40px_40px] opacity-25 pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl animate-pulse pointer-events-none duration-1000" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(6,182,212,0.14),rgba(255,255,255,0))] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_80%_80%,rgba(99,102,241,0.1),rgba(255,255,255,0))] pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-to-b from-[#02040A]/40 via-transparent to-[#02040A]/80 pointer-events-none" />
     </div>
   );

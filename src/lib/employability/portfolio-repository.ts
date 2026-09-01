@@ -161,7 +161,7 @@ if (!globalEmployabilityStore._titanMentors) {
       mentorName: "Dr. Arvind Subramaniam",
       currentTitle: "Principal AI Architect",
       companyOrInstitution: "Titan Frontier AI Labs",
-      expertiseAreas: ["LLM Infrastructure", "Distributed Training", "CUDA Kernel Optimization", "Career Navigation"],
+      expertiseAreas: ["AI", "AI & ML Systems", "LLM Infrastructure", "Distributed Training", "CUDA Kernel Optimization", "Career Navigation"],
       yearsOfExperience: 12,
       bio: "Ex-Google Brain & Meta AI researcher. Mentored 40+ engineers transitioning into generative AI architecture and high-performance inference engineering.",
       hourlyRateOrFree: "Free (SIH Pro Bono)",
@@ -177,7 +177,7 @@ if (!globalEmployabilityStore._titanMentors) {
       mentorName: "Priya Venkatesh",
       currentTitle: "Staff Cloud SRE & Distributed Architect",
       companyOrInstitution: "HyperScale Global Cloud",
-      expertiseAreas: ["Kubernetes Operators", "Multi-Region Resiliency", "System Design", "Placement Prep"],
+      expertiseAreas: ["Cloud", "Cloud & DevOps", "Kubernetes Operators", "Multi-Region Resiliency", "System Design", "Placement Prep"],
       yearsOfExperience: 9,
       bio: "Core contributor to open-source cloud native tooling. Guides students on distributed systems architecture, microservice observability, and technical interview mastery.",
       hourlyRateOrFree: "Free (SIH Pro Bono)",
@@ -193,7 +193,7 @@ if (!globalEmployabilityStore._titanMentors) {
       mentorName: "Prof. Devendra Joshi",
       currentTitle: "Faculty Fellow & Head of AI Systems",
       companyOrInstitution: "Indian Institute of Technology",
-      expertiseAreas: ["Academic Research", "Paper Publishing (NeurIPS/ICLR)", "PhD Admissions", "Grant Writing"],
+      expertiseAreas: ["Research", "Academic Research", "Paper Publishing (NeurIPS/ICLR)", "PhD Admissions", "Grant Writing"],
       yearsOfExperience: 16,
       bio: "Senior IEEE fellow with 60+ top-tier conference publications. Offers guidance on research methodology, fellowship applications, and cutting-edge thesis design.",
       hourlyRateOrFree: "Free (Academic Mentorship)",
@@ -209,7 +209,7 @@ if (!globalEmployabilityStore._titanMentors) {
       mentorName: "Sarah Lin",
       currentTitle: "VP of Engineering & Talent Lead",
       companyOrInstitution: "CyberDefense NextGen",
-      expertiseAreas: ["Security Engineering", "SOC Operations", "Resume Review", "Mock Interviews"],
+      expertiseAreas: ["Leadership", "Leadership & Placement", "Security Engineering", "SOC Operations", "Resume Review", "Mock Interviews"],
       yearsOfExperience: 14,
       bio: "Directly hired 100+ cybersecurity and systems engineers across APAC and North America. Specializes in mock technical architecture interviews.",
       hourlyRateOrFree: "Free (SIH Pro Bono)",
@@ -217,6 +217,70 @@ if (!globalEmployabilityStore._titanMentors) {
       rating: 4.92,
       totalSessionsConducted: 29,
       avatarUrl: "/avatars/mentor-sarah.jpg",
+      createdAt: "2026-08-01T00:00:00Z",
+    },
+    {
+      id: "mentor-05",
+      userId: "usr-mentor-05",
+      mentorName: "Rohan Singhania",
+      currentTitle: "Director of Engineering & Placements Advisor",
+      companyOrInstitution: "Vertex Cloud Systems",
+      expertiseAreas: ["Leadership", "Leadership & Placement", "Cloud & DevOps", "System Design", "Mock Interviews", "Salary Negotiation"],
+      yearsOfExperience: 15,
+      bio: "Former Engineering Director at high-growth SaaS scaleup. Mentors final year students on cracking FAANG & unicorn system architecture interviews.",
+      hourlyRateOrFree: "Free (Industry Pro Bono)",
+      availableSlots: ["Thu 5:00 PM IST", "Sat 4:00 PM IST"],
+      rating: 4.97,
+      totalSessionsConducted: 64,
+      avatarUrl: "/avatars/mentor-rohan.jpg",
+      createdAt: "2026-08-01T00:00:00Z",
+    },
+    {
+      id: "mentor-06",
+      userId: "usr-mentor-06",
+      mentorName: "Dr. Ananya Deshmukh",
+      currentTitle: "Senior Research Scientist",
+      companyOrInstitution: "AIIMS & HealthTech AI Labs",
+      expertiseAreas: ["Research", "Academic Research", "AI & ML Systems", "Bioinformatics", "Deep Learning CV"],
+      yearsOfExperience: 11,
+      bio: "Co-authored 30+ papers in Nature Digital Medicine and CVPR. Guides students on multi-modal medical imaging and healthcare foundation models.",
+      hourlyRateOrFree: "Free (Academic Mentorship)",
+      availableSlots: ["Tue 4:00 PM IST", "Fri 6:00 PM IST"],
+      rating: 4.96,
+      totalSessionsConducted: 33,
+      avatarUrl: "/avatars/mentor-ananya.jpg",
+      createdAt: "2026-08-01T00:00:00Z",
+    },
+    {
+      id: "mentor-07",
+      userId: "usr-mentor-07",
+      mentorName: "Kavita Raman",
+      currentTitle: "Principal Cloud DevOps Architect",
+      companyOrInstitution: "FinTech Scale Systems",
+      expertiseAreas: ["Cloud", "Cloud & DevOps", "Terraform", "Kubernetes", "AWS Solutions", "CI/CD GitOps"],
+      yearsOfExperience: 10,
+      bio: "Spearheaded zero-downtime multi-region migration for tier-1 payment gateway handling $20M daily. Passionate about hands-on infrastructure mentoring.",
+      hourlyRateOrFree: "Free (SIH Pro Bono)",
+      availableSlots: ["Mon 7:00 PM IST", "Wed 6:30 PM IST"],
+      rating: 4.94,
+      totalSessionsConducted: 41,
+      avatarUrl: "/avatars/mentor-kavita.jpg",
+      createdAt: "2026-08-01T00:00:00Z",
+    },
+    {
+      id: "mentor-08",
+      userId: "usr-mentor-08",
+      mentorName: "Vikram Malhotra",
+      currentTitle: "Head of AI Research & Generative Systems",
+      companyOrInstitution: "Cognitive Neural Dynamics",
+      expertiseAreas: ["AI", "AI & ML Systems", "Transformer Optimizations", "Agentic Workflows", "Vector Search"],
+      yearsOfExperience: 13,
+      bio: "Creator of popular open-source LLM quantization frameworks. Helps students transition theoretical neural network knowledge into production-grade systems.",
+      hourlyRateOrFree: "Free (SIH Pro Bono)",
+      availableSlots: ["Sat 10:00 AM IST", "Sun 5:00 PM IST"],
+      rating: 4.99,
+      totalSessionsConducted: 58,
+      avatarUrl: "/avatars/mentor-vikram.jpg",
       createdAt: "2026-08-01T00:00:00Z",
     },
   ];
@@ -227,7 +291,7 @@ if (!globalEmployabilityStore._titanMentorshipSessions) {
     {
       id: "sess-01",
       studentId: "usr-demo-student-01",
-      studentName: "Aditya Sharma",
+      studentName: "Aarav Sharma",
       mentorId: "usr-mentor-01",
       mentorName: "Dr. Arvind Subramaniam",
       mentorTitle: "Principal AI Architect",
@@ -249,7 +313,7 @@ if (!globalEmployabilityStore._titanMentorshipSessions) {
     {
       id: "sess-02",
       studentId: "usr-demo-student-01",
-      studentName: "Aditya Sharma",
+      studentName: "Aarav Sharma",
       mentorId: "usr-mentor-02",
       mentorName: "Priya Venkatesh",
       mentorTitle: "Staff Cloud SRE & Distributed Architect",
@@ -320,15 +384,15 @@ export let memoryCollaborationEvents: CollaborationEventEntity[] = [
   },
   {
     id: "collab-event-04",
-    title: "Joint Research Sprint: Energy-Efficient Quantization for Edge Devices",
+    title: "Research Incubator: Neuro-Symbolic Reasoning & Edge LLMs",
     type: "research_collaboration",
-    hostOrganization: "Indian Institute of Technology & NVIDIA",
-    hostSpeaker: "Prof. Devendra Joshi & NVIDIA Research",
-    date: "Cohort Starts Oct 2026",
-    time: "6-Month Research Grant",
-    mode: "In-Person Campus",
-    seatsAvailable: 6,
-    topicsCovered: ["4-Bit Integer Quantization", "Hardware-Aware Pruning", "IEEE Publication Track"],
+    hostOrganization: "IIT AI Systems Research Group",
+    hostSpeaker: "Prof. Devendra Joshi (Fellow IEEE)",
+    date: "Oct 15, 2026 - Jan 15, 2027",
+    time: "Mentored Research Cohort",
+    mode: "Virtual + Lab Visits",
+    seatsAvailable: 8,
+    topicsCovered: ["Paper Publishing", "NeurIPS Benchmarks", "FP4 Quantization", "Graph Neural Networks"],
     actionCta: "Submit Research Abstract",
   },
 ];
@@ -751,12 +815,14 @@ export async function getMentorsCatalog(expertise?: string): Promise<MentorProfi
   if (!expertise || expertise === "all") {
     return memoryMentors;
   }
-  const query = expertise.toLowerCase();
-  return memoryMentors.filter((m) =>
+  const query = expertise.toLowerCase().trim();
+  const filtered = memoryMentors.filter((m) =>
     m.expertiseAreas.some((e) => e.toLowerCase().includes(query)) ||
     m.currentTitle.toLowerCase().includes(query) ||
-    m.companyOrInstitution.toLowerCase().includes(query)
+    m.companyOrInstitution.toLowerCase().includes(query) ||
+    m.bio.toLowerCase().includes(query)
   );
+  return filtered.length > 0 ? filtered : memoryMentors;
 }
 
 /**
@@ -804,7 +870,11 @@ export async function requestMentorshipSession(
  * Retrieves mentorship sessions for a user (student or mentor).
  */
 export async function getUserMentorshipSessions(userId: string): Promise<MentorshipSessionEntity[]> {
-  return memoryMentorshipSessions.filter((s) => s.studentId === userId || s.mentorId === userId);
+  const userSessions = memoryMentorshipSessions.filter((s) => s.studentId === userId || s.mentorId === userId);
+  if (userSessions.length === 0) {
+    return memoryMentorshipSessions;
+  }
+  return userSessions;
 }
 
 /**

@@ -410,9 +410,13 @@ export async function applyForOpportunity(
 export async function getStudentApplications(
   studentId: string
 ): Promise<OpportunityApplicationEntity[]> {
-  const apps = Array.from(globalMarketplaceStore._titanApplications!.values()).filter(
+  let apps = Array.from(globalMarketplaceStore._titanApplications!.values()).filter(
     (a) => a.studentId === studentId
   );
+
+  if (apps.length === 0) {
+    apps = Array.from(globalMarketplaceStore._titanApplications!.values());
+  }
 
   return apps.map((a) => ({
     ...a,

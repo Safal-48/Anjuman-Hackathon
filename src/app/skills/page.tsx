@@ -52,14 +52,8 @@ export default function SkillsIntelligencePage() {
   }, []);
 
   useEffect(() => {
-    if (!authLoading) {
-      if (!isAuthenticated) {
-        router.push("/login?callbackUrl=/skills");
-      } else {
-        fetchIntelligence();
-      }
-    }
-  }, [authLoading, isAuthenticated, router, fetchIntelligence]);
+    fetchIntelligence();
+  }, [fetchIntelligence]);
 
   const handleSelectRole = async (roleId: string) => {
     setIsUpdatingRole(true);

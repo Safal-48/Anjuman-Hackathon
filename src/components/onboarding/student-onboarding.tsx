@@ -293,6 +293,29 @@ export function StudentOnboarding() {
     "Experience & Projects",
   ];
 
+  const handleAutoFillDemo = () => {
+    setValue("fullName", user?.fullName || "Aarav Sharma", { shouldValidate: true });
+    setValue("education", "B.Tech Computer Science & AI", { shouldValidate: true });
+    setValue("institution", "Indian Institute of Technology", { shouldValidate: true });
+    setValue("academicYear", "3rd Year", { shouldValidate: true });
+    setValue("skills", ["React", "TypeScript", "Python", "PyTorch", "Next.js", "Docker"], { shouldValidate: true });
+    setValue("interests", ["Artificial Intelligence", "Autonomous Systems", "Cloud Architecture"], { shouldValidate: true });
+    setValue("careerGoal", "Principal AI Systems & Distributed Machine Learning Engineer", { shouldValidate: true });
+    setValue("experience", "6-month research internship at NVIDIA AI Research Labs focusing on TensorRT inference graphs and CUDA kernel performance optimization.", { shouldValidate: true });
+    setValue("projects", [
+      {
+        title: "Neural Vision Telemetry Core",
+        description: "Edge computing real-time vision pipeline processing 120 FPS camera streams with sub-10ms inference latency.",
+        link: "https://github.com/tech-titan/vision-telemetry",
+      },
+    ], { shouldValidate: true });
+    setValue("certifications", ["AWS Certified Solutions Architect - Associate", "DeepLearning.AI Generative AI with LLMs"], { shouldValidate: true });
+    setValue("resumeFileName", "Aarav_Sharma_AI_Resume.pdf", { shouldValidate: true });
+    setValue("resumeFileSize", "1.2 MB", { shouldValidate: true });
+    setValue("resumeUrl", "https://drive.google.com/aarav-ai-resume.pdf", { shouldValidate: true });
+    setServerError(null);
+  };
+
   return (
     <OnboardingLayout
       role="student"
@@ -300,6 +323,22 @@ export function StudentOnboarding() {
       totalSteps={3}
       stepTitles={stepTitles}
     >
+      <div className="flex items-center justify-between p-3 mb-2 rounded-xl bg-cyan-950/30 border border-cyan-500/20 backdrop-blur-sm">
+        <div className="flex items-center gap-2">
+          <Sparkles className="h-4 w-4 text-cyan-400 animate-pulse" />
+          <span className="text-xs text-slate-300 font-medium">Want to test quickly?</span>
+        </div>
+        <Button
+          type="button"
+          variant="glass"
+          size="sm"
+          onClick={handleAutoFillDemo}
+          className="text-xs text-cyan-300 border-cyan-500/30 hover:bg-cyan-500/20 shadow-glow-sm"
+        >
+          ⚡ Auto-Fill Demo Profile
+        </Button>
+      </div>
+
       <form onSubmit={handleSubmit(onSubmit, onFormError)} className="space-y-6">
         {serverError && (
           <motion.div
