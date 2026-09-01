@@ -61,13 +61,13 @@ export function Navbar({ onMenuToggle }: { onMenuToggle?: () => void }) {
       }`}
     >
       <Container size="xl">
-        <div className="flex h-16 items-center justify-between gap-4">
+        <div className="flex h-[72px] items-center justify-between gap-4">
           {/* Logo & Brand */}
           <div className="flex items-center gap-3 shrink-0">
             <Link href="/" className="flex items-center gap-3 group">
-              <KaushalSetuIcon size={38} className="shadow-cyan-500/20 shadow-lg" />
+              <KaushalSetuIcon size={40} className="shadow-cyan-500/20 shadow-lg" />
               <div className="flex flex-col">
-                <div className="flex items-center font-extrabold tracking-tight text-base leading-none">
+                <div className="flex items-center font-extrabold tracking-tight text-lg leading-none">
                   <span className="text-cyan-400 group-hover:text-cyan-300 transition-colors">
                     Kaushal
                   </span>
@@ -75,7 +75,7 @@ export function Navbar({ onMenuToggle }: { onMenuToggle?: () => void }) {
                     Setu
                   </span>
                 </div>
-                <span className="text-[9px] font-mono tracking-widest text-muted-foreground uppercase mt-1 hidden sm:inline">
+                <span className="text-[10px] font-mono tracking-widest text-slate-300 uppercase mt-1 hidden sm:inline font-medium">
                   Connecting Skills • Bridging Opportunities
                 </span>
               </div>
@@ -83,7 +83,7 @@ export function Navbar({ onMenuToggle }: { onMenuToggle?: () => void }) {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-2 xl:gap-3">
             {isAuthenticated
               ? loggedInNavItems.map((item) => {
                   const isActive = pathname === item.href;
@@ -92,13 +92,13 @@ export function Navbar({ onMenuToggle }: { onMenuToggle?: () => void }) {
                     <Link
                       key={item.href}
                       href={item.href}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                      className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-semibold transition-all duration-200 tracking-wide ${
                         isActive
-                          ? "bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 shadow-[0_0_12px_rgba(6,182,212,0.2)]"
-                          : "text-muted-foreground hover:text-foreground hover:bg-white/[0.04]"
+                          ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-[0_0_15px_rgba(6,182,212,0.25)] font-bold"
+                          : "text-slate-200 hover:text-white hover:bg-white/[0.08]"
                       }`}
                     >
-                      <Icon className="h-3.5 w-3.5" />
+                      <Icon className="h-4 w-4" />
                       <span>{item.label}</span>
                     </Link>
                   );
@@ -107,7 +107,7 @@ export function Navbar({ onMenuToggle }: { onMenuToggle?: () => void }) {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="px-3 py-1.5 rounded-xl text-xs font-semibold text-muted-foreground hover:text-cyan-400 hover:bg-white/[0.04] transition-all"
+                    className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-100 hover:text-cyan-300 hover:bg-white/[0.08] transition-all duration-200 tracking-wide hover:shadow-sm"
                   >
                     {item.label}
                   </Link>
@@ -115,7 +115,7 @@ export function Navbar({ onMenuToggle }: { onMenuToggle?: () => void }) {
           </nav>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <ThemeToggle />
 
             {isAuthenticated && user ? (
@@ -150,14 +150,14 @@ export function Navbar({ onMenuToggle }: { onMenuToggle?: () => void }) {
                 </div>
               </div>
             ) : (
-              <div className="hidden sm:flex items-center gap-2">
+              <div className="hidden sm:flex items-center gap-2.5">
                 <Link href="/login">
-                  <Button variant="ghost" size="sm" className="text-xs">
+                  <Button variant="ghost" size="sm" className="text-sm font-semibold text-slate-200 hover:text-white px-4">
                     Sign In
                   </Button>
                 </Link>
                 <Link href="/register">
-                  <Button variant="glow" size="sm" className="text-xs">
+                  <Button variant="glow" size="sm" className="text-sm font-semibold px-4 shadow-cyan-500/20 shadow-md">
                     Register
                   </Button>
                 </Link>
