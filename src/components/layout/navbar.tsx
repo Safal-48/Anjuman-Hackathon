@@ -64,12 +64,8 @@ export function Navbar({ onMenuToggle }: { onMenuToggle?: () => void }) {
         <div className="flex h-16 items-center justify-between gap-4">
           {/* Logo & Brand */}
           <div className="flex items-center gap-3 shrink-0">
-            <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500/20 via-emerald-500/20 to-blue-600/20 p-[1px] border border-cyan-500/30 shadow-glow-sm group-hover:shadow-glow-md transition-all">
-                <div className="flex h-full w-full items-center justify-center rounded-[11px] bg-slate-950/90 backdrop-blur-sm">
-                  <KaushalSetuIcon size={26} className="group-hover:scale-110 transition-transform duration-300" />
-                </div>
-              </div>
+            <Link href="/" className="flex items-center gap-3 group">
+              <KaushalSetuIcon size={38} className="shadow-cyan-500/20 shadow-lg" />
               <div className="flex flex-col">
                 <div className="flex items-center font-extrabold tracking-tight text-base leading-none">
                   <span className="text-cyan-400 group-hover:text-cyan-300 transition-colors">
@@ -79,7 +75,7 @@ export function Navbar({ onMenuToggle }: { onMenuToggle?: () => void }) {
                     Setu
                   </span>
                 </div>
-                <span className="text-[9px] font-mono tracking-widest text-muted-foreground uppercase mt-0.5 hidden sm:inline">
+                <span className="text-[9px] font-mono tracking-widest text-muted-foreground uppercase mt-1 hidden sm:inline">
                   Connecting Skills • Bridging Opportunities
                 </span>
               </div>
