@@ -58,11 +58,14 @@ export function SkillStrengthsWeaknesses({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <Badge variant="emerald" size="sm">
+                <div className="flex items-center">
+                  <Badge
+                    variant="emerald"
+                    size="sm"
+                    className="font-mono text-xs px-2.5 py-0.5 uppercase tracking-wider"
+                  >
                     {s.level.toUpperCase()}
                   </Badge>
-                  <span className="font-mono text-sm font-bold text-emerald-400">{s.score}%</span>
                 </div>
               </div>
             ))}
@@ -113,11 +116,14 @@ export function SkillStrengthsWeaknesses({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <Badge variant="amber" size="sm">
+                <div className="flex items-center">
+                  <Badge
+                    variant="amber"
+                    size="sm"
+                    className="font-mono text-xs px-2.5 py-0.5 uppercase tracking-wider"
+                  >
                     {s.level.toUpperCase()}
                   </Badge>
-                  <span className="font-mono text-sm font-bold text-amber-400">{s.score}%</span>
                 </div>
               </div>
             ))}
