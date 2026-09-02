@@ -22,7 +22,8 @@ import { Container } from "@/components/layout/container";
 import { GlassCard } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FadeIn } from "@/components/animations/motion-wrapper";
+import { FadeIn, SlideUp } from "@/components/animations/motion-wrapper";
+import { WhatIfLearningSimulator } from "@/components/simulation/what-if-learning-simulator";
 
 interface Goal {
   id: string;
@@ -258,6 +259,13 @@ export default function GoalBasedLearningPage() {
                 </div>
               </GlassCard>
             ))}
+          </div>
+
+          {/* "What If?" Learning Impact Simulator */}
+          <div className="mt-10">
+            <SlideUp delay={0.05}>
+              <WhatIfLearningSimulator />
+            </SlideUp>
           </div>
 
           {/* Add Goal Modal */}
