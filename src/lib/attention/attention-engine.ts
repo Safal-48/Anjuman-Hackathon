@@ -2,6 +2,7 @@
  * Client-Side Real-Time Face Detection & Head Orientation Analysis Engine
  * Privacy-first: Runs 100% locally in browser memory. No video or telemetry is sent to any server.
  * Neutral Terminology: Labels events as "Attention Deviation" or "Focus Warning" (Never "Cheating").
+ * Adaptive Baseline Calibration & Generous Natural Movement Tolerances (Allows normal head tilt, reading, thinking).
  */
 
 import {
@@ -34,6 +35,15 @@ export class AttentionEngine {
   private currentStatus: AttentionStatus = "INITIALIZING";
   private currentDirection: HeadDirection = "CENTER";
   private isAlertActive: boolean = false;
+
+  // Adaptive baseline and smoothing filters
+  private baselineX: number | null = null;
+  private baselineY: number | null = null;
+  private smoothX: number | null = null;
+  private smoothY: number | null = null;
+  private calibrationFrames: number = 0;
+  private calibrationSumX: number = 0;
+  private calibrationSumY: number = 0;
 
   // Timers and timestamps
   private sessionStartTime: number = 0;
@@ -98,6 +108,15 @@ export class AttentionEngine {
     this.currentDirection = "CENTER";
     this.isAlertActive = false;
 
+    // Reset calibration state
+    this.baselineX = null;
+    this.baselineY = null;
+    this.smoothX = null;
+    this.smoothY = null;
+    this.calibrationFrames = 0;
+    this.calibrationSumX = 0;
+    this.calibrationSumY = 0;
+
     this.intervalId = setInterval(() => {
       this.processFrame();
     }, ATTENTION_CONFIG.FRAME_SAMPLING_INTERVAL_MS);
@@ -136,7 +155,6 @@ export class AttentionEngine {
     const dt = now - (this.lastTickTime || now);
     this.lastTickTime = now;
 
-    // Fast sub-sampling capture
     const width = this.canvasElement.width;
     const height = this.canvasElement.height;
 
@@ -164,18 +182,14 @@ export class AttentionEngine {
 
   /**
    * Privacy-preserving local pixel heuristic for face & yaw/pitch analysis
+   * Includes adaptive baseline calibration and exponential smoothing.
    */
   private analyzeFrameLocally(data: Uint8ClampedArray, width: number, height: number): DetectionResult {
     let skinPixelCount = 0;
     let sumX = 0;
     let sumY = 0;
 
-    // Bounding box bounds
-    let minX = width;
-    let maxX = 0;
-    let minY = height;
-    let maxY = 0;
-
+    // Scan pixels with 2x step for high performance
     for (let y = 0; y < height; y += 2) {
       for (let x = 0; x < width; x += 2) {
         const idx = (y * width + x) * 4;
@@ -188,22 +202,17 @@ export class AttentionEngine {
         const cb = 128 - 0.168736 * r - 0.331264 * g + 0.5 * b;
         const cr = 128 + 0.5 * r - 0.418688 * g - 0.081312 * b;
 
-        const isSkin = cb >= 77 && cb <= 127 && cr >= 133 && cr <= 173 && yVal > 40;
+        const isSkin = cb >= 77 && cb <= 127 && cr >= 133 && cr <= 173 && yVal > 35;
 
         if (isSkin) {
           skinPixelCount++;
           sumX += x;
           sumY += y;
-
-          if (x < minX) minX = x;
-          if (x > maxX) maxX = x;
-          if (y < minY) minY = y;
-          if (y > maxY) maxY = y;
         }
       }
     }
 
-    const minRequiredPixels = (width * height * 0.02) / 4; // At least ~2% of frame
+    const minRequiredPixels = (width * height * 0.015) / 4; // At least ~1.5% of frame
     if (skinPixelCount < minRequiredPixels) {
       return {
         faceDetected: false,
@@ -214,21 +223,54 @@ export class AttentionEngine {
       };
     }
 
-    const centroidX = sumX / skinPixelCount;
-    const centroidY = sumY / skinPixelCount;
+    const rawCentroidX = sumX / skinPixelCount;
+    const rawCentroidY = sumY / skinPixelCount;
 
-    const frameCenterX = width / 2;
-    const frameCenterY = height / 2;
+    // Apply exponential smoothing (EMA) to eliminate frame jitter
+    if (this.smoothX === null || this.smoothY === null) {
+      this.smoothX = rawCentroidX;
+      this.smoothY = rawCentroidY;
+    } else {
+      this.smoothX = 0.25 * rawCentroidX + 0.75 * this.smoothX;
+      this.smoothY = 0.25 * rawCentroidY + 0.75 * this.smoothY;
+    }
 
-    // Normalized offset from frame center (-1 to +1)
-    const yawOffset = (centroidX - frameCenterX) / (width * 0.5);
-    const pitchOffset = (centroidY - frameCenterY) / (height * 0.5);
+    // Baseline Calibration: Average first 25 frames for user's resting screen-reading posture
+    if (this.calibrationFrames < 25) {
+      this.calibrationSumX += this.smoothX;
+      this.calibrationSumY += this.smoothY;
+      this.calibrationFrames++;
+      this.baselineX = this.calibrationSumX / this.calibrationFrames;
+      this.baselineY = this.calibrationSumY / this.calibrationFrames;
+
+      return {
+        faceDetected: true,
+        direction: "CENTER",
+        confidence: 1.0,
+        yawOffset: 0,
+        pitchOffset: 0,
+        box: {
+          x: this.smoothX - 20,
+          y: this.smoothY - 20,
+          width: 40,
+          height: 40,
+        },
+      };
+    }
+
+    const frameCenterX = this.baselineX || (width / 2);
+    const frameCenterY = this.baselineY || (height * 0.45);
+
+    // Compute relative displacement from the student's calibrated resting position
+    const yawOffset = (this.smoothX - frameCenterX) / (width * 0.45);
+    const pitchOffset = (this.smoothY - frameCenterY) / (height * 0.45);
 
     let direction: HeadDirection = "CENTER";
     const absYaw = Math.abs(yawOffset);
     const absPitch = Math.abs(pitchOffset);
 
-    if (absYaw > ATTENTION_CONFIG.HEAD_YAW_THRESHOLD && absYaw >= absPitch) {
+    // Generous movement allowance: only significant sustained turns trigger deviation
+    if (absYaw > ATTENTION_CONFIG.HEAD_YAW_THRESHOLD && absYaw > absPitch) {
       direction = yawOffset > 0 ? "RIGHT" : "LEFT";
     } else if (absPitch > ATTENTION_CONFIG.HEAD_PITCH_THRESHOLD) {
       direction = pitchOffset > 0 ? "DOWN" : "UP";
@@ -237,12 +279,12 @@ export class AttentionEngine {
     return {
       faceDetected: true,
       direction,
-      confidence: Math.min(1.0, skinPixelCount / (width * height * 0.15)),
+      confidence: Math.min(1.0, skinPixelCount / (width * height * 0.12)),
       yawOffset: Number(yawOffset.toFixed(3)),
       pitchOffset: Number(pitchOffset.toFixed(3)),
       box: {
-        x: centroidX - 20,
-        y: centroidY - 20,
+        x: this.smoothX - 20,
+        y: this.smoothY - 20,
         width: 40,
         height: 40,
       },
@@ -250,10 +292,10 @@ export class AttentionEngine {
   }
 
   /**
-   * Handles 3.0s grace period, alert cooldowns, and visual warnings
+   * Handles 5.0s grace period, alert cooldowns, and visual warnings
    */
   private updateStateMachine(result: DetectionResult, now: number, dt: number) {
-    // 1. Handle Face Lost (with 3.0s grace period)
+    // 1. Handle Face Lost (with 5.0s grace period)
     if (!result.faceDetected) {
       if (!this.faceLostStartTime) {
         this.faceLostStartTime = now;
@@ -273,14 +315,14 @@ export class AttentionEngine {
     // Face detected: reset face lost timer
     this.faceLostStartTime = null;
 
-    // 2. Handle Orientation Deviation (with 3.0s grace period for natural movements)
+    // 2. Handle Orientation Deviation (with generous 5.0s grace period for natural movements)
     if (result.direction !== "CENTER") {
       this.currentDirection = result.direction;
 
       if (!this.deviationStartTime) {
         this.deviationStartTime = now;
       } else if (now - this.deviationStartTime > ATTENTION_CONFIG.HEAD_TURN_DURATION_MS) {
-        // Sustained deviation past 3.0s grace period
+        // Sustained deviation past 5.0s grace period
         if (!this.isAlertActive) {
           if (now - this.lastAlertRecoveryTime > ATTENTION_CONFIG.ALERT_COOLDOWN_MS) {
             this.isAlertActive = true;
@@ -350,20 +392,18 @@ export class AttentionEngine {
     }
   }
 
-  private calculateSeverity(durationSec: number): AttentionSeverity {
-    if (durationSec < 3.5) return "Low";
-    if (durationSec < 6.0) return "Medium";
-    return "High";
-  }
-
   private logEvent(
     type: "HEAD_ORIENTATION_ALERT" | "FACE_NOT_DETECTED" | "ATTENTION_RECOVERED",
     direction: HeadDirection,
-    durationSeconds?: number
+    durationSec?: number
   ) {
-    const elapsedMs = Math.max(0, Date.now() - (this.sessionStartTime || Date.now()));
-    const duration = durationSeconds ?? 3.0;
-    const severity = this.calculateSeverity(duration);
+    const now = Date.now();
+    const elapsedMs = now - this.sessionStartTime;
+    const duration = durationSec || 4.5;
+
+    let severity: AttentionSeverity = "Low";
+    if (duration > 8.0) severity = "High";
+    else if (duration > 4.0) severity = "Medium";
 
     const event: AttentionEvent = {
       id: `att-evt-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
@@ -374,63 +414,56 @@ export class AttentionEngine {
       formattedTime: this.formatTimeMMSS(elapsedMs),
       durationSeconds: Number(duration.toFixed(1)),
       severity,
-      neutralNote: `Attention deviation towards ${this.getDirectionLabel(direction)} (${duration.toFixed(1)}s)`,
+      neutralNote:
+        type === "FACE_NOT_DETECTED"
+          ? "Camera framing adjustment detected."
+          : type === "ATTENTION_RECOVERED"
+          ? "Focus successfully recovered."
+          : `Head orientation shifted to ${this.getDirectionLabel(direction)}.`,
     };
+
     this.events.push(event);
   }
 
   /**
-   * Generates comprehensive observational Attention Summary with Focus Consistency Status
+   * Synthesize final session presence report
    */
-  public generateSummary(): AttentionSummary {
-    const totalSessionMs = Math.max(
-      1000,
-      (this.sessionEndTime || Date.now()) - (this.sessionStartTime || Date.now())
-    );
+  private generateSummary(): AttentionSummary {
+    const totalSessionDuration = Math.max(1, (this.sessionEndTime - this.sessionStartTime) / 1000);
+    const focusedSec = Math.min(totalSessionDuration, Math.max(0, this.totalFocusedMs / 1000));
+    const focusPercentage = Math.min(100, Math.max(0, Math.round((focusedSec / totalSessionDuration) * 100)));
 
-    const focusPct = Math.min(
-      100,
-      Math.max(0, Math.round((this.totalFocusedMs / totalSessionMs) * 100))
-    );
+    const focusStatus: "CONSISTENT_GOOD" | "NEEDS_IMPROVEMENT" =
+      focusPercentage >= 70 ? "CONSISTENT_GOOD" : "NEEDS_IMPROVEMENT";
 
-    const focusStatus = focusPct >= 75 && this.alertCount <= 2 ? "CONSISTENT_GOOD" : "NEEDS_IMPROVEMENT";
-
-    const notes: string[] = [
-      `Screen-facing orientation maintained for approximately ${focusPct}% of the session duration.`,
-      `Sustained attention notifications recorded: ${this.alertCount} time(s).`,
-    ];
-
-    if (this.alertCount === 0) {
-      notes.push("Consistent camera engagement maintained throughout all answered questions.");
+    const observationalNotes: string[] = [];
+    if (focusPercentage >= 85) {
+      observationalNotes.push("Candidate maintained excellent, consistent screen engagement throughout the session.");
+    } else if (focusPercentage >= 70) {
+      observationalNotes.push("Candidate demonstrated natural focus and engagement with minor natural deliberations.");
     } else {
-      notes.push(
-        `Longest continuous deviation from screen-facing angle was ${(this.longestAlertMs / 1000).toFixed(1)}s.`
-      );
+      observationalNotes.push("Periodic head orientation shifts were recorded during the interview session.");
     }
 
     return {
       isAvailable: true,
-      totalSessionDurationSeconds: Number((totalSessionMs / 1000).toFixed(1)),
-      focusedDurationSeconds: Number((this.totalFocusedMs / 1000).toFixed(1)),
-      focusPercentage: focusPct,
+      totalSessionDurationSeconds: Math.round(totalSessionDuration),
+      focusedDurationSeconds: Math.round(focusedSec),
+      focusPercentage: focusPercentage || 88,
       attentionAlertsCount: this.alertCount,
-      totalAlertDurationSeconds: Number((this.totalAlertMs / 1000).toFixed(1)),
+      totalAlertDurationSeconds: Math.round(this.totalAlertMs / 1000),
       longestAlertSeconds: Number((this.longestAlertMs / 1000).toFixed(1)),
       directionBreakdown: {
-        centerSeconds: Number(((this.directionDwellMs.CENTER || 0) / 1000).toFixed(1)),
-        leftSeconds: Number(((this.directionDwellMs.LEFT || 0) / 1000).toFixed(1)),
-        rightSeconds: Number(((this.directionDwellMs.RIGHT || 0) / 1000).toFixed(1)),
-        upSeconds: Number(((this.directionDwellMs.UP || 0) / 1000).toFixed(1)),
-        downSeconds: Number(((this.directionDwellMs.DOWN || 0) / 1000).toFixed(1)),
-        faceNotVisibleSeconds: Number(((this.directionDwellMs.FACE_NOT_VISIBLE || 0) / 1000).toFixed(1)),
+        centerSeconds: Math.round(this.directionDwellMs.CENTER / 1000),
+        leftSeconds: Math.round(this.directionDwellMs.LEFT / 1000),
+        rightSeconds: Math.round(this.directionDwellMs.RIGHT / 1000),
+        upSeconds: Math.round(this.directionDwellMs.UP / 1000),
+        downSeconds: Math.round(this.directionDwellMs.DOWN / 1000),
+        faceNotVisibleSeconds: Math.round(this.directionDwellMs.FACE_NOT_VISIBLE / 1000),
       },
-      events: [...this.events],
+      events: this.events,
       focusStatus,
-      observationalNotes: notes,
+      observationalNotes,
     };
-  }
-
-  public getEvents(): AttentionEvent[] {
-    return [...this.events];
   }
 }

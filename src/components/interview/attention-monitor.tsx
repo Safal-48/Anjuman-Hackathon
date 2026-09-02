@@ -323,14 +323,14 @@ export function AttentionMonitor({
             <div />
           </div>
 
-          {/* Direction Indicator Pill */}
-          {direction !== "CENTER" && (
-            <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-black/70 border border-white/10 text-[9px] font-mono text-cyan-300 font-bold uppercase tracking-wider">
+          {/* Direction Indicator Pill (Only shown during active sustained deviation) */}
+          {isAlert && direction !== "CENTER" && (
+            <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-rose-950/80 border border-rose-500/40 text-[9px] font-mono text-rose-300 font-bold uppercase tracking-wider animate-pulse">
               {direction}
             </div>
           )}
 
-          {/* Deviation Alert Overlay */}
+          {/* Deviation Alert Overlay (Only shown after 5.0s continuous sustained deviation) */}
           {isAlert && (
             <div className="absolute inset-0 bg-rose-950/40 border-2 border-rose-500/60 flex items-center justify-center p-2 text-center animate-pulse">
               <div className="space-y-1">
@@ -349,8 +349,10 @@ export function AttentionMonitor({
         <div className="flex-1 truncate">{renderStatusBadge()}</div>
 
         <div className="text-[9px] font-mono text-muted-foreground flex items-center gap-1 shrink-0">
-          <span>Direction:</span>
-          <span className="font-bold text-cyan-400 uppercase">{direction}</span>
+          <span>Status:</span>
+          <span className={`font-bold uppercase ${direction === "CENTER" ? "text-emerald-400" : isAlert ? "text-rose-400" : "text-emerald-400"}`}>
+            {isAlert ? direction : "FOCUSED"}
+          </span>
         </div>
       </div>
     </div>
