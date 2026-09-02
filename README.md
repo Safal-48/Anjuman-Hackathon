@@ -1,93 +1,309 @@
-# KAUSHALSETU — AI Personalized Learning Ecosystem
+<div align="center">
 
-> **Autonomous Skill Intelligence, Adaptive Learning Navigation, Opportunity Marketplace & Verified Digital Portfolio Platform**
-> 
-> Engineered by **Team TechNova**
+# 🌐 KAUSHALSETU
+### **Autonomous AI Personalized Learning Ecosystem & Continuous Skill Intelligence Platform**
 
----
+*Bridging the divide between academic learning and industry readiness through empirical performance feedback.*
 
-## 🏛️ Final Architecture Summary
+[![Engineered By](https://img.shields.io/badge/Engineered%20By-Team%20TechNova-06b6d4?style=for-the-badge&logo=codeforces&logoColor=white)](https://github.com/Safal-48/Anjuman-Hackathon)
+[![Next.js](https://img.shields.io/badge/Next.js%2014-App%20Router-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-100%25%20Strict-3178c6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Supabase](https://img.shields.io/badge/Database-Supabase%20PostgreSQL-3ecf8e?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com)
+[![Three.js](https://img.shields.io/badge/3D%20Engine-React%20Three%20Fiber-black?style=for-the-badge&logo=three.js&logoColor=white)](https://threejs.org)
 
-**KaushalSetu** is an adaptive, enterprise-grade AI learning and employability platform engineered to bridge the critical gap between academic learning and industry readiness through continuous diagnostic assessment, explainable skill gap prioritization, targeted learning interventions, and verifiable competency proof.
-
-- **Frontend & App Core**: Next.js 14 (App Router) with React Server Components (RSC) & Streaming SSR.
-- **Type Safety**: 100% Strict TypeScript with zero `any` leaks and Zod runtime schema validation.
-- **Design System & Aesthetics**: Dark-first Cyberpunk/Obsidian theme with HSL variables, glassmorphic depth, CVA component variants, and Framer Motion micro-interactions.
-- **3D Visualization Layer**: React Three Fiber & Three.js with lazy-loaded dynamic imports and hardware fallback.
-- **Database & Data Layer**: Supabase PostgreSQL schema with relational tables, foreign keys, timestamps, indexes, and full TypeScript typing.
-- **Deterministic & Explainable AI**: Multi-vector skill gap calculation, non-fabricating resume analysis, 5-stage connected milestone roadmaps, explainable match decomposition (Strong ✓, Partial ⚠, Gap ✗), and 4-vector AI mock interview evaluation.
-- **Bilingual & Socratic AI Engine**: Native English (`en-IN`), Hindi (`hi-IN` / हिन्दी), and Hinglish Socratic AI learning assistance with reactive audio waveform visualization.
+</div>
 
 ---
 
-## 🚀 Implemented Features & Core Intelligence Loop
+## 📖 Executive Summary & Core Product Vision
 
-### 1. The Signature Learning Intelligence Loop
+Traditional learning platforms and LMS solutions suffer from a fatal flaw: **Course Completion is treated as Skill Mastery.** Watching a 10-hour tutorial or obtaining a completion certificate does not prove genuine competency.
+
+**KaushalSetu** is not a course platform and not just a chatbot. It is an **Autonomous Adaptive AI Learning Ecosystem** that:
+1. Continuously observes a student's actual diagnostic and sandbox performance.
+2. Identifies granular sub-skill deficits rather than vague overall percentages.
+3. Computes multi-factor priority scores to determine **"What do I learn first?"**.
+4. Delivers targeted 15-minute Socratic remediation sprints in English, Hindi, and Hinglish.
+5. Adapts question difficulty in real time (scaffolding with analogies on failure vs. leveling up on success).
+6. Requires empirical reassessment proof ($42\% \rightarrow 82\%$) before certifying **🟢 SKILL PROVEN**.
+7. Automatically shifts roadmap milestones and unlocks the next priority in real time.
+
 $$\mathbf{\text{ASSESS}} \longrightarrow \mathbf{\text{UNDERSTAND}} \longrightarrow \mathbf{\text{PRIORITIZE}} \longrightarrow \mathbf{\text{LEARN}} \longrightarrow \mathbf{\text{PRACTICE}} \longrightarrow \mathbf{\text{PROVE}} \longrightarrow \mathbf{\text{REASSESS}} \longrightarrow \mathbf{\text{ADAPT}}$$
 
-- **Granular AI Diagnostic Assessment (`/assessment`)**: Tests sub-topics rather than single percentages (e.g. SQL Basics 86%, Filtering 78%, JOINs 42% 🚨, Subqueries 51%).
-- **Personal Skill DNA (`/skills`)**: Dynamic competency tracker distinguishing between *Self-Declared* claims and *Demonstrated* proof with trend vectors (↑, →, ↓) and confidence scoring.
-- **Performance-Based Priority Engine**: Multi-factor priority algorithm calculating the #1 critical blocker (`DO THIS FIRST`) using deficit gap, goal relevance, and dependency chains.
-- **“Why This?” Explainable Recommendations (`/learning/resources`)**: 4-pillar explainability breakdown (What, Why, What it improves, What to do after).
-- **Socratic AI Learning Assistant (`/learning/assistant`)**: Grounded in student profile with time-budgeted plans (`20 min`, `30 min`) and multilingual Hinglish analogies.
-- **Adaptive Personalized Roadmap (`/learning/roadmap`)**: Dynamic 5-stage milestone graph (`Resource ➔ Explanation ➔ Practice ➔ Assessment ➔ Result`) that mutates when skills are proven.
-- **15-Minute Targeted Socratic Interventions (`/learning/intervention`)**: 7-stage micro-remediation loop with real-time adaptive difficulty branching (Level Up on success vs. Simplified Analogy on mistake).
-- **LEARN ➔ PRACTICE ➔ PROVE ➔ REASSESS Engine (`/progress/growth`)**: Empirical verification preventing course completion inflation ($42\% \rightarrow 82\% = \text{🟢 Skill Proven}$).
-- **Recurring Mistake Memory & Skill Decay Radar (`/progress/history`)**: Multi-session mistake trail logging and Ebbinghaus retention decay monitoring.
-- **“What If?” Learning Impact Simulator (`/learning/goals`)**: Interactive multi-skill sliders forecasting projected readiness score boosts and shifted bottlenecks.
-- **Next Best Action Command Center (`/dashboard`)**: Apex dashboard hero banner instantly answering *"What do I do next?"* in under 3 seconds.
-
-### 2. Secure Authentication & Role Isolation
-- **5 Supported Roles**: Student, Industry, Academician, Institution, and System Administrator.
-- **Public Protection**: System Administrator role is strictly blocked from public registration portals.
-- **Multi-Step Onboarding**: Role-specific data collection workflows (education, domains, research expertise, accreditation).
-
-### 3. Connected Career & Employability Tools
-- **Connected Resume Analyzer (`/resume-analyzer`)**: Cross-references resume claims against verified diagnostic test logs to detect *Claimed vs. Demonstrated Verification Gaps*.
-- **AI Mock Technical Interview (`/mock-interview`)**: Voice and text oral exams with 4-vector scoring feeding recommended remedial actions back into the learning engine.
-- **Opportunity Marketplace (`/opportunities`)**: Transparent candidate compatibility decomposition (Strong ✓, Partial ⚠, Gap ✗).
-- **Verified Digital Portfolio (`/portfolio`)**: Institution-authenticated credentials stamped with verifiable cryptographic hashes.
-
 ---
 
-## 🔑 Demo Credentials
+## 🏛️ High-Level System Architecture
 
-| Role | Email | Password | Dashboard Link |
-|---|---|---|---|
-| **Student** | `student@titan.ai` | `TitanSecure#2026` | `/dashboard` |
-| **Industry Recruiter** | `recruiter@titan.ai` | `TitanSecure#2026` | `/dashboard/industry` |
-| **Academician Faculty** | `faculty@titan.ai` | `TitanSecure#2026` | `/dashboard/academician` |
-| **Institution Admin** | `institution@titan.ai` | `TitanSecure#2026` | `/dashboard/institution` |
-| **System Admin** | `admin@titan.ai` | `TitanSecure#2026` | `/admin` |
-
----
-
-## 🎬 Primary Platform Demonstration Flow
-
-Demonstrate the full platform journey in 14 seamless stages:
-
-1. **Student Onboarding**: Register `student@titan.ai` and select goal: *Become a Data Analyst*.
-2. **Diagnostic Assessment**: Execute granular diagnostic probe across SQL sub-topics (Basics 86%, JOINs 42% 🚨).
-3. **Skill DNA Synchronization**: Inspect updated Skill DNA with unverified self-declared tags and recurring mistake flags.
-4. **Priority Engine**: Review computed 94/100 Priority Score identifying SQL JOINs as the #1 critical blocker.
-5. **"Why This?" Explanation**: Inspect 4-pillar recommendation justification with live telemetry metrics.
-6. **Command Center Hero**: Review Next Best Action banner (*Practice SQL JOINs — 15 min*).
-7. **Socratic AI Assistant**: Ask for Hinglish explanations with Zomato order-table analogies.
-8. **Targeted Intervention Sprint**: Execute 15-minute 7-stage remediation sprint with adaptive difficulty branching.
-9. **Empirical Reassessment**: Submit 3-question diagnostic probe proving score jump ($42\% \rightarrow 82\%$).
-10. **🟢 Skill Proven Certification**: Skill DNA updates to *Demonstrated & Verified*.
-11. **Roadmap Mutation**: Watch the roadmap dynamically advance and unlock *Power BI* as the next priority.
-12. **Resume Verification Gap**: Inspect resume claim vs. demonstrated skill gap analysis.
-13. **AI Mock Interview**: Complete oral defense exam with automatic remedial action feedback.
-14. **Institutional Digital Portfolio**: Inspect 3D credential cards and verifiable cryptographic hashes.
-
----
-
-## 🛠️ Verification & Test Suite Execution
-
-Run automated validation suites:
-```bash
-npm run typecheck
-npm run lint
-npm run build
 ```
+                                  ╔══════════════════════════════════════╗
+                                  ║         STUDENT ONBOARDING           ║
+                                  ║  Primary Goal + Self-Declared Skills ║
+                                  ╚══════════════════╦═══════════════════╝
+                                                     ║
+                                                     ▼
+                                  ╔══════════════════════════════════════╗
+                                  ║    AI DIAGNOSTIC ASSESSMENT ENGINE   ║
+                                  ║   Granular Sub-Topic Topic Matrix    ║
+                                  ╚══════════════════╦═══════════════════╝
+                                                     ║
+                                                     ▼
+                                  ╔══════════════════════════════════════╗
+                                  ║       DYNAMIC PERSONAL SKILL DNA     ║
+                                  ║  Self-Declared vs. Demonstrated Proof║
+                                  ╚══════════════════╦═══════════════════╝
+                                                     ║
+                                                     ▼
+                                  ╔══════════════════════════════════════╗
+                                  ║    PERFORMANCE-BASED PRIORITY ENGINE ║
+                                  ║  Calculates #1 Critical Bottleneck   ║
+                                  ╚══════════════════╦═══════════════════╝
+                                                     ║
+                                                     ▼
+                                  ╔══════════════════════════════════════╗
+                                  ║   NEXT BEST ACTION COMMAND CENTER    ║
+                                  ║      "DO THIS FIRST" Hero Banner     ║
+                                  ╚══════════════════╦═══════════════════╝
+                                                     ║
+                                                     ▼
+                                  ╔══════════════════════════════════════╗
+                                  ║  15-MIN SOCRATIC REMEDIATION SPRINT  ║
+                                  ║   Multilingual Hinglish + Analogies  ║
+                                  ║    Adaptive Difficulty Branching     ║
+                                  ╚══════════════════╦═══════════════════╝
+                                                     ║
+                                                     ▼
+                                  ╔══════════════════════════════════════╗
+                                  ║     TIMED REASSESSMENT PROBE         ║
+                                  ║       Empirical Verification         ║
+                                  ╚══════════════════╦═══════════════════╝
+                                                     ║
+                           ┌─────────────────────────┴─────────────────────────┐
+                           ▼                                                   ▼
+            [ Score < 75% Mastery ]                             [ Score ≥ 75% Mastery ]
+                   ⚠️ Deficit                                          🟢 PROVEN
+      ╔═══════════════════════════════════╗               ╔═══════════════════════════════════╗
+      ║  AUTOMATIC FOLLOW-UP INTERVENTION ║               ║     SKILL PROVEN CERTIFICATION    ║
+      ║  Lightweight Mistake Memory Radar ║               ║  • Skill DNA Status Upgraded      ║
+      ╚═══════════════════════════════════╝               ║  • Adaptive Roadmap Mutates       ║
+                                                          ║  • Next Priority Node Unlocks     ║
+                                                          ║  • Cryptographic Hash Stamped     ║
+                                                          ╚═══════════════════════════════════╝
+```
+
+---
+
+## ⚡ Key Modules & Feature Highlights
+
+### 1. 🎯 Next Best Action Student Command Center (`/dashboard`)
+- **Apex Dashboard Banner**: Displays the student's current primary goal (*Become a Data Analyst*), live readiness progress ($68\%$), current critical bottleneck (*SQL JOINs*), and the single highest-yield **Next Best Action** (*Practice SQL JOINs — 15 min*).
+- **"WHY THIS?" Justification**: Backed by actual telemetry (*"Your recent accuracy is 43%, and JOINs are a high-dependency prerequisite for your selected goal."*).
+
+### 2. 🧬 Dynamic Personal Skill DNA (`/skills`)
+- **Unverified Badging**: Self-declared skills from onboarding remain tagged `[Unverified (0% Demonstrated)]` until tested.
+- **Continuous Telemetry Radar**: Tracks confidence levels, directional trend vectors ($\uparrow$, $\rightarrow$, $\downarrow$), logged practice attempts, and flags **⚠️ Recurring Weaknesses**.
+
+### 3. 🗺️ Continuous Adaptive Learning Roadmap (`/learning/roadmap`)
+- **5-Stage Connected Milestones**: Every single node links:
+  $$\mathbf{\text{Learning Resource}} \longrightarrow \mathbf{\text{Socratic Explanation}} \longrightarrow \mathbf{\text{Interactive Practice}} \longrightarrow \mathbf{\text{Diagnostic Probe}} \longrightarrow \mathbf{\text{Verified Result}}$$
+- **Dynamic Graph Mutation**: When a student proves mastery in SQL JOINs ($42\% \rightarrow 84\%$), the node automatically transitions to `🟢 Skill Proven`, track progress jumps from $38\% \rightarrow 52\%$, and *Power BI & Advanced Analytics* unlocks as the new priority.
+
+### 4. ⚡ 15-Minute Targeted Socratic Remediation (`/learning/intervention`)
+- **7-Stage Socratic Loop**:
+  `1. Concept Brief` $\rightarrow$ `2. Real-World Zomato Example` $\rightarrow$ `3. Guided Question` $\rightarrow$ `4. Student Answer` $\rightarrow$ `5. AI Feedback` $\rightarrow$ `6. Adaptive Practice` $\rightarrow$ `7. Mini Assessment`.
+- **Adaptive Difficulty Branching**:
+  - **On Correct Answer**: Dynamically escalates difficulty to advanced edge-cases (*e.g., `COUNT(*)` vs `COUNT(column)` in outer joins*).
+  - **On Incorrect Answer**: Enters *Scaffold Mode* with an intuitive *Class Attendance Register* analogy and simplified practice questions.
+
+### 5. 🤖 Multilingual AI Socratic Learning Assistant (`/learning/assistant`)
+- Contextually aware of student skill deficits, time budgets, and target roles.
+- Supports conversational Socratic tutoring in **English**, **Hindi (हिन्दी)**, and **Hinglish** (*e.g., "Bhai mujhe SQL JOIN Zomato ke example se samjha"*).
+- Generates realistic micro-plans based on available time (*"I only have 20 minutes today"*).
+
+### 6. 🎛️ “What If?” Learning Impact Simulator (`/learning/goals`)
+- Interactive multi-skill proficiency sliders allowing students to simulate:
+  $$\text{Baseline: } 64\% \xrightarrow{\text{Simulate SQL } 52\% \rightarrow 80\%} \text{Projected Readiness: } 76\% \quad (+12\% \text{ Boost})$$
+- Shows shifted next priority bottlenecks and ranks learning activities by **ROI (Readiness Boost per Hour of Study)**.
+
+### 7. 📉 Recurring Mistake Memory & Skill Decay Radar (`/progress/history`)
+- **Mistake Memory Trail**: Detects concepts failed repeatedly across Assessment 1 $\rightarrow$ Practice $\rightarrow$ Assessment 2, flagging them as **`⚠️ Recurring Weakness`**.
+- **Ebbinghaus Decay Monitor**: Compares historical peak score vs. current evaluated performance (*e.g., SQL $84\% \rightarrow 63\%$, $\downarrow 21\%$ Decay*) and triggers proactive spaced repetition drills.
+
+### 8. 📊 Evidence-Based Proven Skills Matrix (`/progress/performance`)
+- Enforces the core mastery axiom:
+  $$\mathbf{\text{Course Completion} \neq \text{Skill Mastery}} \qquad \Longleftrightarrow \qquad \mathbf{\text{Empirical Evidence} = \text{Proven Competency}}$$
+- Categorizes all skills across 4 explicit evidence pillars: *Learning Completed*, *Practice Accuracy*, *Assessment Score*, and *Proven Status*.
+
+### 9. 📄 Connected Resume Analyzer & AI Mock Interview (`/resume-analyzer`, `/mock-interview`)
+- **Resume Claimed vs. Demonstrated Gaps**: Cross-references resume bullet points against verified diagnostic test logs to expose unverified claims (*"Resume: Advanced SQL vs. Test: 58%"*).
+- **Oral Defense Feedback Signal**: Evaluates live technical depth, communication, and confidence during mock interviews, directly feeding recommended remedial actions back into the learning engine.
+
+### 10. 🛡️ Verified Digital Portfolio Ledger (`/portfolio`)
+- Stamped with institutional cryptographic verification hashes (`TITAN-VERIF-...`) and rendered on 3D tilt perspective cards.
+
+---
+
+## 💻 Complete Technology Stack
+
+| Layer | Technologies |
+| :--- | :--- |
+| **Framework & Core** | **Next.js 14** (App Router, Server Components, Streaming SSR), **React 18** |
+| **Language & Typing** | **TypeScript 5.0+** (Strict Mode, 100% Type-Safe, Zero `any` Leaks), **Zod** |
+| **Styling & Aesthetics** | **Tailwind CSS**, Vanilla CSS Custom Tokens, Obsidian/Cyberpunk Dark Mode, Glassmorphism |
+| **3D & Micro-Animations** | **Three.js**, **React Three Fiber** (`@react-three/fiber`, `@react-three/drei`), **Framer Motion**, **GSAP** |
+| **Database & Persistence**| **Supabase PostgreSQL**, Row-Level Security (RLS), TypeScript Database Definitions |
+| **Speech & Audio Engine** | **Web Speech API** (`SpeechRecognition` / `SpeechSynthesis`) with Hindi/English bilingual fallback |
+| **Icons & Design Primitives** | **Lucide React**, **Radix UI** Accessibility Primitives, **Class Variance Authority (CVA)** |
+
+---
+
+## 📂 Project Directory Structure
+
+```
+├── src/
+│   ├── app/                               # Next.js 14 App Router
+│   │   ├── (auth)/                        # Authentication routes (Login, Register)
+│   │   ├── onboarding/                    # 5-Step Profiling & Self-Declared Badging
+│   │   ├── dashboard/                     # Apex Next Best Action Command Center
+│   │   │   ├── industry/                  # Recruiter Talent Discovery Radar
+│   │   │   ├── institution/               # University Cohort & Skill Gap Heatmaps
+│   │   │   └── academician/               # Faculty Collaboration Tracks
+│   │   ├── assessment/                    # Granular Sub-Topic Diagnostic Probe
+│   │   ├── skills/                        # Personal Skill DNA & Priority Queue
+│   │   ├── learning/
+│   │   │   ├── assistant/                 # Multilingual Socratic AI Tutor
+│   │   │   ├── roadmap/                   # Dynamic 5-Stage Adaptive Roadmap
+│   │   │   ├── resources/                 # 4-Pillar Explainable Recommendation Cards
+│   │   │   ├── intervention/              # 15-Min Remediation Sprint Studio
+│   │   │   └── goals/                     # "What If?" Impact Simulator & Goal Engine
+│   │   ├── progress/
+│   │   │   ├── performance/               # Evidence-Based Proven Skills Matrix
+│   │   │   ├── growth/                    # Empirical Mastery Velocity (Pre vs Post)
+│   │   │   └── history/                   # Recurring Mistake Memory & Decay Radar
+│   │   ├── practice/                      # Multi-Modal Practice Arena
+│   │   ├── resume-analyzer/               # Claimed vs. Demonstrated Verification
+│   │   ├── mock-interview/                # AI Oral Technical Defense Exam
+│   │   ├── opportunities/                 # Transparent Matching Marketplace
+│   │   └── portfolio/                     # 3D Cryptographic Portfolio Ledger
+│   ├── components/
+│   │   ├── demo/                          # 14-Step Presentation Tour Modal
+│   │   ├── dashboard/                     # Command Center Hero & Metric Cards
+│   │   ├── skills/                        # Skill DNA, Priority Engine & Diagnostic Matrix
+│   │   ├── roadmap/                       # Adaptive Milestone Pipeline Visualizer
+│   │   ├── learning/                      # Intervention Runner & Socratic Engine
+│   │   ├── simulation/                    # "What If?" Live Multi-Skill Sliders
+│   │   ├── progress/                      # Evidence Matrix & Mistake Decay Monitor
+│   │   ├── ai/                            # Resume Analyzer & Mock Interview Rooms
+│   │   ├── layout/                        # Cyberpunk Navbar, Footer, Container & Sidebar
+│   │   └── ui/                            # Glow Cards, Badges, Buttons, 3D Canvas
+│   └── lib/                               # Core Business Logic & AI Engines
+│       ├── ai/                            # Socratic Coach, Voice Synthesis, RAG Knowledge
+│       ├── skills/                        # Skill DNA Repository, Priority Gap Engine
+│       ├── roadmap/                       # Adaptive Roadmap Pipeline State Machine
+│       ├── learning/                      # 7-Step Intervention & Empirical Loop Engines
+│       ├── simulation/                    # "What If?" Deterministic Forecast Engine
+│       ├── memory/                        # Recurring Mistake Memory & Decay Engine
+│       ├── progress/                      # Evidence-Based Competency Types
+│       ├── auth/                          # 5-Role Context & Session Management
+│       └── db/                            # Supabase / Relational Repositories
+└── public/                                # Static assets, 3D glTF models & sound assets
+```
+
+---
+
+## 🔑 Multi-Role Demo Credentials
+
+The platform features role-based access control across 5 distinct ecosystem perspectives:
+
+| Role | Email | Password | Access Sector |
+| :--- | :--- | :--- | :--- |
+| **Student Learner** | `student@titan.ai` | `TitanSecure#2026` | [`/dashboard`](http://localhost:3000/dashboard) |
+| **Industry Recruiter** | `recruiter@titan.ai` | `TitanSecure#2026` | [`/dashboard/industry`](http://localhost:3000/dashboard/industry) |
+| **Academician / Faculty** | `faculty@titan.ai` | `TitanSecure#2026` | [`/dashboard/academician`](http://localhost:3000/dashboard/academician) |
+| **Institution Admin** | `institution@titan.ai` | `TitanSecure#2026` | [`/dashboard/institution`](http://localhost:3000/dashboard/institution) |
+| **System Administrator** | `admin@titan.ai` | `TitanSecure#2026` | [`/admin`](http://localhost:3000/admin) |
+
+---
+
+## 🎬 14-Step Canonical Presentation Walkthrough
+
+When demonstrating KaushalSetu to evaluators, click the glowing **`🏆 Judge Tour`** button in the top navigation bar to launch the guided walkthrough, or follow these steps manually:
+
+1. **Onboarding (`/onboarding`)**: Register and set goal: *Become a Data Analyst*. Notice how self-declared skills are tagged `[Unverified (0% Demonstrated)]`.
+2. **Diagnostic Assessment (`/assessment`)**: Take the assessment. The AI tests 7 granular sub-topics (Basics 86%, Filtering 78%, JOINs 42% 🚨).
+3. **Personal Skill DNA (`/skills`)**: Inspect Skill DNA. SQL is flagged as a *Recurring Weakness* with downward trend ($\downarrow$).
+4. **Priority Engine (`/skills`)**: View the 94/100 Priority Score designating SQL JOINs as the #1 critical blocker (`DO THIS FIRST`).
+5. **"Why This?" Explanation (`/learning/resources`)**: Inspect 4-pillar explainable cards detailing *What, Why, What it improves, and What to do after*.
+6. **Command Center Hero (`/dashboard`)**: View the top hero banner answering *"What do I do next?"* in 3 seconds.
+7. **Socratic AI Tutor (`/learning/assistant`)**: Ask for a Hinglish explanation of SQL JOINs with Zomato order-table analogies.
+8. **15-Min Targeted Sprint (`/learning/intervention`)**: Execute the 7-step remediation sprint with adaptive difficulty branching.
+9. **Empirical Reassessment (`/learning/intervention`)**: Complete the 3-question diagnostic probe proving score gain from $42\% \rightarrow 82\%$.
+10. **🟢 Skill Proven Certification (`/progress/performance`)**: Skill DNA updates from *Critical Deficit* to *Demonstrated & Verified*.
+11. **Adaptive Roadmap Mutation (`/learning/roadmap`)**: Watch the roadmap dynamically advance and unlock *Power BI* as the next priority.
+12. **Resume Verification Gap (`/resume-analyzer`)**: View cross-referenced comparison of resume claims vs. demonstrated test scores.
+13. **AI Mock Interview (`/mock-interview`)**: Complete a simulated technical oral defense with automatic remedial action triggers.
+14. **Digital Portfolio Ledger (`/portfolio`)**: Inspect 3D perspective credential cards stamped with cryptographic verification hashes.
+
+---
+
+## ⚙️ Quick Start & Local Setup
+
+### Prerequisites
+- **Node.js**: `v18.17.0` or higher
+- **npm** / **yarn** / **pnpm**
+
+### Installation Steps
+
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/Safal-48/Anjuman-Hackathon.git
+   cd Anjuman-Hackathon
+   ```
+
+2. **Install Dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Configure Environment Variables:**
+   Create a `.env.local` file in the root directory (optional for offline presentation demo mode):
+   ```env
+   NEXT_PUBLIC_APP_URL=http://localhost:3000
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
+   *(Note: The system includes zero-latency deterministic mock stores and works 100% out of the box without external database connections.)*
+
+4. **Run the Development Server:**
+   ```bash
+   npm run dev
+   ```
+   Open **[http://localhost:3000](http://localhost:3000)** in your browser.
+
+5. **Execute Validation & Test Suite:**
+   ```bash
+   npm run typecheck    # 100% Strict TypeScript validation
+   npm run lint         # ESLint code quality checks
+   npm run build        # Production bundle compilation
+   ```
+
+---
+
+## 🏆 Summary of Differentiators
+
+| Traditional EdTech & LMS | KaushalSetu (Team TechNova) |
+| :--- | :--- |
+| ❌ Video completion = Skill mastery | ✅ **Empirical Evidence = Demonstrated Competency** |
+| ❌ Fixed static syllabus & schedules | ✅ **Continuous Adaptive Roadmap that Mutates on Performance** |
+| ❌ Vague overall score percentage (e.g., 65%) | ✅ **Granular Sub-Topic Topic Matrix (e.g., SQL JOINs: 42%)** |
+| ❌ Generic 10-hour video recommendations | ✅ **15-Minute Targeted Socratic Remediation Sprints** |
+| ❌ Blind self-declared skill acceptance | ✅ **Distinguishes Self-Declared from Demonstrated Evidence** |
+| ❌ Static single-attempt test results | ✅ **Recurring Mistake Memory & Ebbinghaus Decay Radar** |
+
+---
+
+<div align="center">
+
+**KaushalSetu — Engineered with precision by Team TechNova**  
+*Turning skills into verified opportunities, and potential into high-impact careers.*
+
+</div>
