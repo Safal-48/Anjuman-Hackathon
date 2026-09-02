@@ -26,6 +26,8 @@ import { AttentionMonitor } from "@/components/interview/attention-monitor";
 interface AssessmentRunnerProps {
   questions: AssessmentQuestion[];
   initialSession?: AssessmentSession | null;
+  subjectTitle?: string;
+  onChangeSubject?: () => void;
   onAnswerSaved: (questionId: string, optionId: string, index: number) => Promise<void>;
   onSubmitAssessment: (targetRoleId?: string) => Promise<void>;
 }
@@ -33,6 +35,8 @@ interface AssessmentRunnerProps {
 export function AssessmentRunner({
   questions = [],
   initialSession,
+  subjectTitle,
+  onChangeSubject,
   onAnswerSaved,
   onSubmitAssessment,
 }: AssessmentRunnerProps) {
@@ -121,10 +125,15 @@ export function AssessmentRunner({
               <CurrentIcon className="h-5 w-5" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="font-bold text-foreground text-sm sm:text-base">
                   Question {currentIndex + 1} of {totalQuestions}
                 </span>
+                {subjectTitle && (
+                  <Badge variant="glass" size="sm" className="bg-cyan-500/10 text-cyan-300 border-cyan-500/30">
+                    {subjectTitle}
+                  </Badge>
+                )}
                 <Badge variant="cyber" size="sm">
                   {currentMeta.label.toUpperCase()}
                 </Badge>
@@ -136,8 +145,19 @@ export function AssessmentRunner({
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="text-right space-y-1">
+          <div className="flex items-center gap-3">
+            {onChangeSubject && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onChangeSubject}
+                className="text-xs font-mono border-white/10 hover:border-cyan-400 text-slate-300"
+              >
+                ← Change Subject
+              </Button>
+            )}
+
+            <div className="text-right space-y-1 hidden sm:block">
               <span className="text-xs font-mono text-muted-foreground block">
                 Progress: <strong className="text-foreground">{answeredCount}</strong> / {totalQuestions} answered
               </span>

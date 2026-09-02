@@ -5,7 +5,8 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const category = searchParams.get("category") || undefined;
-    const questions = await getAssessmentQuestions(category);
+    const subject = searchParams.get("subject") || undefined;
+    const questions = await getAssessmentQuestions(category, subject);
 
     return NextResponse.json({ questions }, { status: 200 });
   } catch (error: unknown) {
