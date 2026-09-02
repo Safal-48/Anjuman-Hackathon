@@ -10,8 +10,16 @@ export const SITE_CONFIG = {
     category: "Software / AI & Emerging Technologies",
     teamName: "TechNova",
   },
+  contact: {
+    email: "skilloraedu26@gmail.com",
+    phone: "+91 93228 33495",
+    phoneRaw: "+919322833495",
+    instagram: "https://www.instagram.com/skilloraedu26?igsi=MTVpdmk1cHQ0bHl3bQ==",
+    instagramHandle: "@skilloraedu26",
+    whatsapp: "https://wa.me/919322833495",
+  },
   links: {
-    github: "https://github.com",
+    github: "https://github.com/Safal-48/Anjuman-Hackathon",
     docs: "/docs",
     status: "/api/health",
   },

@@ -157,8 +157,9 @@ Core Purpose: To eliminate the massive disconnect between academic curricula and
     ],
     citation: "Skillora Official Communications Directory",
     content: `Official Support & Communication Channels for Skillora:
-- 📧 Email: skillora.team@gmail.com
-- 📱 Phone / WhatsApp: +91 91584 70655
+- 📸 Instagram: @skilloraedu26 (Profile: https://www.instagram.com/skilloraedu26?igsi=MTVpdmk1cHQ0bHl3bQ==)
+- 📧 Email: skilloraedu26@gmail.com
+- 📱 Phone / WhatsApp: +91 93228 33495
 - 📍 Organization: Team TechNova (Skillora AI Learning Ecosystem)`
   }
 ];
@@ -473,8 +474,9 @@ export function generateNexoraRAGResponse(
   if (q.includes("contact") || q.includes("email") || q.includes("phone") || q.includes("instagram") || q.includes("reach") || q.includes("whatsapp")) {
     const reply = `### 📞 Connect with the Skillora Team\n\n` +
       `We'd love to assist you! Reach out through any of our official channels:\n\n` +
-      `- 📧 **Email**: [skillora.team@gmail.com](mailto:skillora.team@gmail.com)\n` +
-      `- 📱 **Phone / WhatsApp**: [+91 91584 70655](tel:+919158470655)\n\n` +
+      `- 📸 **Instagram**: [@skilloraedu26](https://www.instagram.com/skilloraedu26?igsi=MTVpdmk1cHQ0bHl3bQ==)\n` +
+      `- 📧 **Email**: [skilloraedu26@gmail.com](mailto:skilloraedu26@gmail.com)\n` +
+      `- 📱 **Phone / WhatsApp**: [+91 93228 33495](tel:+919322833495)\n\n` +
       `*Skillora • Engineered by Team TechNova*`;
 
     return {
