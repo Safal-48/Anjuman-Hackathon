@@ -242,22 +242,31 @@ export function InterviewSessionRoom({
 
   return (
     <div
-      className={`space-y-6 p-4 sm:p-6 rounded-3xl transition-all duration-500 border ${
+      className={`space-y-6 p-4 sm:p-6 rounded-3xl transition-all duration-300 border ${
         isAttentionAlert
-          ? "border-rose-500/60 shadow-[0_0_35px_rgba(244,63,94,0.3)] bg-rose-950/[0.12]"
+          ? "border-rose-500 ring-2 ring-rose-500/80 shadow-[0_0_50px_rgba(244,63,94,0.4)] bg-rose-950/20"
           : "border-white/5 bg-transparent"
       }`}
     >
       {/* Real-time Attention Deviation Alert Banner */}
       {isAttentionAlert && (
-        <div className="p-3 px-4 rounded-2xl bg-rose-950/80 border border-rose-500/60 text-rose-200 flex items-center justify-between gap-3 shadow-[0_0_20px_rgba(244,63,94,0.35)] animate-pulse">
-          <div className="flex items-center gap-2.5 text-xs font-mono font-bold uppercase tracking-wide">
-            <AlertTriangle className="h-4 w-4 text-rose-400 shrink-0" />
-            <span>⚠ {attentionAlertMsg || "PLEASE LOOK TOWARDS THE SCREEN"}</span>
+        <div className="p-3.5 px-5 rounded-2xl bg-rose-950/90 border border-rose-500/80 text-rose-100 flex items-center justify-between gap-3 shadow-[0_0_30px_rgba(244,63,94,0.45)] animate-pulse">
+          <div className="flex items-center gap-3">
+            <div className="h-7 w-7 rounded-lg bg-rose-500/20 border border-rose-500/40 flex items-center justify-center shrink-0">
+              <AlertTriangle className="h-4 w-4 text-rose-400" />
+            </div>
+            <div>
+              <span className="text-xs font-mono font-black tracking-wide block text-rose-200">
+                ⚠ Attention Check
+              </span>
+              <span className="text-[11px] font-mono text-rose-300/90 block">
+                {attentionAlertMsg || "Please maintain your focus on the screen."}
+              </span>
+            </div>
           </div>
-          <span className="text-[10px] font-mono text-rose-300/80 hidden sm:inline">
-            Visual Presence Feedback
-          </span>
+          <Badge variant="destructive" size="sm" className="font-mono text-[10px] hidden sm:inline-flex">
+            Live Presence Signal
+          </Badge>
         </div>
       )}
 

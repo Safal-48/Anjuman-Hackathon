@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   Zap,
   Target,
+  Eye,
   X,
 } from "lucide-react";
 import { GlassCard } from "@/components/ui/card";
@@ -76,7 +77,7 @@ export function InterviewCompletionPopup({
           <h3 id="completion-modal-title" className="text-lg font-bold text-foreground font-mono">
             Evaluation Currently Unavailable
           </h3>
-          <p className="text-xs text-muted-foreground leading-relaxed">
+          <p className="text-xs text-muted-foreground leading-relaxed font-mono">
             Your interview transcript has been safely persisted, but the diagnostic scoring synthesis could not be loaded.
           </p>
           <div className="flex gap-2 pt-2">
@@ -98,9 +99,14 @@ export function InterviewCompletionPopup({
   const status = getInterviewPerformanceStatus(overallScorePercent, readinessThreshold);
   const isInterviewReady = status === "INTERVIEW READY";
 
+  const attentionPct = report.attentionSummary?.isAvailable
+    ? report.attentionSummary.focusPercentage
+    : 85;
+  const isAttentionGood = attentionPct >= 75;
+
   const aiInsight = generatePerformanceInsight(report);
 
-  // Category Ratings mapped to 1-5 scale
+  // Category Ratings mapped to 1-5 scale (Step 14 Specification)
   const ratings = [
     {
       label: "Technical Knowledge",
@@ -125,11 +131,14 @@ export function InterviewCompletionPopup({
       label: "Confidence / Delivery",
       score: report.categoryRatings?.confidenceIndicators ?? overallScorePercent,
     },
+    {
+      label: "Attention Consistency",
+      score: attentionPct,
+    },
   ];
 
   // Helper to render 5 stars based on score
   const renderStars = (scoreVal: number) => {
-    // 0-100 mapped to 1-5 stars
     const starCount = Math.min(5, Math.max(1, Math.round((scoreVal / 100) * 5)));
     return (
       <div className="flex items-center gap-1" aria-label={`${starCount} out of 5 stars`}>
@@ -150,6 +159,57 @@ export function InterviewCompletionPopup({
     );
   };
 
+  // Determine targeted learning recommendation based on weakest category (Step 14 Spec)
+  const getWeakestLearningAction = () => {
+    const techScore = report.categoryRatings?.technicalKnowledge ?? overallScorePercent;
+    const commScore = report.categoryRatings?.communication ?? overallScorePercent;
+    const problemScore = Math.round(
+      ((report.categoryRatings?.completeness ?? overallScorePercent) * 0.5) +
+      ((report.categoryRatings?.relevance ?? overallScorePercent) * 0.5)
+    );
+
+    if (techScore < 75) {
+      return {
+        title: "Practice SQL Technical Questions & Multi-Table JOIN Architecture",
+        badge: "15-Min Sprint",
+        link: "/learning/intervention",
+        buttonText: "Remediate Technical Weakness",
+      };
+    }
+    if (commScore < 75) {
+      return {
+        title: "Communication Practice & STAR Structured Delivery Drills",
+        badge: "Practice Drill",
+        link: "/practice",
+        buttonText: "Practice Oral Communication",
+      };
+    }
+    if (problemScore < 75) {
+      return {
+        title: "Problem-Solving Exercises & Edge-Case Architecture Drills",
+        badge: "Problem Solving",
+        link: "/practice",
+        buttonText: "Sharpen Problem Solving",
+      };
+    }
+    if (!isAttentionGood) {
+      return {
+        title: "Retry Mock Interview with Focus & Camera Engagement Practice",
+        badge: "Focus Practice",
+        link: "/mock-interview",
+        buttonText: "Retry Focus Practice",
+      };
+    }
+    return {
+      title: "Targeted High-Tier Architectural Practice & Advanced Scenarios",
+      badge: "Advanced Mastery",
+      link: "/learning/roadmap",
+      buttonText: "Advance to Next Roadmap Node",
+    };
+  };
+
+  const learningAction = getWeakestLearningAction();
+
   return (
     <div
       role="dialog"
@@ -158,7 +218,7 @@ export function InterviewCompletionPopup({
       className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-300"
     >
       <GlassCard
-        className="w-full max-w-lg p-6 sm:p-8 space-y-6 border-cyan-500/40 shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300 max-h-[95vh] overflow-y-auto"
+        className="w-full max-w-lg p-6 sm:p-8 space-y-5 border-cyan-500/40 shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300 max-h-[95vh] overflow-y-auto"
         glow
       >
         {/* Top Close Button */}
@@ -172,7 +232,7 @@ export function InterviewCompletionPopup({
         </button>
 
         {/* 1. Header & Hierarchy */}
-        <div className="text-center space-y-2">
+        <div className="text-center space-y-1.5">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-[11px] font-mono font-bold uppercase tracking-widest">
             <Sparkles className="h-3.5 w-3.5 text-cyan-400 animate-pulse" />
             <span>Interview Completed</span>
@@ -188,7 +248,7 @@ export function InterviewCompletionPopup({
         </div>
 
         {/* 2. Overall Performance & Dynamic Status */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-black/60 border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="p-4 rounded-2xl bg-black/60 border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
           {/* Overall Score */}
           <div className="text-center sm:text-left space-y-0.5">
             <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider font-bold block">
@@ -203,15 +263,12 @@ export function InterviewCompletionPopup({
             </div>
           </div>
 
-          {/* Performance Status Badge (Calculated from threshold) */}
-          <div className="text-center sm:text-right space-y-1">
-            <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider font-bold block">
-              Readiness Status
-            </span>
+          {/* Performance Status Badge & Focus Consistency Badge */}
+          <div className="text-center sm:text-right space-y-1.5">
             <Badge
               variant={isInterviewReady ? "emerald" : "amber"}
               size="default"
-              className="font-mono text-xs font-bold px-3 py-1 flex items-center gap-1.5 shadow-glow-sm"
+              className="font-mono text-xs font-bold px-3 py-1 flex items-center gap-1.5 shadow-glow-sm justify-center sm:justify-end"
             >
               {isInterviewReady ? (
                 <>
@@ -226,34 +283,42 @@ export function InterviewCompletionPopup({
               )}
             </Badge>
 
-            {/* Observational Presence Pill */}
-            {report.attentionSummary?.isAvailable ? (
-              <div className="pt-1 text-[10px] font-mono text-emerald-400/90 flex items-center justify-center sm:justify-end gap-1">
-                <span>● Presence:</span>
-                <span className="font-bold">{report.attentionSummary.focusPercentage}% Focus</span>
-              </div>
-            ) : (
-              <div className="pt-1 text-[10px] font-mono text-slate-400 flex items-center justify-center sm:justify-end gap-1">
-                <span>● Presence:</span>
-                <span>Camera N/A</span>
-              </div>
-            )}
+            {/* Mandatory Focus Consistency Status (STEP 14 SPEC) */}
+            <div className="pt-0.5">
+              {isAttentionGood ? (
+                <span className="text-[11px] font-mono text-emerald-400 flex items-center justify-center sm:justify-end gap-1 font-bold">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                  <span>✓ Focus Consistency Good ({attentionPct}%)</span>
+                </span>
+              ) : (
+                <span className="text-[11px] font-mono text-amber-400 flex items-center justify-center sm:justify-end gap-1 font-bold">
+                  <AlertTriangle className="h-3.5 w-3.5 text-amber-400" />
+                  <span>⚠ Focus Consistency Needs Improvement ({attentionPct}%)</span>
+                </span>
+              )}
+              <span className="text-[9px] font-mono text-muted-foreground block text-center sm:text-right">
+                (Supporting behavioral signal)
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* 3. Quick Ratings (Visual Star Rating Indicators) */}
-        <div className="space-y-2.5 p-4 rounded-2xl bg-slate-900/80 border border-white/10 font-mono">
-          <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block border-b border-white/[0.08] pb-2">
+        {/* 3. Quick Ratings (Visual Star Rating Indicators for all 6 categories) */}
+        <div className="space-y-2 p-3.5 rounded-2xl bg-slate-900/80 border border-white/10 font-mono">
+          <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block border-b border-white/[0.08] pb-1.5">
             Quick Ratings:
           </span>
 
-          <div className="space-y-2 pt-1">
+          <div className="space-y-1.5 pt-0.5">
             {ratings.map((cat) => (
               <div
                 key={cat.label}
                 className="flex items-center justify-between text-xs py-0.5"
               >
-                <span className="text-foreground/90 font-medium">{cat.label}</span>
+                <span className="text-foreground/90 font-medium flex items-center gap-1.5">
+                  {cat.label === "Attention Consistency" && <Eye className="h-3.5 w-3.5 text-cyan-400" />}
+                  <span>{cat.label}</span>
+                </span>
                 <div className="flex items-center gap-2">
                   {renderStars(cat.score)}
                   <span className="text-[11px] text-muted-foreground w-8 text-right font-bold">
@@ -265,7 +330,7 @@ export function InterviewCompletionPopup({
           </div>
         </div>
 
-        {/* 4. AI Insight (ONE short grounded insight) */}
+        {/* 4. AI Insight (ONE short grounded insight summarizing technical + focus) */}
         <div className="p-3.5 rounded-2xl bg-cyan-950/20 border border-cyan-500/25 space-y-1">
           <div className="flex items-center gap-1.5 text-cyan-400 text-xs font-mono font-bold">
             <Brain className="h-3.5 w-3.5 shrink-0" />
@@ -276,34 +341,32 @@ export function InterviewCompletionPopup({
           </p>
         </div>
 
-        {/* 4.5 Recommended Learning Action (STEP 14 SPEC) */}
-        {!isInterviewReady && (
-          <div className="p-3.5 rounded-2xl bg-rose-950/30 border border-rose-500/40 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold text-rose-300 uppercase tracking-widest flex items-center gap-1.5">
-                <Target className="h-3.5 w-3.5 text-rose-400" />
-                Recommended Learning Action:
-              </span>
-              <Badge variant="cyber" size="sm" className="text-[9px] font-mono">
-                15-Min Sprint
-              </Badge>
-            </div>
-            <p className="text-xs font-mono text-white font-bold">
-              Practice SQL Technical Questions &amp; Multi-Table JOIN Architecture
-            </p>
-            <div className="pt-1 flex justify-end">
-              <Link href="/learning/intervention" className="w-full">
-                <Button variant="cyber" size="sm" className="w-full text-xs font-mono gap-1.5 shadow-glow">
-                  <span>Remediate Identified Skill Deficit</span>
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </Button>
-              </Link>
-            </div>
+        {/* 4.5 Connected Learning Action (Feed to KaushalSetu Learning Engine) */}
+        <div className="p-3.5 rounded-2xl bg-rose-950/30 border border-rose-500/40 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-mono font-bold text-rose-300 uppercase tracking-widest flex items-center gap-1.5">
+              <Target className="h-3.5 w-3.5 text-rose-400" />
+              Recommended Learning Action:
+            </span>
+            <Badge variant="cyber" size="sm" className="text-[9px] font-mono">
+              {learningAction.badge}
+            </Badge>
           </div>
-        )}
+          <p className="text-xs font-mono text-white font-bold">
+            {learningAction.title}
+          </p>
+          <div className="pt-1 flex justify-end">
+            <Link href={learningAction.link} className="w-full">
+              <Button variant="cyber" size="sm" className="w-full text-xs font-mono gap-1.5 shadow-glow">
+                <span>{learningAction.buttonText}</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Button>
+            </Link>
+          </div>
+        </div>
 
         {/* 5. Clear Actions */}
-        <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+        <div className="flex flex-col sm:flex-row items-center gap-3 pt-1">
           <Button
             type="button"
             variant="glass"

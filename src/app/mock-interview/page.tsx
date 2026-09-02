@@ -26,6 +26,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { InterviewSetupModal } from "@/components/ai/interview/interview-setup-modal";
+import { CameraPermissionGate } from "@/components/interview/camera-permission-gate";
 import { InterviewSessionRoom } from "@/components/ai/interview/interview-session-room";
 import { InterviewCompletionPopup } from "@/components/ai/interview/interview-completion-popup";
 import {
@@ -37,7 +38,7 @@ import {
 } from "@/lib/ai/interview-engine";
 import { FadeIn, SlideUp } from "@/components/animations/motion-wrapper";
 
-type InterviewStep = "setup" | "active";
+type InterviewStep = "setup" | "permission" | "active";
 
 export default function DedicatedMockInterviewPage() {
   const router = useRouter();
@@ -74,7 +75,7 @@ export default function DedicatedMockInterviewPage() {
     loadAttempts();
   }, []);
 
-  // Handle Launching a New Session
+  // Handle Launching a New Session (Moves to Camera & Attention Permission Gate)
   const handleStartInterview = async (config: InterviewConfig) => {
     setIsInitializing(true);
     try {
@@ -93,7 +94,7 @@ export default function DedicatedMockInterviewPage() {
       setActiveConfig(data.config);
       setActiveInterviewer(data.interviewer);
       setInitialQuestion(data.initialQuestion);
-      setStep("active");
+      setStep("permission");
     } catch (err) {
       console.error("Error starting mock interview:", err);
       alert("Failed to start interview session. Please try again.");
@@ -235,7 +236,20 @@ export default function DedicatedMockInterviewPage() {
           />
         )}
 
-        {/* Step 2: Active Interview Session Room (Distraction-Free) */}
+        {/* Step 2: Camera & Attention Permission Gate (Mandatory Pre-Interview Equipment Check) */}
+        {!isCompilingReport && step === "permission" && activeConfig && (
+          <CameraPermissionGate
+            roleTitle={activeConfig.roleId.replace(/_/g, " ").toUpperCase()}
+            onPermissionGranted={() => {
+              setStep("active");
+            }}
+            onCancel={() => {
+              setStep("setup");
+            }}
+          />
+        )}
+
+        {/* Step 3: Active Interview Session Room (Distraction-Free) */}
         {!isCompilingReport &&
           step === "active" &&
           activeConfig &&

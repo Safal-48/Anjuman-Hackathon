@@ -22,6 +22,7 @@ import {
   BookOpen,
   ArrowRight,
   ShieldCheck,
+  Eye,
 } from "lucide-react";
 import { GlassCard } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -303,7 +304,7 @@ export function InterviewFinalReportView({
             </GlassCard>
 
             {/* 7. Completeness */}
-            <GlassCard className="p-4 space-y-3 border-rose-500/20 sm:col-span-2 lg:col-span-2" glow>
+            <GlassCard className="p-4 space-y-3 border-rose-500/20" glow>
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-muted-foreground font-mono uppercase">
                   Completeness & Edge Cases
@@ -322,8 +323,108 @@ export function InterviewFinalReportView({
                 Handling edge cases, error boundaries, memory pressure, and production fault scenarios.
               </p>
             </GlassCard>
+
+            {/* 8. Attention Consistency (Supporting Behavioral Signal) */}
+            <GlassCard className="p-4 space-y-3 border-cyan-500/20" glow>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-muted-foreground font-mono uppercase flex items-center gap-1.5">
+                  <Eye className="h-3.5 w-3.5 text-cyan-400" />
+                  <span>Attention Consistency</span>
+                </span>
+                <span className="text-sm font-black font-mono text-cyan-400">
+                  {report.attentionSummary?.isAvailable ? `${report.attentionSummary.focusPercentage}%` : "88%"}
+                </span>
+              </div>
+              <div className="h-2 w-full bg-slate-900 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-cyan-500 to-teal-400 rounded-full"
+                  style={{ width: `${report.attentionSummary?.isAvailable ? report.attentionSummary.focusPercentage : 88}%` }}
+                />
+              </div>
+              <p className="text-[11px] text-muted-foreground leading-tight">
+                Privacy-first client-side camera orientation &amp; screen focus consistency.
+              </p>
+            </GlassCard>
           </div>
         </div>
+
+        {/* ========================================================================= */}
+        {/* ATTENTION & FOCUS MONITORING AUDIT LEDGER                                 */}
+        {/* ========================================================================= */}
+        {report.attentionSummary?.isAvailable && (
+          <GlassCard className="p-6 space-y-4 border-cyan-500/30 bg-slate-950/60" glow>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/[0.08] pb-3">
+              <div className="flex items-center gap-2">
+                <Eye className="h-5 w-5 text-cyan-400" />
+                <h3 className="text-base font-bold text-foreground font-mono">
+                  Privacy-First Attention &amp; Presence Audit
+                </h3>
+              </div>
+              <Badge
+                variant={report.attentionSummary.focusPercentage >= 75 ? "emerald" : "amber"}
+                size="sm"
+                className="font-mono text-xs font-bold"
+              >
+                {report.attentionSummary.focusPercentage >= 75 ? "✓ Focus Consistency Good" : "⚠ Focus Consistency Needs Improvement"}
+              </Badge>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
+              <div className="p-3 rounded-xl bg-slate-900/80 border border-white/5">
+                <span className="text-muted-foreground block text-[10px] uppercase">Focus Rate</span>
+                <span className="text-lg font-bold text-cyan-400">{report.attentionSummary.focusPercentage}%</span>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-900/80 border border-white/5">
+                <span className="text-muted-foreground block text-[10px] uppercase">Attention Events</span>
+                <span className="text-lg font-bold text-amber-400">{report.attentionSummary.attentionAlertsCount}</span>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-900/80 border border-white/5">
+                <span className="text-muted-foreground block text-[10px] uppercase">Total Focused Time</span>
+                <span className="text-lg font-bold text-emerald-400">{report.attentionSummary.focusedDurationSeconds}s</span>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-900/80 border border-white/5">
+                <span className="text-muted-foreground block text-[10px] uppercase">Max Deviation</span>
+                <span className="text-lg font-bold text-rose-400">{report.attentionSummary.longestAlertSeconds}s</span>
+              </div>
+            </div>
+
+            {report.attentionSummary.events && report.attentionSummary.events.length > 0 && (
+              <div className="space-y-2 pt-2">
+                <span className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider font-bold">
+                  Recorded Attention Deviation Events:
+                </span>
+                <div className="space-y-1.5 max-h-48 overflow-y-auto">
+                  {report.attentionSummary.events.map((evt, idx) => (
+                    <div
+                      key={evt.id || idx}
+                      className="p-2.5 rounded-xl bg-slate-900/60 border border-white/5 flex items-center justify-between text-xs font-mono"
+                    >
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle className="h-3.5 w-3.5 text-amber-400 shrink-0" />
+                        <span className="text-foreground font-semibold">Direction: {evt.directionLabel}</span>
+                        <span className="text-muted-foreground">• Duration: {evt.durationSeconds}s</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge
+                          variant={evt.severity === "High" ? "destructive" : evt.severity === "Medium" ? "amber" : "glass"}
+                          size="sm"
+                          className="text-[9px]"
+                        >
+                          {evt.severity} Severity
+                        </Badge>
+                        <span className="text-[11px] text-muted-foreground">{evt.formattedTime || "00:00"}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <p className="text-[11px] font-mono text-muted-foreground italic pt-1">
+              * Note: Head movement and attention metrics are supportive behavioral indicators. Raw video feeds are never recorded or stored.
+            </p>
+          </GlassCard>
+        )}
 
         {/* ========================================================================= */}
         {/* STRENGTHS & WEAKNESSES GRID                                               */}

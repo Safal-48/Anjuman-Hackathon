@@ -133,11 +133,22 @@ $$\mathbf{\text{ASSESS}} \longrightarrow \mathbf{\text{UNDERSTAND}} \longrightar
   $$\mathbf{\text{Course Completion} \neq \text{Skill Mastery}} \qquad \Longleftrightarrow \qquad \mathbf{\text{Empirical Evidence} = \text{Proven Competency}}$$
 - Categorizes all skills across 4 explicit evidence pillars: *Learning Completed*, *Practice Accuracy*, *Assessment Score*, and *Proven Status*.
 
-### 9. 📄 Connected Resume Analyzer & AI Mock Interview (`/resume-analyzer`, `/mock-interview`)
-- **Resume Claimed vs. Demonstrated Gaps**: Cross-references resume bullet points against verified diagnostic test logs to expose unverified claims (*"Resume: Advanced SQL vs. Test: 58%"*).
-- **Oral Defense Feedback Signal**: Evaluates live technical depth, communication, and confidence during mock interviews, directly feeding recommended remedial actions back into the learning engine.
+### 9. 🎙️ AI Mock Interview + Privacy-First Attention Monitoring (`/mock-interview`)
+- **Mandatory Pre-Interview Equipment & Permission Gate**: Before initiating any mock session, a dedicated permission gate activates and calibrates the webcam, ensuring camera access while guaranteeing 100% privacy: **Raw camera feeds remain strictly local and are NEVER recorded or uploaded**.
+- **Client-Side Real-Time Attention Engine**: Evaluates screen-facing head/face orientation (Yaw/Pitch) with a **3.0-second continuous deviation grace period** to tolerate natural movements. No biometric facial ID, emotion analysis, or demographic profiling.
+- **Neutral Warning Terminology & Red Viewport Glow**: If a student is continuously distracted for $>3.0\text{s}$, the viewport triggers a gentle red glow with neutral notices (*`⚠ Attention Check: Please maintain your focus on the screen.`*) and a soft audio chime. Automatically clears upon focus recovery without interrupting the session.
+- **Detailed Attention Event Ledger**: Records structured, non-punitive events:
+  $$\text{Direction (Left / Right / Up / Down / Face Not Visible)} \quad\bullet\quad \text{Duration (e.g. } 4.2\text{s)} \quad\bullet\quad \text{Timestamp} \quad\bullet\quad \text{Severity (Low / Med / High)}$$
+- **Animated "INTERVIEW COMPLETED" Performance Popup**: Summarizes 6 rating dimensions:
+  $$\text{Overall Performance (7.2/10)} \quad\bullet\quad \text{Technical Knowledge} \quad\bullet\quad \text{Communication} \quad\bullet\quad \text{Answer Quality} \quad\bullet\quad \text{Problem Solving} \quad\bullet\quad \text{Confidence} \quad\bullet\quad \mathbf{\text{Attention Consistency (88\%)}}$$
+  Includes status badges (*`✓ Focus Consistency Good`* vs *`⚠ Focus Consistency Needs Improvement`*), treating attention as a supportive behavioral signal.
+- **Closed-Loop Learning Engine Feed**: Converts interview performance directly into actionable KaushalSetu remediation:
+  $$\text{Technical Deficit (SQL 52\%)} \longrightarrow \text{Personal Skill DNA Updated} \longrightarrow \text{Next Best Action: "Practice SQL JOINs — 15 min"} \longrightarrow \text{Targeted Intervention} \longrightarrow \text{Roadmap Adapt}$$
 
-### 10. 🛡️ Verified Digital Portfolio Ledger (`/portfolio`)
+### 10. 📄 Connected Resume ATS Analyzer (`/resume-analyzer`)
+- **Resume Claimed vs. Demonstrated Gaps**: Cross-references resume bullet points against verified diagnostic test logs to expose unverified claims (*"Resume: Advanced SQL vs. Test: 58%"*).
+
+### 11. 🛡️ Verified Digital Portfolio Ledger (`/portfolio`)
 - Stamped with institutional cryptographic verification hashes (`TITAN-VERIF-...`) and rendered on 3D tilt perspective cards.
 
 ---

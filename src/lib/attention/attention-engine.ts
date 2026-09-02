@@ -1,11 +1,13 @@
 /**
  * Client-Side Real-Time Face Detection & Head Orientation Analysis Engine
  * Privacy-first: Runs 100% locally in browser memory. No video or telemetry is sent to any server.
+ * Neutral Terminology: Labels events as "Attention Deviation" or "Focus Warning" (Never "Cheating").
  */
 
 import {
   ATTENTION_CONFIG,
   AttentionEvent,
+  AttentionSeverity,
   AttentionStatus,
   AttentionSummary,
   HeadDirection,
@@ -26,7 +28,6 @@ export class AttentionEngine {
   private canvasElement: HTMLCanvasElement | null = null;
   private ctx: CanvasRenderingContext2D | null = null;
   private isRunning: boolean = false;
-  private animationFrameId: number | null = null;
   private intervalId: NodeJS.Timeout | null = null;
 
   // State machine tracking
@@ -56,6 +57,7 @@ export class AttentionEngine {
     RIGHT: 0,
     UP: 0,
     DOWN: 0,
+    FACE_NOT_VISIBLE: 0,
   };
   private lastTickTime: number = 0;
 
@@ -99,35 +101,24 @@ export class AttentionEngine {
     this.intervalId = setInterval(() => {
       this.processFrame();
     }, ATTENTION_CONFIG.FRAME_SAMPLING_INTERVAL_MS);
-
-    this.notifyStatus("FOCUSED", "CENTER");
   }
 
   /**
-   * Pause / Resume processing
-   */
-  public pause() {
-    this.isRunning = false;
-    if (this.intervalId) clearInterval(this.intervalId);
-    this.notifyStatus("PAUSED", "CENTER");
-  }
-
-  /**
-   * Stop monitoring and calculate final summary
+   * Stop processing and finalize session metrics
    */
   public stop(): AttentionSummary {
     this.isRunning = false;
     this.sessionEndTime = Date.now();
+
     if (this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = null;
     }
 
-    // Finalize any ongoing alert duration
     if (this.currentAlertStart) {
-      const alertDur = Date.now() - this.currentAlertStart;
-      this.totalAlertMs += alertDur;
-      this.longestAlertMs = Math.max(this.longestAlertMs, alertDur);
+      const remainingAlertMs = Date.now() - this.currentAlertStart;
+      this.totalAlertMs += remainingAlertMs;
+      this.longestAlertMs = Math.max(this.longestAlertMs, remainingAlertMs);
       this.currentAlertStart = null;
     }
 
@@ -135,107 +126,104 @@ export class AttentionEngine {
   }
 
   /**
-   * Analyze individual frame from video element
+   * Core frame analysis routine
    */
   private processFrame() {
-    if (!this.isRunning || !this.videoElement || !this.ctx || !this.canvasElement) return;
-
-    if (this.videoElement.readyState < 2 || this.videoElement.paused || this.videoElement.ended) {
-      return;
-    }
+    if (!this.isRunning || !this.videoElement || !this.canvasElement || !this.ctx) return;
+    if (this.videoElement.readyState < 2) return; // HAVE_CURRENT_DATA
 
     const now = Date.now();
-    const dt = now - this.lastTickTime;
+    const dt = now - (this.lastTickTime || now);
     this.lastTickTime = now;
 
-    // Draw frame to downscaled analysis canvas (96x72)
-    const w = this.canvasElement.width;
-    const h = this.canvasElement.height;
-    this.ctx.drawImage(this.videoElement, 0, 0, w, h);
+    // Fast sub-sampling capture
+    const width = this.canvasElement.width;
+    const height = this.canvasElement.height;
 
-    const frame = this.ctx.getImageData(0, 0, w, h);
-    const result = this.analyzeFrameData(frame, w, h);
+    try {
+      this.ctx.drawImage(this.videoElement, 0, 0, width, height);
+      const frameData = this.ctx.getImageData(0, 0, width, height);
+      const result = this.analyzeFrameLocally(frameData.data, width, height);
 
-    // Update direction dwell metrics
-    if (result.faceDetected) {
-      this.directionDwellMs[result.direction] = (this.directionDwellMs[result.direction] || 0) + dt;
-    }
+      // Track dwell time
+      if (!result.faceDetected) {
+        this.directionDwellMs.FACE_NOT_VISIBLE = (this.directionDwellMs.FACE_NOT_VISIBLE || 0) + dt;
+      } else {
+        this.directionDwellMs[result.direction] = (this.directionDwellMs[result.direction] || 0) + dt;
+      }
 
-    // State machine logic
-    this.updateStateMachine(result, now, dt);
+      this.updateStateMachine(result, now, dt);
 
-    if (this.onMetricsUpdateCallback) {
-      this.onMetricsUpdateCallback(result, this.currentStatus);
+      if (this.onMetricsUpdateCallback) {
+        this.onMetricsUpdateCallback(result, this.currentStatus);
+      }
+    } catch {
+      // Gracefully ignore canvas capture frames during DOM destruction
     }
   }
 
   /**
-   * Optical feature analysis: calculates skin-luminance centroid and horizontal/vertical symmetry
+   * Privacy-preserving local pixel heuristic for face & yaw/pitch analysis
    */
-  private analyzeFrameData(frame: ImageData, width: number, height: number): DetectionResult {
-    const data = frame.data;
-    let totalWeight = 0;
-    let weightedX = 0;
-    let weightedY = 0;
+  private analyzeFrameLocally(data: Uint8ClampedArray, width: number, height: number): DetectionResult {
     let skinPixelCount = 0;
+    let sumX = 0;
+    let sumY = 0;
 
-    const minX = width * 0.15;
-    const maxX = width * 0.85;
-    const minY = height * 0.1;
-    const maxY = height * 0.9;
+    // Bounding box bounds
+    let minX = width;
+    let maxX = 0;
+    let minY = height;
+    let maxY = 0;
 
-    for (let y = Math.floor(minY); y < maxY; y++) {
-      for (let x = Math.floor(minX); x < maxX; x++) {
+    for (let y = 0; y < height; y += 2) {
+      for (let x = 0; x < width; x += 2) {
         const idx = (y * width + x) * 4;
         const r = data[idx];
         const g = data[idx + 1];
         const b = data[idx + 2];
 
-        // Chromaticity & luminance range typical for face contours
-        const isSkin =
-          r > 45 &&
-          g > 30 &&
-          b > 20 &&
-          r > g &&
-          r > b &&
-          Math.abs(r - g) > 12 &&
-          r - b > 12 &&
-          r < 250;
+        // Adaptive YCbCr skin tone threshold
+        const yVal = 0.299 * r + 0.587 * g + 0.114 * b;
+        const cb = 128 - 0.168736 * r - 0.331264 * g + 0.5 * b;
+        const cr = 128 + 0.5 * r - 0.418688 * g - 0.081312 * b;
+
+        const isSkin = cb >= 77 && cb <= 127 && cr >= 133 && cr <= 173 && yVal > 40;
 
         if (isSkin) {
           skinPixelCount++;
-          // Center-biased weight to focus on central facial features
-          const weight = 1.0;
-          totalWeight += weight;
-          weightedX += x * weight;
-          weightedY += y * weight;
+          sumX += x;
+          sumY += y;
+
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
         }
       }
     }
 
-    const minRequiredSkinPixels = (width * height) * 0.035; // ~3.5% of frame
-    if (skinPixelCount < minRequiredSkinPixels || totalWeight === 0) {
+    const minRequiredPixels = (width * height * 0.02) / 4; // At least ~2% of frame
+    if (skinPixelCount < minRequiredPixels) {
       return {
         faceDetected: false,
-        direction: "CENTER",
+        direction: "FACE_NOT_VISIBLE",
         confidence: 0,
         yawOffset: 0,
         pitchOffset: 0,
       };
     }
 
-    const centroidX = weightedX / totalWeight;
-    const centroidY = weightedY / totalWeight;
+    const centroidX = sumX / skinPixelCount;
+    const centroidY = sumY / skinPixelCount;
 
-    // Normalize centroid to [-1, 1] scale relative to center of video
-    const centerX = width / 2;
-    const centerY = height / 2;
+    const frameCenterX = width / 2;
+    const frameCenterY = height / 2;
 
-    // Flip X because webcam is mirrored in preview
-    const yawOffset = -((centroidX - centerX) / (width * 0.35));
-    const pitchOffset = (centroidY - centerY) / (height * 0.35);
+    // Normalized offset from frame center (-1 to +1)
+    const yawOffset = (centroidX - frameCenterX) / (width * 0.5);
+    const pitchOffset = (centroidY - frameCenterY) / (height * 0.5);
 
-    // Determine discrete head direction based on threshold
     let direction: HeadDirection = "CENTER";
     const absYaw = Math.abs(yawOffset);
     const absPitch = Math.abs(pitchOffset);
@@ -262,18 +250,21 @@ export class AttentionEngine {
   }
 
   /**
-   * Handles time persistence thresholds, alert cooldowns, and visual warnings
+   * Handles 3.0s grace period, alert cooldowns, and visual warnings
    */
   private updateStateMachine(result: DetectionResult, now: number, dt: number) {
-    // 1. Handle Face Lost
+    // 1. Handle Face Lost (with 3.0s grace period)
     if (!result.faceDetected) {
       if (!this.faceLostStartTime) {
         this.faceLostStartTime = now;
       } else if (now - this.faceLostStartTime > ATTENTION_CONFIG.FACE_LOST_DURATION_MS) {
         if (this.currentStatus !== "FACE_LOST_WARNING") {
           this.currentStatus = "FACE_LOST_WARNING";
+          this.currentAlertStart = now;
+          this.alertCount++;
+          audioAlert.playSoftAttentionChime();
           this.triggerAlert(true, ATTENTION_CONFIG.LABELS.FACE_LOST);
-          this.logEvent("FACE_NOT_DETECTED", "CENTER");
+          this.logEvent("FACE_NOT_DETECTED", "FACE_NOT_VISIBLE");
         }
       }
       return;
@@ -282,16 +273,15 @@ export class AttentionEngine {
     // Face detected: reset face lost timer
     this.faceLostStartTime = null;
 
-    // 2. Handle Orientation Deviation
+    // 2. Handle Orientation Deviation (with 3.0s grace period for natural movements)
     if (result.direction !== "CENTER") {
       this.currentDirection = result.direction;
 
       if (!this.deviationStartTime) {
         this.deviationStartTime = now;
       } else if (now - this.deviationStartTime > ATTENTION_CONFIG.HEAD_TURN_DURATION_MS) {
-        // Sustained deviation past duration threshold
+        // Sustained deviation past 3.0s grace period
         if (!this.isAlertActive) {
-          // Check cooldown to avoid rapid flapping
           if (now - this.lastAlertRecoveryTime > ATTENTION_CONFIG.ALERT_COOLDOWN_MS) {
             this.isAlertActive = true;
             this.currentStatus = "DEVIATION_WARNING";
@@ -304,13 +294,13 @@ export class AttentionEngine {
         }
       }
     } else {
-      // 3. User is Screen-Facing (CENTER)
+      // 3. User returned focus to screen (CENTER)
       this.deviationStartTime = null;
       this.currentDirection = "CENTER";
       this.totalFocusedMs += dt;
 
       if (this.isAlertActive || this.currentStatus !== "FOCUSED") {
-        // Recovery
+        // Automatic recovery
         this.isAlertActive = false;
         this.currentStatus = "FOCUSED";
         this.lastAlertRecoveryTime = now;
@@ -342,23 +332,55 @@ export class AttentionEngine {
     }
   }
 
+  private formatTimeMMSS(ms: number): string {
+    const totalSec = Math.floor(ms / 1000);
+    const m = Math.floor(totalSec / 60).toString().padStart(2, "0");
+    const s = (totalSec % 60).toString().padStart(2, "0");
+    return `${m}:${s}`;
+  }
+
+  private getDirectionLabel(dir: HeadDirection): string {
+    switch (dir) {
+      case "LEFT": return "Left";
+      case "RIGHT": return "Right";
+      case "UP": return "Up";
+      case "DOWN": return "Down";
+      case "FACE_NOT_VISIBLE": return "Face Not Visible";
+      default: return "Center";
+    }
+  }
+
+  private calculateSeverity(durationSec: number): AttentionSeverity {
+    if (durationSec < 3.5) return "Low";
+    if (durationSec < 6.0) return "Medium";
+    return "High";
+  }
+
   private logEvent(
     type: "HEAD_ORIENTATION_ALERT" | "FACE_NOT_DETECTED" | "ATTENTION_RECOVERED",
     direction: HeadDirection,
     durationSeconds?: number
   ) {
+    const elapsedMs = Math.max(0, Date.now() - (this.sessionStartTime || Date.now()));
+    const duration = durationSeconds ?? 3.0;
+    const severity = this.calculateSeverity(duration);
+
     const event: AttentionEvent = {
       id: `att-evt-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
       type,
       direction,
+      directionLabel: this.getDirectionLabel(direction),
       timestamp: new Date().toISOString(),
-      durationSeconds: durationSeconds ? Number(durationSeconds.toFixed(1)) : undefined,
+      formattedTime: this.formatTimeMMSS(elapsedMs),
+      durationSeconds: Number(duration.toFixed(1)),
+      severity,
+      neutralNote: `Attention deviation towards ${this.getDirectionLabel(direction)} (${duration.toFixed(1)}s)`,
     };
     this.events.push(event);
   }
 
   /**
-   * Generates comprehensive observational Attention Summary
+   * Generates comprehensive observational Attention Summary with Focus Consistency Status
    */
   public generateSummary(): AttentionSummary {
     const totalSessionMs = Math.max(
@@ -371,8 +393,10 @@ export class AttentionEngine {
       Math.max(0, Math.round((this.totalFocusedMs / totalSessionMs) * 100))
     );
 
+    const focusStatus = focusPct >= 75 && this.alertCount <= 2 ? "CONSISTENT_GOOD" : "NEEDS_IMPROVEMENT";
+
     const notes: string[] = [
-      `Screen-facing orientation detected for approximately ${focusPct}% of the session duration.`,
+      `Screen-facing orientation maintained for approximately ${focusPct}% of the session duration.`,
       `Sustained attention notifications recorded: ${this.alertCount} time(s).`,
     ];
 
@@ -398,7 +422,10 @@ export class AttentionEngine {
         rightSeconds: Number(((this.directionDwellMs.RIGHT || 0) / 1000).toFixed(1)),
         upSeconds: Number(((this.directionDwellMs.UP || 0) / 1000).toFixed(1)),
         downSeconds: Number(((this.directionDwellMs.DOWN || 0) / 1000).toFixed(1)),
+        faceNotVisibleSeconds: Number(((this.directionDwellMs.FACE_NOT_VISIBLE || 0) / 1000).toFixed(1)),
       },
+      events: [...this.events],
+      focusStatus,
       observationalNotes: notes,
     };
   }
