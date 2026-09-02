@@ -21,7 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { FadeIn, SlideUp } from "@/components/animations/motion-wrapper";
 
 interface CameraPermissionGateProps {
-  onPermissionGranted: (stream: MediaStream) => void;
+  onPermissionGranted: () => void;
   onCancel: () => void;
   roleTitle?: string;
 }
@@ -47,47 +47,69 @@ export function CameraPermissionGate({
     }
 
     try {
+      // Release any previously opened stream tracks
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((t) => t.stop());
+        streamRef.current = null;
+      }
+
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
-          width: { ideal: 640 },
-          height: { ideal: 480 },
+          width: { ideal: 640, min: 320 },
+          height: { ideal: 480, min: 240 },
           facingMode: "user",
         },
-        audio: true,
+        audio: false, // Audio will be captured by speech recognition independently
       });
 
       streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        await videoRef.current.play().catch(() => {});
-      }
-
       setPermissionState("granted");
     } catch (err: any) {
       console.warn("Camera permission denied or unavailable:", err);
       setPermissionState("denied");
       setErrorMessage(
         err.name === "NotAllowedError" || err.name === "PermissionDeniedError"
-          ? "Camera permission was denied. Please allow camera and microphone access in your browser settings to proceed with the mock interview."
-          : "Could not initialize video stream. Please ensure no other application is currently using your webcam."
+          ? "Camera permission was denied. Please allow camera access in your browser settings to proceed with the mock interview."
+          : "Could not initialize video stream. Please ensure no other application is using your webcam."
       );
     }
   };
 
-  const handleProceed = () => {
-    if (streamRef.current) {
-      onPermissionGranted(streamRef.current);
+  // Ensure video element plays the live stream immediately upon granting
+  useEffect(() => {
+    if (permissionState === "granted" && streamRef.current && videoRef.current) {
+      const video = videoRef.current;
+      video.srcObject = streamRef.current;
+      video.muted = true;
+      video.playsInline = true;
+
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((e) => {
+          console.warn("Video auto-play handled:", e);
+        });
+      }
     }
+  }, [permissionState]);
+
+  const handleProceed = () => {
+    // Gracefully release preview stream lock so the interview room AttentionMonitor gets a clean stream
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+    onPermissionGranted();
   };
 
   useEffect(() => {
     return () => {
-      // Clean up local preview stream if unmounting before proceeding
-      if (permissionState !== "granted" && streamRef.current) {
+      // Clean up local preview stream if unmounting
+      if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
       }
     };
-  }, [permissionState]);
+  }, []);
 
   return (
     <FadeIn>
@@ -110,7 +132,7 @@ export function CameraPermissionGate({
             </p>
           </div>
 
-          {/* Privacy Guarantee Box (MANDATORY REQUIREMENT) */}
+          {/* Privacy Guarantee Box */}
           <div className="p-4 rounded-2xl bg-emerald-950/20 border border-emerald-500/30 space-y-2">
             <div className="flex items-center gap-2 text-emerald-400 font-mono text-xs font-bold">
               <Lock className="h-4 w-4 shrink-0 text-emerald-400" />
@@ -122,14 +144,20 @@ export function CameraPermissionGate({
           </div>
 
           {/* Live Video Preview Box */}
-          <div className="mt-6 relative rounded-2xl overflow-hidden bg-black/80 border border-white/10 aspect-video flex items-center justify-center">
+          <div className="mt-6 relative rounded-2xl overflow-hidden bg-black/90 border border-white/10 aspect-video flex items-center justify-center">
+            {/* Live Video Element */}
             <video
               ref={videoRef}
+              autoPlay
               playsInline
               muted
-              className={`w-full h-full object-cover transform -scale-x-100 ${
+              onLoadedMetadata={() => {
+                videoRef.current?.play().catch(() => {});
+              }}
+              className={`w-full h-full object-cover ${
                 permissionState === "granted" ? "block" : "hidden"
               }`}
+              style={{ transform: "scaleX(-1)" }}
             />
 
             {permissionState === "prompt" && (
@@ -149,7 +177,7 @@ export function CameraPermissionGate({
                   className="font-mono text-xs font-bold gap-2"
                 >
                   <Camera className="h-4 w-4" />
-                  <span>Grant Camera &amp; Mic Permission</span>
+                  <span>Grant Camera Permission</span>
                 </Button>
               </div>
             )}

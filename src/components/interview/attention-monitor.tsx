@@ -133,6 +133,23 @@ export function AttentionMonitor({
     };
   }, [startCamera, onSummaryReady]);
 
+  // Ensure video element plays the live stream immediately upon granting
+  useEffect(() => {
+    if (permissionState === "granted" && streamRef.current && videoRef.current) {
+      const video = videoRef.current;
+      video.srcObject = streamRef.current;
+      video.muted = true;
+      video.playsInline = true;
+
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((e) => {
+          console.warn("Video auto-play handled:", e);
+        });
+      }
+    }
+  }, [permissionState]);
+
   // Toggle sound
   const handleToggleSound = () => {
     const next = !soundEnabled;
