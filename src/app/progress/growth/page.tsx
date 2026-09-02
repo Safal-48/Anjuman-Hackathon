@@ -20,6 +20,7 @@ import { GlassCard } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FadeIn } from "@/components/animations/motion-wrapper";
+import { LearnPracticeProveReassess } from "@/components/learning/learn-practice-prove-reassess";
 
 interface GrowthTrend {
   skill: string;
@@ -144,6 +145,11 @@ export default function SkillGrowthPage() {
               </div>
               <p className="text-xs text-slate-400 mt-1">Ready for advanced portfolio challenges</p>
             </GlassCard>
+          </div>
+
+          {/* Signature 4-Step Empirical Mastery Loop */}
+          <div className="mt-8">
+            <LearnPracticeProveReassess />
           </div>
 
           {/* Growth Breakdown List */}
