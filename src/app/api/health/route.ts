@@ -13,10 +13,8 @@ export async function GET() {
       latencyMs: Date.now() - startTime,
       project: {
         name: SITE_CONFIG.name,
-        hackathon: "Smart India Hackathon 2026",
-        problemStatement: SITE_CONFIG.sih.problemStatementId,
-        category: SITE_CONFIG.sih.category,
-        team: SITE_CONFIG.sih.teamName,
+        team: "TechNova",
+        category: "Autonomous AI Personalized Learning Ecosystem",
       },
       services: {
         webApp: {

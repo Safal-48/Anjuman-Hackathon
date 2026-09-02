@@ -25,22 +25,23 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: `${SITE_CONFIG.name} | SIH 2026 Problem Statement ${SITE_CONFIG.sih.problemStatementId}`,
+    default: `${SITE_CONFIG.name} | AI Personalized Learning Ecosystem`,
     template: `%s | ${SITE_CONFIG.name}`,
   },
   description: SITE_CONFIG.description,
   keywords: [
-    "Smart India Hackathon 2026",
-    "SIH 2026",
-    "Problem Statement 26044",
     "KaushalSetu",
     "Kaushal Setu",
+    "TechNova",
+    "AI Personalized Learning Assistant",
+    "Adaptive Learning Ecosystem",
+    "Skill DNA",
     "Connecting Skills Bridging Opportunities",
     "Employability & Mentorship Platform",
     "AI Career Copilot",
   ],
-  authors: [{ name: SITE_CONFIG.sih.teamName }],
-  creator: SITE_CONFIG.sih.teamName,
+  authors: [{ name: "TechNova" }],
+  creator: "TechNova",
   icons: {
     icon: "/favicon.ico",
   },

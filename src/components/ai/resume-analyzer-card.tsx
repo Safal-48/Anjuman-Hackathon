@@ -47,7 +47,7 @@ KEY PROJECTS:
 
 CERTIFICATIONS & HONORS:
 - AWS Certified Solutions Architect - Associate
-- National Smart India Hackathon Finalist (Problem Statement 26044)`;
+- National Hackathon Finalist & Best Technical Innovation Award`;
 
 export function ResumeAnalyzerCard({ targetRole, onAnalyzeResume }: ResumeAnalyzerCardProps) {
   const [resumeText, setResumeText] = useState(SAMPLE_RESUME);

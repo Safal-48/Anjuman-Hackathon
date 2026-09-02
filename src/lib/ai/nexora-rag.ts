@@ -17,15 +17,15 @@ export const NEXORA_KNOWLEDGE_BASE: RAGDocument[] = [
   {
     id: "ks-overview",
     category: "overview",
-    title: "KaushalSetu Platform Overview & SIH 2026 Mission",
+    title: "KaushalSetu Platform Overview & Mission",
     keywords: [
-      "kaushalsetu", "what is", "kya hai", "about", "mission", "vision", "sih", "smart india hackathon",
-      "26044", "problem statement", "objective", "overview", "kaushal setu", "platform", "purpose", "tagline"
+      "kaushalsetu", "what is", "kya hai", "about", "mission", "vision", "technova",
+      "objective", "overview", "kaushal setu", "platform", "purpose", "tagline"
     ],
-    citation: "KaushalSetu Core Architecture • SIH PS #26044",
-    content: `KaushalSetu is an AI-powered unified employability, skill intelligence, and mentorship ecosystem built for Smart India Hackathon 2026 (Problem Statement #26044).
+    citation: "KaushalSetu Core Architecture • Team TechNova",
+    content: `KaushalSetu is an adaptive AI-powered personalized learning, skill intelligence, and mentorship ecosystem engineered by Team TechNova.
 Tagline: "Connecting Skills • Bridging Opportunities" | "Bridging Skills with Opportunity."
-Core Purpose: To eliminate the massive disconnect between academic curricula and industry hiring demands by providing transparent, skill-first assessments, personalized learning roadmaps, and explainable AI opportunity matching for students, colleges, and recruiters.`
+Core Purpose: To eliminate the massive disconnect between academic curricula and industry hiring demands by providing transparent, skill-first assessments, personalized adaptive learning roadmaps, and explainable AI opportunity matching for students, colleges, and recruiters.`
   },
   {
     id: "ks-how-it-works",
@@ -160,7 +160,7 @@ Core Purpose: To eliminate the massive disconnect between academic curricula and
 - 📧 Email: kaushalsetu.edu@gmail.com
 - 📱 Phone / WhatsApp: +91 91584 70655
 - 📸 Instagram: @kaushal_setu (Profile: https://www.instagram.com/kaushal_setu?igsi=a2ZmajhtZmw1Mndh)
-- 📍 Organization: Smart India Hackathon 2026 (Team Tech-Titan / KaushalSetu)`
+- 📍 Organization: Team TechNova (KaushalSetu AI Learning Ecosystem)`
   }
 ];
 
@@ -477,7 +477,7 @@ export function generateNexoraRAGResponse(
       `- 📧 **Email**: [kaushalsetu.edu@gmail.com](mailto:kaushalsetu.edu@gmail.com)\n` +
       `- 📱 **Phone / WhatsApp**: [+91 91584 70655](tel:+919158470655)\n` +
       `- 📸 **Instagram**: [@kaushal_setu](https://www.instagram.com/kaushal_setu?igsi=a2ZmajhtZmw1Mndh)\n\n` +
-      `*Smart India Hackathon 2026 • Problem Statement #26044*`;
+      `*KaushalSetu • Engineered by Team TechNova*`;
 
     return {
       reply,

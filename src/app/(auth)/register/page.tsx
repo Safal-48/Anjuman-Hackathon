@@ -128,11 +128,11 @@ export default function RegisterPage() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-widest">
-                Smart India Hackathon 2026
+                Team TechNova
               </span>
               <span className="h-1 w-1 rounded-full bg-cyan-400" />
               <Badge variant="cyber" size="sm" className="font-mono text-[9px]">
-                PS #26044
+                AI Learning Ecosystem
               </Badge>
             </div>
             <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground font-mono">

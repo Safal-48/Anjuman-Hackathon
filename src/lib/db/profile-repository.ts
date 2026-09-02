@@ -84,11 +84,11 @@ if (!globalRelationalStore._titanSkills) {
   const demoAchievement: AchievementEntity = {
     id: `achieve-${Math.random().toString(36).substring(2, 9)}`,
     userId: studentDemoId,
-    title: "National Smart India Hackathon Finalist",
+    title: "National Hackathon Finalist & Best Technical Innovation Award",
     category: "hackathon",
-    description: "Engineered scalable AI telemetry architecture for Problem Statement 26044.",
+    description: "Engineered scalable AI personalized learning telemetry and Socratic intervention engine.",
     dateAchieved: "2026-03-01",
-    proofUrl: "https://sih.gov.in",
+    proofUrl: "https://technova.ai/credentials",
     createdAt: new Date().toISOString(),
   };
   globalRelationalStore._titanAchievements!.set(demoAchievement.id, demoAchievement);

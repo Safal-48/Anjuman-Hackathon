@@ -180,7 +180,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-muted-foreground">
           <div className="flex items-center gap-2">
-            <span>© 2026 KaushalSetu. Smart India Hackathon.</span>
+            <span>© 2026 KaushalSetu. Engineered by Team TechNova.</span>
           </div>
           <div className="flex items-center gap-4">
             <span className="text-cyan-400">ASSESS → UNDERSTAND → PRIORITIZE → LEARN → PRACTICE → PROVE → REASSESS → ADAPT</span>

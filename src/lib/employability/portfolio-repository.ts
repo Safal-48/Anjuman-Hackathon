@@ -616,11 +616,11 @@ export async function getVerifiedDigitalPortfolio(studentId: string): Promise<Di
       {
         id: "achieve-01",
         userId: studentId,
-        title: "National Finalist - Smart India Hackathon 2026",
+        title: "National Hackathon Finalist & Best Technical Innovation Award",
         category: "hackathon",
-        description: "Selected among top 1% nationwide for Problem Statement #26044 (KaushalSetu Employability & Mentorship Platform).",
+        description: "Engineered KaushalSetu Autonomous AI Personalized Learning Ecosystem with continuous adaptive roadmap mutations and Socratic tutoring.",
         dateAchieved: "2026-08-28",
-        proofUrl: "https://sih.gov.in/finalist/26044",
+        proofUrl: "https://technova.ai/credentials/achieve-01",
         createdAt: "2026-08-28T10:00:00Z",
       },
       {
