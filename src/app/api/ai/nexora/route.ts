@@ -6,7 +6,7 @@ import { getCandidateContext } from "@/lib/ai/career-context";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { message, targetRoleId } = body;
+    const { message, targetRoleId, language } = body;
 
     if (!message || typeof message !== "string" || message.trim().length === 0) {
       return NextResponse.json({ error: "Message is required" }, { status: 400 });
@@ -40,8 +40,8 @@ export async function POST(req: NextRequest) {
       userProfile = undefined;
     }
 
-    // Generate RAG Response
-    const response = generateNexoraRAGResponse(message.trim(), userProfile);
+    // Generate RAG Response with language awareness (hi / en / hinglish)
+    const response = generateNexoraRAGResponse(message.trim(), userProfile, language);
 
     return NextResponse.json(
       {

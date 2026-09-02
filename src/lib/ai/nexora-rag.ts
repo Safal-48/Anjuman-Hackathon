@@ -271,7 +271,8 @@ export function retrieveRAGContext(query: string, limit: number = 3): { document
  */
 export function generateNexoraRAGResponse(
   userQuery: string,
-  userProfile?: { fullName?: string; role?: string; targetRole?: string; readinessScore?: number; skills?: string[] }
+  userProfile?: { fullName?: string; role?: string; targetRole?: string; readinessScore?: number; skills?: string[] },
+  preferredLang?: "hi" | "en" | "hinglish"
 ): {
   reply: string;
   citations: string[];
@@ -279,8 +280,12 @@ export function generateNexoraRAGResponse(
 } {
   const q = userQuery.toLowerCase().trim();
 
-  // Detect language tone: Hindi / Hinglish vs English
-  const isHinglish = /kya|kaise|batao|karna|chahiye|hai|hain|mujhe|tum|mera|meri|kaha|kaun|kaise|seekhe|milenga|namaste|shukriya|madad|bhai|Skillora/.test(q);
+  // Detect language tone: Hindi / Hinglish vs English (if explicit language passed, prioritize it)
+  const isHinglish =
+    preferredLang === "hi" ||
+    preferredLang === "hinglish" ||
+    /[\u0900-\u097F]/.test(userQuery) ||
+    /kya|kaise|batao|karna|chahiye|hai|hain|mujhe|tum|mera|meri|kaha|kaun|kaise|seekhe|milenga|namaste|shukriya|madad|bhai|sikhao|bataiye|samjhao/.test(q);
 
   const nameGreeting = userProfile?.fullName ? userProfile.fullName : "Learner";
 
@@ -299,7 +304,7 @@ export function generateNexoraRAGResponse(
 
     return {
       reply: outOfScopeReply,
-      citations: ["Skillora Intelligence Scope Guardrail • SIH 2026"],
+      citations: ["Skillora Intelligence Scope Guardrail"],
       suggestedPrompts: [
         "How does Skillora work?",
         "Show 4-phase Full Stack Roadmap",
@@ -310,22 +315,22 @@ export function generateNexoraRAGResponse(
   }
 
   // Greetings
-  if (q.includes("hi") || q.includes("hello") || q.includes("namaste") || q.includes("hey") || q.includes("who are you")) {
+  if (q.includes("hi") || q.includes("hello") || q.includes("namaste") || q.includes("hey") || q.includes("who are you") || q.includes("kaun ho") || q.includes("kya ho")) {
     let reply = "";
     if (isHinglish) {
-      reply = `Namaste ${nameGreeting}! Main hoon **Nexora.ai**, aapka AI Career & Skill Intelligence Copilot for **Skillora** (SIH 2026 Problem Statement #26044).\n\n` +
-        `Main aapki in areas mein madad kar sakta hoon:\n` +
-        `- 🎯 **Skill Gap Analysis**: Aapke target role ke liye missing skills diagnose karna.\n` +
-        `- 🗺️ **Personalized Career Roadmaps**: Step-by-step 4-phase learning tracks.\n` +
+      reply = `Namaste ${nameGreeting}! Main hoon **Nexora.ai**, aapka AI Career & Skill Intelligence Copilot for **Skillora**.\n\n` +
+        `Main aapki in areas mein poori madad kar sakta hoon:\n` +
+        `- 🎯 **Skill Gap Diagnostics**: Aapke target role ke liye weak skills diagnose karna.\n` +
+        `- 🗺️ **Personalized Career Roadmaps**: Step-by-step adaptive learning tracks.\n` +
         `- ⚡ **Explainable AI Matching**: Transparent compatibility score ke sath internships & jobs discover karna.\n` +
         `- 🎙️ **Bilingual Mock Interviews**: Technical & behavioral rounds ki live voice practice.\n` +
         `- 🏛️ **College & Recruiter Features**: Institutional telemetry aur zero-resume-fraud hiring.\n\n` +
-        `Aap kya explore karna chahte hain?`;
+        `Aap kya sikhna ya explore karna chahte hain?`;
     } else {
-      reply = `Hello ${nameGreeting}! I am **Nexora.ai**, your AI Career & Skill Intelligence Copilot for **Skillora** (SIH 2026 Problem Statement #26044).\n\n` +
+      reply = `Hello ${nameGreeting}! I am **Nexora.ai**, your AI Career & Skill Intelligence Copilot for **Skillora**.\n\n` +
         `Here is how I can empower your journey today:\n` +
         `- 🎯 **Diagnose Skill Gaps**: Uncover missing competencies for your dream engineering role.\n` +
-        `- 🗺️ **Personalized Roadmaps**: 4-phase milestone roadmaps tailored to industry demand.\n` +
+        `- 🗺️ **Personalized Roadmaps**: Adaptive milestone roadmaps tailored to industry demand.\n` +
         `- ⚡ **Explainable AI Matching**: Transparent compatibility breakdown for top jobs & internships.\n` +
         `- 🎙️ **Bilingual Mock Interviews**: Practice audio/text mock interviews in English or Hindi.\n` +
         `- 🏛️ **Ecosystem Telemetry**: Explore data insights for colleges and recruiters.\n\n` +
@@ -334,7 +339,7 @@ export function generateNexoraRAGResponse(
 
     return {
       reply,
-      citations: ["Skillora Core Architecture • SIH PS #26044"],
+      citations: ["Skillora Core Architecture"],
       suggestedPrompts: [
         "How does Skillora explainable matching work?",
         "Generate a 3-month AI & ML Roadmap",
@@ -347,23 +352,39 @@ export function generateNexoraRAGResponse(
   // Specific Query Routing
   const { documents, citations } = retrieveRAGContext(userQuery);
 
-  if (q.includes("roadmap") || q.includes("path") || q.includes("seekhe") || q.includes("learn") || q.includes("syllabus")) {
+  if (q.includes("roadmap") || q.includes("path") || q.includes("seekhe") || q.includes("learn") || q.includes("syllabus") || q.includes("course") || q.includes("padhai")) {
     if (q.includes("ai") || q.includes("ml") || q.includes("machine learning") || q.includes("data science")) {
-      const reply = `### 🤖 4-Phase AI & Machine Learning Career Roadmap\n\n` +
-        `Industry-calibrated curriculum on **Skillora**:\n\n` +
-        `1. **Phase 1: Foundations (Weeks 1–4)**\n` +
-        `   - Python 3.11+, NumPy, Pandas, Data Wrangling\n` +
-        `   - Linear Algebra, Probability, Statistics, Calculus essentials\n` +
-        `2. **Phase 2: Core Machine Learning (Weeks 5–8)**\n` +
-        `   - Scikit-learn, Supervised & Unsupervised Learning, XGBoost\n` +
-        `   - Cross-Validation, Feature Engineering, Hyperparameter Optimization\n` +
-        `3. **Phase 3: Deep Learning & Generative AI (Weeks 9–14)**\n` +
-        `   - PyTorch, Neural Networks, CNNs & Transformers\n` +
-        `   - Hugging Face, LangChain, RAG Architecture, Vector DBs (Chroma/Pinecone)\n` +
-        `4. **Phase 4: Production Deployment & MLOps (Weeks 15–18)**\n` +
-        `   - FastAPI model inference server, Docker containerization\n` +
-        `   - Cloud GPU deployment & real-time monitoring telemetry.\n\n` +
-        `💡 *Complete Skillora skill assessments after each phase to earn verified digital credentials!*`;
+      const reply = isHinglish
+        ? `### 🤖 4-Phase AI & Machine Learning Career Roadmap (हिन्दी / Hinglish)\n\n` +
+          `**Skillora** par industry standard step-by-step curriculum:\n\n` +
+          `1. **Phase 1: Foundations (हफ़्ते 1–4)**\n` +
+          `   - Python 3.11+, NumPy, Pandas, Data Cleaning aur Exploration\n` +
+          `   - Linear Algebra, Probability, Statistics, Calculus zaroori concepts\n` +
+          `2. **Phase 2: Core Machine Learning (हफ़्ते 5–8)**\n` +
+          `   - Scikit-learn, Supervised & Unsupervised Learning, XGBoost\n` +
+          `   - Cross-Validation, Feature Engineering, Hyperparameter Tuning\n` +
+          `3. **Phase 3: Deep Learning & Generative AI (हफ़्ते 9–14)**\n` +
+          `   - PyTorch, Neural Networks, CNNs & Transformers architecture\n` +
+          `   - Hugging Face, LangChain, RAG Architecture, Vector Databases (Pinecone)\n` +
+          `4. **Phase 4: Production Deployment & MLOps (हफ़्ते 15–18)**\n` +
+          `   - FastAPI model inference server, Docker containerization\n` +
+          `   - Cloud GPU deployment aur real-time telemetry monitoring.\n\n` +
+          `💡 *Har phase ke baad Skillora Diagnostic Assessment dekar verified badge earn karein!*`
+        : `### 🤖 4-Phase AI & Machine Learning Career Roadmap\n\n` +
+          `Industry-calibrated curriculum on **Skillora**:\n\n` +
+          `1. **Phase 1: Foundations (Weeks 1–4)**\n` +
+          `   - Python 3.11+, NumPy, Pandas, Data Wrangling\n` +
+          `   - Linear Algebra, Probability, Statistics, Calculus essentials\n` +
+          `2. **Phase 2: Core Machine Learning (Weeks 5–8)**\n` +
+          `   - Scikit-learn, Supervised & Unsupervised Learning, XGBoost\n` +
+          `   - Cross-Validation, Feature Engineering, Hyperparameter Optimization\n` +
+          `3. **Phase 3: Deep Learning & Generative AI (Weeks 9–14)**\n` +
+          `   - PyTorch, Neural Networks, CNNs & Transformers\n` +
+          `   - Hugging Face, LangChain, RAG Architecture, Vector DBs (Chroma/Pinecone)\n` +
+          `4. **Phase 4: Production Deployment & MLOps (Weeks 15–18)**\n` +
+          `   - FastAPI model inference server, Docker containerization\n` +
+          `   - Cloud GPU deployment & real-time monitoring telemetry.\n\n` +
+          `💡 *Complete Skillora skill assessments after each phase to earn verified digital credentials!*`;
 
       return {
         reply,
@@ -375,20 +396,35 @@ export function generateNexoraRAGResponse(
         ],
       };
     } else {
-      const reply = `### 🚀 4-Phase Full Stack Modern Web Developer Roadmap\n\n` +
-        `Step-by-step career trajectory on **Skillora**:\n\n` +
-        `1. **Phase 1: Core Fundamentals (Weeks 1–3)**\n` +
-        `   - Semantic HTML5, Modern CSS3, Flexbox/Grid, Responsive Design\n` +
-        `   - Modern JavaScript (ES6+), Async/Await, DOM manipulation, Git & GitHub\n` +
-        `2. **Phase 2: Frontend Engineering (Weeks 4–7)**\n` +
-        `   - React 18+, Next.js 14 App Router, TypeScript\n` +
-        `   - Tailwind CSS, State Management (Zustand/Redux), Framer Motion animations\n` +
-        `3. **Phase 3: Backend & Database Architecture (Weeks 8–11)**\n` +
-        `   - Node.js, Express, PostgreSQL, Prisma ORM, Redis caching\n` +
-        `   - RESTful APIs, JWT Authentication, WebSockets\n` +
-        `4. **Phase 4: Production Readiness & Deployment (Weeks 12–16)**\n` +
-        `   - Docker, CI/CD with GitHub Actions, Vercel/AWS deployment\n` +
-        `   - Build a full-stack SaaS Capstone and link it to your Skillora Verified Portfolio.`;
+      const reply = isHinglish
+        ? `### 🚀 4-Phase Full Stack Modern Web Developer Roadmap (हिन्दी / Hinglish)\n\n` +
+          `**Skillora** par step-by-step career path:\n\n` +
+          `1. **Phase 1: Core Fundamentals (हफ़्ते 1–3)**\n` +
+          `   - Semantic HTML5, Modern CSS3, Flexbox/Grid, Responsive Layouts\n` +
+          `   - Modern JavaScript (ES6+), Async/Await, DOM manipulation, Git & GitHub\n` +
+          `2. **Phase 2: Frontend Engineering (हफ़्ते 4–7)**\n` +
+          `   - React 18+, Next.js 14 App Router, TypeScript strict typing\n` +
+          `   - Tailwind CSS, State Management (Zustand/Redux), Framer Motion animations\n` +
+          `3. **Phase 3: Backend & Database Architecture (हफ़्ते 8–11)**\n` +
+          `   - Node.js, Express, PostgreSQL, Prisma ORM, Redis caching\n` +
+          `   - RESTful APIs, JWT Authentication, WebSockets real-time sync\n` +
+          `4. **Phase 4: Production Readiness & Deployment (हफ़्ते 12–16)**\n` +
+          `   - Docker, CI/CD with GitHub Actions, Vercel/AWS cloud deployment\n` +
+          `   - Full-stack SaaS Capstone project banakar Skillora Verified Portfolio se connect karein.`
+        : `### 🚀 4-Phase Full Stack Modern Web Developer Roadmap\n\n` +
+          `Step-by-step career trajectory on **Skillora**:\n\n` +
+          `1. **Phase 1: Core Fundamentals (Weeks 1–3)**\n` +
+          `   - Semantic HTML5, Modern CSS3, Flexbox/Grid, Responsive Design\n` +
+          `   - Modern JavaScript (ES6+), Async/Await, DOM manipulation, Git & GitHub\n` +
+          `2. **Phase 2: Frontend Engineering (Weeks 4–7)**\n` +
+          `   - React 18+, Next.js 14 App Router, TypeScript\n` +
+          `   - Tailwind CSS, State Management (Zustand/Redux), Framer Motion animations\n` +
+          `3. **Phase 3: Backend & Database Architecture (Weeks 8–11)**\n` +
+          `   - Node.js, Express, PostgreSQL, Prisma ORM, Redis caching\n` +
+          `   - RESTful APIs, JWT Authentication, WebSockets\n` +
+          `4. **Phase 4: Production Readiness & Deployment (Weeks 12–16)**\n` +
+          `   - Docker, CI/CD with GitHub Actions, Vercel/AWS deployment\n` +
+          `   - Build a full-stack SaaS Capstone and link it to your Skillora Verified Portfolio.`;
 
       return {
         reply,
@@ -403,16 +439,28 @@ export function generateNexoraRAGResponse(
   }
 
   if (q.includes("interview") || q.includes("mock") || q.includes("practice")) {
-    const reply = `### 🎙️ Bilingual AI Mock Interview Simulator\n\n` +
-      `**Skillora** offers a real-time conversational interview environment:\n\n` +
-      `- 🌐 **Bilingual Support**: Practice in **English** or **Hindi** with natural voice speech.\n` +
-      `- 🎯 **Role-Specific Scenarios**: Dynamic technical & behavioral interview prompts for roles like Frontend, AI Engineer, Cloud Architect.\n` +
-      `- 📊 **3-Pillar Rubric Scoring**:\n` +
-      `  1. **Technical Accuracy**: Depth and correctness of conceptual explanation.\n` +
-      `  2. **Communication & Structure**: Clarity, articulation, and professional tone.\n` +
-      `  3. **Completeness**: Addressing all parts of the scenario with real-world examples.\n` +
-      `- 💡 **Actionable Feedback**: Instant tips on missed keywords and model answers.\n\n` +
-      `👉 *Head over to the **AI Career Studio -> Mock Interview** tab to start your session!*`;
+    const reply = isHinglish
+      ? `### 🎙️ Bilingual AI Mock Interview Simulator (हिन्दी / Hinglish)\n\n` +
+        `**Skillora** par real-time voice aur text interview environment:\n\n` +
+        `- 🌐 **Bilingual Support**: Hindi ya English kisi bhi language me interview practice karein.\n` +
+        `- 🎯 **Role-Specific Scenarios**: Frontend, AI Engineer, Cloud DevOps ke liye real technical questions.\n` +
+        `- 📊 **3-Pillar Rubric Scoring**:\n` +
+        `  1. **Technical Accuracy**: Depth aur conceptual correctness.\n` +
+        `  2. **Communication & Structure**: Clarity, articulation aur professional presentation.\n` +
+        `  3. **Completeness**: Real-world examples ke sath complete answer.\n` +
+        `- 👁️ **Privacy-First Attention Monitor**: Client-side face focus telemetry.\n` +
+        `- 💡 **Actionable Feedback**: Missed keywords aur model answers turant report me milte hain.\n\n` +
+        `👉 *AI Career Studio -> **Mock Interview** tab par click karke interview start karein!*`
+      : `### 🎙️ Bilingual AI Mock Interview Simulator\n\n` +
+        `**Skillora** offers a real-time conversational interview environment:\n\n` +
+        `- 🌐 **Bilingual Support**: Practice in **English** or **Hindi** with natural voice speech.\n` +
+        `- 🎯 **Role-Specific Scenarios**: Dynamic technical & behavioral interview prompts for roles like Frontend, AI Engineer, Cloud Architect.\n` +
+        `- 📊 **3-Pillar Rubric Scoring**:\n` +
+        `  1. **Technical Accuracy**: Depth and correctness of conceptual explanation.\n` +
+        `  2. **Communication & Structure**: Clarity, articulation, and professional tone.\n` +
+        `  3. **Completeness**: Addressing all parts of the scenario with real-world examples.\n` +
+        `- 💡 **Actionable Feedback**: Instant tips on missed keywords and model answers.\n\n` +
+        `👉 *Head over to the **AI Career Studio -> Mock Interview** tab to start your session!*`;
 
     return {
       reply,
@@ -425,20 +473,34 @@ export function generateNexoraRAGResponse(
     };
   }
 
-  if (q.includes("how it works") || q.includes("kaise kaam") || q.includes("process") || q.includes("steps")) {
-    const reply = `### 🔄 How Skillora Works (4-Step Progression)\n\n` +
-      `**01. 🟢 Discover Skills (Know Yourself Better)**\n` +
-      `- AI-powered adaptive skill assessments across Technical, Soft Skills, and Aptitude.\n` +
-      `- Generates your verified hexagonal skill radar profile.\n\n` +
-      `**02. 🟣 Identify Gaps (Know What's Missing)**\n` +
-      `- Live benchmark comparison against industry role demands.\n` +
-      `- Instant calculation of Career Readiness Score (e.g., 68% -> Target: 85%).\n\n` +
-      `**03. 🔵 Build Readiness (Turn Gaps Into Growth)**\n` +
-      `- Personalized 4-phase learning roadmaps with curated modules.\n` +
-      `- Step-by-step milestone tracking & coding challenges.\n\n` +
-      `**04. 🟡 Connect Opportunities (From Skills to Opportunity)**\n` +
-      `- Transparent Explainable AI matching with top internships & jobs.\n` +
-      `- Direct industry recruitment and 1-on-1 mentorship.`;
+  if (q.includes("how it works") || q.includes("kaise kaam") || q.includes("process") || q.includes("steps") || q.includes("kya hai")) {
+    const reply = isHinglish
+      ? `### 🔄 Skillora Kaise Kaam Karta Hai (4-Step Progression)\n\n` +
+        `**01. 🟢 Discover Skills (Apne Skills Pehchano)**\n` +
+        `- AI-powered adaptive skill assessments se Technical, Soft Skills aur Aptitude check karein.\n` +
+        `- Aapka verified hexagonal Skill DNA radar map generate hota hai.\n\n` +
+        `**02. 🟣 Identify Gaps (Kami Kahan Hai)**\n` +
+        `- Industry role demands ke sath live benchmark comparison.\n` +
+        `- Career Readiness Score calculate hota hai (e.g., 68% -> Target: 85%).\n\n` +
+        `**03. 🔵 Build Readiness (Gaps Ko Growth Me Badlo)**\n` +
+        `- Personalized 4-phase learning roadmap aur curated study modules.\n` +
+        `- Interactive coding drills aur practice arena.\n\n` +
+        `**04. 🟡 Connect Opportunities (Job & Internship Placement)**\n` +
+        `- Transparent Explainable AI matching top jobs aur internships ke sath.\n` +
+        `- Direct industry recruitment aur 1-on-1 mentorship.`
+      : `### 🔄 How Skillora Works (4-Step Progression)\n\n` +
+        `**01. 🟢 Discover Skills (Know Yourself Better)**\n` +
+        `- AI-powered adaptive skill assessments across Technical, Soft Skills, and Aptitude.\n` +
+        `- Generates your verified hexagonal skill radar profile.\n\n` +
+        `**02. 🟣 Identify Gaps (Know What's Missing)**\n` +
+        `- Live benchmark comparison against industry role demands.\n` +
+        `- Instant calculation of Career Readiness Score (e.g., 68% -> Target: 85%).\n\n` +
+        `**03. 🔵 Build Readiness (Turn Gaps Into Growth)**\n` +
+        `- Personalized 4-phase learning roadmaps with curated modules.\n` +
+        `- Step-by-step milestone tracking & coding challenges.\n\n` +
+        `**04. 🟡 Connect Opportunities (From Skills to Opportunity)**\n` +
+        `- Transparent Explainable AI matching with top internships & jobs.\n` +
+        `- Direct industry recruitment and 1-on-1 mentorship.`;
 
     return {
       reply,
