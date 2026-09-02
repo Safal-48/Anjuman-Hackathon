@@ -15,6 +15,7 @@ import {
   Zap,
 } from "lucide-react";
 import { TopicDiagnosticBreakdown } from "@/components/skills/topic-diagnostic-breakdown";
+import { PersonalSkillDNA } from "@/components/skills/personal-skill-dna";
 import { Container } from "@/components/layout/container";
 import { ReadinessRadial } from "@/components/skills/readiness-radial";
 import { SkillStrengthsWeaknesses } from "@/components/skills/skill-strengths-weaknesses";
@@ -125,7 +126,14 @@ export default function SkillsIntelligencePage() {
           </GlassCard>
         </FadeIn>
 
-        {/* Section 1: Multi-Vector Readiness Radial */}
+        {/* Section 1: Personal Skill DNA (Continuous Mastery & Evidence Model) */}
+        <div className="mt-8">
+          <SlideUp delay={0.05}>
+            <PersonalSkillDNA />
+          </SlideUp>
+        </div>
+
+        {/* Section 2: Multi-Vector Readiness Radial */}
         <div className="mt-8">
           <SlideUp delay={0.1}>
             <ReadinessRadial report={report} />
