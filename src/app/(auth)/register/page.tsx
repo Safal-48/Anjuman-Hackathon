@@ -281,7 +281,7 @@ export default function RegisterPage() {
                     {...register("agreeTerms")}
                   />
                   <span className="text-[11px] leading-relaxed">
-                    I agree to the SIH 2026 Skillora Terms of Platform Access and verify the accuracy of my academic/institutional affiliation.
+                    I agree to the Skillora Terms of Platform Access and verify the accuracy of my academic/institutional affiliation.
                   </span>
                 </label>
                 {errors.agreeTerms && (
