@@ -18,7 +18,8 @@ import { Container } from "@/components/layout/container";
 import { GlassCard } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FadeIn } from "@/components/animations/motion-wrapper";
+import { FadeIn, SlideUp } from "@/components/animations/motion-wrapper";
+import { RecurringMistakeDecayMonitor } from "@/components/progress/recurring-mistake-decay-monitor";
 
 interface HistoryEntry {
   id: string;
@@ -97,6 +98,13 @@ export default function LearningHistoryPage() {
                 </Button>
               </Link>
             </div>
+          </div>
+
+          {/* Recurring Mistake Memory & Skill Decay Radar */}
+          <div className="mt-8">
+            <SlideUp delay={0.05}>
+              <RecurringMistakeDecayMonitor />
+            </SlideUp>
           </div>
 
           {/* Timeline Feed */}
