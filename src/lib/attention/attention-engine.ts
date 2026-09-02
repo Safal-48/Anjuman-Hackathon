@@ -226,17 +226,17 @@ export class AttentionEngine {
     const rawCentroidX = sumX / skinPixelCount;
     const rawCentroidY = sumY / skinPixelCount;
 
-    // Apply exponential smoothing (EMA) to eliminate frame jitter
+    // Apply exponential smoothing (EMA) for responsive real-time tracking
     if (this.smoothX === null || this.smoothY === null) {
       this.smoothX = rawCentroidX;
       this.smoothY = rawCentroidY;
     } else {
-      this.smoothX = 0.25 * rawCentroidX + 0.75 * this.smoothX;
-      this.smoothY = 0.25 * rawCentroidY + 0.75 * this.smoothY;
+      this.smoothX = 0.45 * rawCentroidX + 0.55 * this.smoothX;
+      this.smoothY = 0.45 * rawCentroidY + 0.55 * this.smoothY;
     }
 
-    // Baseline Calibration: Average first 25 frames for user's resting screen-reading posture
-    if (this.calibrationFrames < 25) {
+    // Fast Baseline Calibration: First 8 frames (~800ms) establish initial sitting center
+    if (this.calibrationFrames < 8) {
       this.calibrationSumX += this.smoothX;
       this.calibrationSumY += this.smoothY;
       this.calibrationFrames++;
@@ -262,15 +262,15 @@ export class AttentionEngine {
     const frameCenterY = this.baselineY || (height * 0.45);
 
     // Compute relative displacement from the student's calibrated resting position
-    const yawOffset = (this.smoothX - frameCenterX) / (width * 0.45);
-    const pitchOffset = (this.smoothY - frameCenterY) / (height * 0.45);
+    const yawOffset = (this.smoothX - frameCenterX) / (width * 0.35);
+    const pitchOffset = (this.smoothY - frameCenterY) / (height * 0.35);
 
     let direction: HeadDirection = "CENTER";
     const absYaw = Math.abs(yawOffset);
     const absPitch = Math.abs(pitchOffset);
 
-    // Generous movement allowance: only significant sustained turns trigger deviation
-    if (absYaw > ATTENTION_CONFIG.HEAD_YAW_THRESHOLD && absYaw > absPitch) {
+    // Clear and responsive directional classification
+    if (absYaw > ATTENTION_CONFIG.HEAD_YAW_THRESHOLD && absYaw >= absPitch) {
       direction = yawOffset > 0 ? "RIGHT" : "LEFT";
     } else if (absPitch > ATTENTION_CONFIG.HEAD_PITCH_THRESHOLD) {
       direction = pitchOffset > 0 ? "DOWN" : "UP";

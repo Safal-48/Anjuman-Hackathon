@@ -4,35 +4,40 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import {
   Camera,
   CameraOff,
+  AlertTriangle,
+  Eye,
+  CheckCircle2,
   Volume2,
   VolumeX,
-  Eye,
-  AlertTriangle,
-  CheckCircle2,
   Minimize2,
   Maximize2,
   HelpCircle,
-  RefreshCw,
   Sparkles,
+  RefreshCw,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  ATTENTION_CONFIG,
-  AttentionStatus,
-  AttentionSummary,
-  HeadDirection,
-} from "@/lib/attention/attention-config";
-import { AttentionEngine, DetectionResult } from "@/lib/attention/attention-engine";
+import { AttentionEngine } from "@/lib/attention/attention-engine";
 import { audioAlert } from "@/lib/attention/audio-alert";
+import {
+  AttentionStatus,
+  HeadDirection,
+  AttentionSummary,
+  ATTENTION_CONFIG,
+} from "@/lib/attention/attention-config";
 
-export interface AttentionMonitorProps {
+interface AttentionMonitorProps {
+  /** Optional pre-acquired live MediaStream from permission gate */
   initialStream?: MediaStream | null;
+  /** Triggered when an alert state changes (true = deviation alert active) */
   onAlertChange?: (isAlert: boolean, message: string) => void;
+  /** Triggered when attention session ends with the complete observational report */
   onSummaryReady?: (summary: AttentionSummary) => void;
+  /** Triggered when attention status changes */
   onStatusChange?: (status: AttentionStatus) => void;
+  /** Indicates whether the interview/assessment session is currently active */
   isSessionActive?: boolean;
+  /** Optional CSS classes for custom placement */
   className?: string;
+  /** Compact display mode for mobile or small split screens */
   compact?: boolean;
 }
 
@@ -60,7 +65,7 @@ export function AttentionMonitor({
   const [showInfo, setShowInfo] = useState<boolean>(false);
   const [confidence, setConfidence] = useState<number>(0);
 
-  // Setup engine on an active video element
+  // Setup and attach engine to the active video element
   const bindStreamToVideo = useCallback((stream: MediaStream) => {
     streamRef.current = stream;
     setPermissionState("granted");
@@ -68,11 +73,12 @@ export function AttentionMonitor({
     const video = videoRef.current;
     if (!video) return;
 
-    video.srcObject = stream;
+    if (video.srcObject !== stream) {
+      video.srcObject = stream;
+    }
     video.muted = true;
     video.playsInline = true;
 
-    // Start engine as soon as video stream dimensions and metadata are ready
     const startAnalysis = () => {
       video.play().catch((e) => console.warn("Video play handled:", e));
 
@@ -96,6 +102,11 @@ export function AttentionMonitor({
         onMetricsUpdate: (result) => {
           if (!isMountedRef.current) return;
           setConfidence(result.confidence);
+          if (result.direction !== "CENTER") {
+            setDirection(result.direction);
+          } else {
+            setDirection("CENTER");
+          }
         },
       });
 
@@ -138,49 +149,43 @@ export function AttentionMonitor({
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
-          width: { ideal: 320, min: 240 },
-          height: { ideal: 240, min: 180 },
+          width: { ideal: 640 },
+          height: { ideal: 480 },
           facingMode: "user",
-          frameRate: { ideal: 15, max: 20 },
+          frameRate: { ideal: 24, max: 30 },
         },
         audio: false,
       });
 
       if (!isMountedRef.current) {
-        stream.getTracks().forEach((t) => t.stop());
+        stream.getTracks().forEach((track) => track.stop());
         return;
       }
 
       bindStreamToVideo(stream);
     } catch (err: unknown) {
-      console.warn(`AttentionMonitor: Camera init attempt ${retryCount + 1} failed:`, err);
-      // If hardware lock was still busy from a previous track release, retry after 400ms
-      if (retryCount < 2 && isMountedRef.current) {
-        setTimeout(() => {
-          if (isMountedRef.current) {
-            startCamera(retryCount + 1);
-          }
-        }, 400 * (retryCount + 1));
-      } else {
-        setPermissionState("denied");
-        setStatus("UNAVAILABLE");
-        onStatusChange?.("UNAVAILABLE");
-      }
-    }
-  }, [initialStream, bindStreamToVideo, onStatusChange]);
+      console.warn("Attention camera acquisition attempt failed:", err);
 
-  // Handle mounting and unmounting
+      // Retry up to 3 times with backoff if camera is temporarily locked by DirectShow
+      if (retryCount < 3 && isMountedRef.current) {
+        setTimeout(() => {
+          startCamera(retryCount + 1);
+        }, 400 * (retryCount + 1));
+        return;
+      }
+
+      setPermissionState("denied");
+      setStatus("UNAVAILABLE");
+    }
+  }, [bindStreamToVideo, initialStream]);
+
+  // Main lifecycle: start camera on mount, clean up on unmount
   useEffect(() => {
     isMountedRef.current = true;
-    startCamera();
+    startCamera(0);
 
     return () => {
       isMountedRef.current = false;
-      // Clean up local camera stream and engine
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach((track) => track.stop());
-        streamRef.current = null;
-      }
       if (engineRef.current) {
         const summary = engineRef.current.stop();
         onSummaryReady?.(summary);
@@ -189,16 +194,16 @@ export function AttentionMonitor({
     };
   }, [startCamera, onSummaryReady]);
 
-  // Ensure video element plays the live stream if stream becomes available later
+  // Ensure video element plays the live stream as soon as DOM video attaches
   useEffect(() => {
-    if (permissionState === "granted" && streamRef.current && videoRef.current) {
+    if (streamRef.current && videoRef.current) {
       const video = videoRef.current;
-      if (!video.srcObject) {
+      if (video.srcObject !== streamRef.current) {
         video.srcObject = streamRef.current;
         video.play().catch(() => {});
       }
     }
-  }, [permissionState]);
+  }, [permissionState, initialStream]);
 
   // Toggle sound
   const handleToggleSound = () => {
@@ -209,50 +214,66 @@ export function AttentionMonitor({
 
   // Render Status Badge Content
   const renderStatusBadge = () => {
-    switch (status) {
-      case "FOCUSED":
-        return (
-          <div className="flex items-center gap-1.5 text-emerald-400 font-mono text-[11px] font-semibold">
-            <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
-            <span>Attention: Focused</span>
-          </div>
-        );
-      case "DEVIATION_WARNING":
-        return (
-          <div className="flex items-center gap-1.5 text-rose-400 font-mono text-[11px] font-bold animate-pulse">
-            <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
-            <span>⚠ Attention Check</span>
-          </div>
-        );
-      case "FACE_LOST_WARNING":
-        return (
-          <div className="flex items-center gap-1.5 text-amber-400 font-mono text-[11px] font-bold animate-pulse">
-            <Eye className="h-3.5 w-3.5 shrink-0" />
-            <span>Camera Centering Needed</span>
-          </div>
-        );
-      case "UNAVAILABLE":
-        return (
-          <div className="flex items-center gap-1.5 text-slate-400 font-mono text-[10px]">
-            <CameraOff className="h-3.5 w-3.5 shrink-0 text-slate-500" />
-            <span>Monitor Offline</span>
-          </div>
-        );
-      default:
-        return (
-          <div className="flex items-center gap-1.5 text-cyan-400 font-mono text-[10px]">
-            <RefreshCw className="h-3 w-3 animate-spin shrink-0" />
-            <span>Calibrating...</span>
-          </div>
-        );
+    if (isAlert || status === "DEVIATION_WARNING") {
+      return (
+        <div className="flex items-center gap-1.5 text-rose-400 font-mono text-[11px] font-bold animate-pulse">
+          <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-rose-400" />
+          <span>⚠ Attention Check</span>
+        </div>
+      );
     }
+
+    if (status === "FACE_LOST_WARNING" || direction === "FACE_NOT_VISIBLE") {
+      return (
+        <div className="flex items-center gap-1.5 text-amber-400 font-mono text-[11px] font-bold animate-pulse">
+          <Eye className="h-3.5 w-3.5 shrink-0 text-amber-400" />
+          <span>Face Not Visible</span>
+        </div>
+      );
+    }
+
+    if (direction !== "CENTER") {
+      return (
+        <div className="flex items-center gap-1.5 text-amber-400 font-mono text-[11px] font-medium">
+          <span className="h-2 w-2 rounded-full bg-amber-400 animate-ping" />
+          <span>Glancing {direction}</span>
+        </div>
+      );
+    }
+
+    if (status === "FOCUSED") {
+      return (
+        <div className="flex items-center gap-1.5 text-emerald-400 font-mono text-[11px] font-semibold">
+          <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+          <span>Attention: Focused</span>
+        </div>
+      );
+    }
+
+    if (status === "UNAVAILABLE") {
+      return (
+        <div className="flex items-center gap-1.5 text-slate-400 font-mono text-[10px]">
+          <CameraOff className="h-3.5 w-3.5 shrink-0 text-slate-500" />
+          <span>Monitor Offline</span>
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex items-center gap-1.5 text-cyan-400 font-mono text-[10px]">
+        <RefreshCw className="h-3 w-3 animate-spin shrink-0" />
+        <span>Calibrating...</span>
+      </div>
+    );
   };
 
   return (
     <div
       className={`rounded-2xl border transition-all duration-300 overflow-hidden shadow-lg ${
         isAlert
-          ? "border-rose-500/80 bg-rose-950/20 shadow-rose-900/30"
+          ? "border-2 border-rose-500 bg-rose-950/30 shadow-[0_0_25px_rgba(244,63,94,0.6)] ring-2 ring-rose-500/50"
+          : direction !== "CENTER" && status !== "INITIALIZING"
+          ? "border-amber-500/50 bg-slate-950/90 shadow-amber-950/20"
           : "border-cyan-500/30 bg-slate-950/90 shadow-cyan-950/20"
       } ${className}`}
     >
@@ -262,19 +283,23 @@ export function AttentionMonitor({
           <div className="relative flex items-center justify-center">
             <span
               className={`h-2 w-2 rounded-full ${
-                status === "FOCUSED"
-                  ? "bg-emerald-400 animate-ping opacity-75"
-                  : isAlert
+                isAlert
                   ? "bg-rose-500 animate-ping"
+                  : direction !== "CENTER"
+                  ? "bg-amber-400 animate-pulse"
+                  : status === "FOCUSED"
+                  ? "bg-emerald-400 animate-ping opacity-75"
                   : "bg-cyan-400"
               }`}
             />
             <span
               className={`absolute h-2 w-2 rounded-full ${
-                status === "FOCUSED"
-                  ? "bg-emerald-400"
-                  : isAlert
+                isAlert
                   ? "bg-rose-500"
+                  : direction !== "CENTER"
+                  ? "bg-amber-400"
+                  : status === "FOCUSED"
+                  ? "bg-emerald-400"
                   : "bg-cyan-400"
               }`}
             />
@@ -361,27 +386,34 @@ export function AttentionMonitor({
             <div className="border-r border-b border-white/[0.03]" />
             <div className="border-b border-white/[0.03]" />
             <div className="border-r border-b border-white/[0.03]" />
-            <div className="border-r border-b border-cyan-500/20 bg-cyan-500/[0.02]" />
+            <div className={`border-r border-b transition-colors ${isAlert ? "border-rose-500/40 bg-rose-500/[0.05]" : "border-cyan-500/20 bg-cyan-500/[0.02]"}`} />
             <div className="border-b border-white/[0.03]" />
             <div className="border-r border-white/[0.03]" />
             <div className="border-r border-white/[0.03]" />
             <div />
           </div>
 
-          {/* Direction Indicator Pill (Only shown during active sustained deviation) */}
-          {isAlert && direction !== "CENTER" && (
-            <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-rose-950/80 border border-rose-500/40 text-[9px] font-mono text-rose-300 font-bold uppercase tracking-wider animate-pulse">
+          {/* Real-Time Direction Badge Pill */}
+          {direction !== "CENTER" && (
+            <div className={`absolute top-2 right-2 px-2 py-0.5 rounded-md text-[9px] font-mono font-bold uppercase tracking-wider ${
+              isAlert
+                ? "bg-rose-950/90 border border-rose-500 text-rose-300 animate-pulse shadow-lg"
+                : "bg-amber-950/80 border border-amber-500/50 text-amber-300"
+            }`}>
               {direction}
             </div>
           )}
 
-          {/* Deviation Alert Overlay (Only shown after 5.0s continuous sustained deviation) */}
+          {/* Deviation Alert Overlay (Shows bright warning & red flashing banner when looking away) */}
           {isAlert && (
-            <div className="absolute inset-0 bg-rose-950/40 border-2 border-rose-500/60 flex items-center justify-center p-2 text-center animate-pulse">
-              <div className="space-y-1">
-                <AlertTriangle className="h-5 w-5 text-rose-400 mx-auto" />
-                <p className="text-[10px] font-mono font-bold text-rose-200 uppercase tracking-tight">
+            <div className="absolute inset-0 bg-rose-950/50 border-2 border-rose-500 flex items-center justify-center p-2 text-center animate-pulse">
+              <div className="space-y-1.5 p-2 rounded-xl bg-slate-950/80 border border-rose-500/80 shadow-2xl backdrop-blur-md">
+                <AlertTriangle className="h-6 w-6 text-rose-400 mx-auto animate-bounce" />
+                <p className="text-[11px] font-mono font-bold text-rose-200 uppercase tracking-tight">
                   Please Look Towards Screen
+                </p>
+                <p className="text-[9px] font-mono text-rose-300/80">
+                  Focus detected away from camera
                 </p>
               </div>
             </div>
@@ -395,8 +427,14 @@ export function AttentionMonitor({
 
         <div className="text-[9px] font-mono text-muted-foreground flex items-center gap-1 shrink-0">
           <span>Status:</span>
-          <span className={`font-bold uppercase ${direction === "CENTER" ? "text-emerald-400" : isAlert ? "text-rose-400" : "text-emerald-400"}`}>
-            {isAlert ? direction : "FOCUSED"}
+          <span className={`font-bold uppercase ${
+            isAlert
+              ? "text-rose-400 font-extrabold"
+              : direction !== "CENTER"
+              ? "text-amber-400"
+              : "text-emerald-400"
+          }`}>
+            {isAlert ? "DEVIATION ALERT" : direction !== "CENTER" ? direction : "FOCUSED"}
           </span>
         </div>
       </div>

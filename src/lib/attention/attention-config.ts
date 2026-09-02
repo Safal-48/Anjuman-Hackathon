@@ -50,14 +50,14 @@ export interface AttentionSummary {
 }
 
 export const ATTENTION_CONFIG = {
-  // Generous Angle & Displacement thresholds (allows natural movement, nodding, reading questions)
-  HEAD_YAW_THRESHOLD: 0.38, // Horizontal offset threshold (38% displacement for Left/Right)
-  HEAD_PITCH_THRESHOLD: 0.45, // Vertical offset threshold (45% displacement for Up/Down, allows reading questions)
+  // Balanced Angle & Displacement thresholds (allows natural glances, triggers clearly on sustained turns)
+  HEAD_YAW_THRESHOLD: 0.22, // Horizontal offset threshold for Left/Right detection
+  HEAD_PITCH_THRESHOLD: 0.24, // Vertical offset threshold for Up/Down detection
 
-  // Durations in milliseconds - Configurable 5.0s grace period for natural movements
-  HEAD_TURN_DURATION_MS: 5000, // 5.0s continuous sustained deviation required before alert triggers
-  FACE_LOST_DURATION_MS: 5000, // 5.0s grace period before "Face Not Visible" warning
-  ALERT_COOLDOWN_MS: 1500, // Cooldown after recovery to prevent UI flickering
+  // Durations in milliseconds - 2.0s grace period before alert triggers
+  HEAD_TURN_DURATION_MS: 2000, // 2.0s continuous sustained deviation before visual red warning & chime
+  FACE_LOST_DURATION_MS: 2000, // 2.0s grace period before "Face Not Visible" warning
+  ALERT_COOLDOWN_MS: 800, // Fast recovery when candidate returns focus to screen
 
   // Sampling rate for camera video frame processing (10 FPS for ultra-low CPU/GPU impact)
   FRAME_SAMPLING_INTERVAL_MS: 100,
