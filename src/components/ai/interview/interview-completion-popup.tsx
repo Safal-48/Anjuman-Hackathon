@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useCallback } from "react";
+import Link from "next/link";
 import {
   Award,
   CheckCircle2,
@@ -12,6 +13,7 @@ import {
   Brain,
   ShieldCheck,
   Zap,
+  Target,
   X,
 } from "lucide-react";
 import { GlassCard } from "@/components/ui/card";
@@ -273,6 +275,32 @@ export function InterviewCompletionPopup({
             &ldquo;{aiInsight}&rdquo;
           </p>
         </div>
+
+        {/* 4.5 Recommended Learning Action (STEP 14 SPEC) */}
+        {!isInterviewReady && (
+          <div className="p-3.5 rounded-2xl bg-rose-950/30 border border-rose-500/40 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono font-bold text-rose-300 uppercase tracking-widest flex items-center gap-1.5">
+                <Target className="h-3.5 w-3.5 text-rose-400" />
+                Recommended Learning Action:
+              </span>
+              <Badge variant="cyber" size="sm" className="text-[9px] font-mono">
+                15-Min Sprint
+              </Badge>
+            </div>
+            <p className="text-xs font-mono text-white font-bold">
+              Practice SQL Technical Questions &amp; Multi-Table JOIN Architecture
+            </p>
+            <div className="pt-1 flex justify-end">
+              <Link href="/learning/intervention" className="w-full">
+                <Button variant="cyber" size="sm" className="w-full text-xs font-mono gap-1.5 shadow-glow">
+                  <span>Remediate Identified Skill Deficit</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* 5. Clear Actions */}
         <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import {
   Award,
   CheckCircle2,
@@ -26,6 +27,8 @@ import {
   AlertCircle,
   Copy,
   Check,
+  Dna,
+  ArrowRight,
 } from "lucide-react";
 import { GlassCard } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -313,6 +316,56 @@ export function ResumeAnalysisDashboard({
       {activeTab === "overview" && (
         <SlideUp>
           <div className="space-y-6">
+            {/* ========================================================================= */}
+            {/* CLAIMED SKILL VS DEMONSTRATED SKILL VERIFICATION GAP (STEP 14 SPEC)       */}
+            {/* ========================================================================= */}
+            <GlassCard className="p-6 space-y-4 border-rose-500/30 bg-gradient-to-br from-rose-950/20 via-slate-900/90 to-cyan-950/20" glow>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-white/[0.08]">
+                <div className="flex items-center gap-2">
+                  <Dna className="h-5 w-5 text-rose-400" />
+                  <h3 className="text-base font-bold text-white font-mono">
+                    Resume Claimed vs. Demonstrated Skill Verification Gap
+                  </h3>
+                </div>
+                <Badge variant="destructive" size="sm" className="font-mono text-[9px]">
+                  Learning Engine Connected
+                </Badge>
+              </div>
+
+              <p className="text-xs text-slate-300">
+                KaushalSetu cross-references the skills claimed on your uploaded resume against your empirical diagnostic assessment results to detect unverified proficiency gaps.
+              </p>
+
+              {/* Comparison Item */}
+              <div className="p-4 rounded-xl bg-slate-950/80 border border-rose-500/30 flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs font-mono">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <strong className="text-white text-sm">SQL &amp; Relational Databases</strong>
+                    <Badge variant="outline" size="sm" className="text-[9px] text-amber-300 border-amber-500/30">
+                      ⚠️ Verification Gap (-26%)
+                    </Badge>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-400">
+                    <span>Resume Claim: <strong className="text-cyan-300">Advanced SQL (84% Equivalent)</strong></span>
+                    <span>•</span>
+                    <span>Assessment Result: <strong className="text-rose-400">58% Demonstrated</strong></span>
+                  </div>
+                  <p className="text-[10px] text-slate-400">
+                    Specific Gaps: SQL JOINs (42%) and Subquery Latency (51%).
+                  </p>
+                </div>
+
+                <div className="shrink-0">
+                  <Link href="/learning/intervention">
+                    <Button variant="cyber" size="sm" className="text-xs font-mono gap-1.5 shadow-glow">
+                      <span>SQL Learning ➔ Practice ➔ Reassess</span>
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </GlassCard>
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Strengths */}
               <GlassCard className="p-6 space-y-4 border-emerald-500/20 bg-emerald-950/10" glow>
