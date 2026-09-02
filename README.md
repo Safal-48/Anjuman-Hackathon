@@ -226,10 +226,10 @@ The platform features role-based access control across 5 distinct ecosystem pers
 
 ## 🎬 14-Step Canonical Presentation Walkthrough
 
-When demonstrating KaushalSetu to evaluators, click the glowing **`🏆 Judge Tour`** button in the top navigation bar to launch the guided walkthrough, or follow these steps manually:
+When demonstrating KaushalSetu to evaluators, click the glowing **` Judge Tour`** button in the top navigation bar to launch the guided walkthrough, or follow these steps manually:
 
 1. **Onboarding (`/onboarding`)**: Register and set goal: *Become a Data Analyst*. Notice how self-declared skills are tagged `[Unverified (0% Demonstrated)]`.
-2. **Diagnostic Assessment (`/assessment`)**: Take the assessment. The AI tests 7 granular sub-topics (Basics 86%, Filtering 78%, JOINs 42% 🚨).
+2. **Diagnostic Assessment (`/assessment`)**: Take the assessment. The AI tests 7 granular sub-topics (Basics 86%, Filtering 78%, JOINs 42% ).
 3. **Personal Skill DNA (`/skills`)**: Inspect Skill DNA. SQL is flagged as a *Recurring Weakness* with downward trend ($\downarrow$).
 4. **Priority Engine (`/skills`)**: View the 94/100 Priority Score designating SQL JOINs as the #1 critical blocker (`DO THIS FIRST`).
 5. **"Why This?" Explanation (`/learning/resources`)**: Inspect 4-pillar explainable cards detailing *What, Why, What it improves, and What to do after*.
@@ -288,7 +288,7 @@ When demonstrating KaushalSetu to evaluators, click the glowing **`🏆 Judge To
 
 ---
 
-## 🏆 Summary of Differentiators
+##  Summary of Differentiators
 
 | Traditional EdTech & LMS | KaushalSetu (Team TechNova) |
 | :--- | :--- |
