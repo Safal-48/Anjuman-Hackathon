@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { TopicDiagnosticBreakdown } from "@/components/skills/topic-diagnostic-breakdown";
 import { PersonalSkillDNA } from "@/components/skills/personal-skill-dna";
+import { PerformancePriorityEngine } from "@/components/skills/performance-priority-engine";
 import { Container } from "@/components/layout/container";
 import { ReadinessRadial } from "@/components/skills/readiness-radial";
 import { SkillStrengthsWeaknesses } from "@/components/skills/skill-strengths-weaknesses";
@@ -133,7 +134,14 @@ export default function SkillsIntelligencePage() {
           </SlideUp>
         </div>
 
-        {/* Section 2: Multi-Vector Readiness Radial */}
+        {/* Section 2: Performance-Based Gap & Priority Engine (Do This First) */}
+        <div className="mt-8">
+          <SlideUp delay={0.08}>
+            <PerformancePriorityEngine />
+          </SlideUp>
+        </div>
+
+        {/* Section 3: Multi-Vector Readiness Radial */}
         <div className="mt-8">
           <SlideUp delay={0.1}>
             <ReadinessRadial report={report} />
