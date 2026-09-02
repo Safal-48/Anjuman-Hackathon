@@ -1,9 +1,9 @@
 export const SITE_CONFIG = {
-  name: "KaushalSetu",
-  shortName: "KaushalSetu",
-  tagline: "Connecting Skills. Bridging Opportunities.",
+  name: "Skillora",
+  shortName: "Skillora",
+  tagline: "Learn Smart. Improve Continuously. Own Your Future.",
   description:
-    "Bridging the gap between what students learn, and what industry needs. Turning skills into opportunities, and potential into careers.",
+    "Autonomous AI Personalized Learning Ecosystem & Continuous Skill Intelligence Platform. Learn smart, improve continuously, and own your future.",
   sih: {
     year: "2026",
     problemStatementId: "26044",

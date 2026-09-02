@@ -30,10 +30,10 @@ export const metadata: Metadata = {
   },
   description: SITE_CONFIG.description,
   keywords: [
-    "KaushalSetu",
-    "Kaushal Setu",
+    "Skillora",
+    "Skillora AI",
     "TechNova",
-    "AI Personalized Learning Assistant",
+    "Autonomous AI Personalized Learning Ecosystem",
     "Adaptive Learning Ecosystem",
     "Skill DNA",
     "Connecting Skills Bridging Opportunities",

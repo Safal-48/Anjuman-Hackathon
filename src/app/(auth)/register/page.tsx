@@ -136,11 +136,11 @@ export default function RegisterPage() {
               </Badge>
             </div>
             <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground font-mono">
-              Join <span className="text-cyan-400">Kaushal</span>
-              <span className="text-emerald-400">Setu</span>
+              Join <span className="text-white">Skill</span>
+              <span className="bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">ora</span>
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground max-w-md font-mono">
-              Connecting skills to opportunities and building next-generation verified careers.
+              Learn Smart • Improve Continuously • Own Your Future
             </p>
           </div>
         </FadeIn>

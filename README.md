@@ -1,9 +1,11 @@
 <div align="center">
 
-# 🌐 KAUSHALSETU
+<img src="public/skillora-logo.png" alt="Skillora Logo" width="120" style="border-radius: 24px; box-shadow: 0 0 30px rgba(6, 182, 212, 0.4);" />
+
+# 🚀 SKILLORA
 ### **Autonomous AI Personalized Learning Ecosystem & Continuous Skill Intelligence Platform**
 
-*Bridging the divide between academic learning and industry readiness through empirical performance feedback.*
+*Learn Smart. Improve Continuously. Own Your Future.*
 
 [![Engineered By](https://img.shields.io/badge/Engineered%20By-Team%20TechNova-06b6d4?style=for-the-badge&logo=codeforces&logoColor=white)](https://github.com/Safal-48/Anjuman-Hackathon)
 [![Next.js](https://img.shields.io/badge/Next.js%2014-App%20Router-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org)
@@ -19,7 +21,7 @@
 
 Traditional learning platforms and LMS solutions suffer from a fatal flaw: **Course Completion is treated as Skill Mastery.** Watching a 10-hour tutorial or obtaining a completion certificate does not prove genuine competency.
 
-**KaushalSetu** is not a course platform and not just a chatbot. It is an **Autonomous Adaptive AI Learning Ecosystem** that:
+**Skillora** is not a course platform and not just a chatbot. It is an **Autonomous Adaptive AI Learning Ecosystem** that:
 1. Continuously observes a student's actual diagnostic and sandbox performance.
 2. Identifies granular sub-skill deficits rather than vague overall percentages.
 3. Computes multi-factor priority scores to determine **"What do I learn first?"**.

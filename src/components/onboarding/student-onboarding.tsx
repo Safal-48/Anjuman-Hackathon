@@ -816,7 +816,7 @@ export function StudentOnboarding() {
                 </div>
 
                 <div className="p-3 rounded-xl bg-slate-950/80 border border-white/[0.05] text-xs leading-relaxed text-slate-200 font-sans">
-                  "{languageExamples[selectedLanguage].explanation}"
+                  &ldquo;{languageExamples[selectedLanguage].explanation}&rdquo;
                 </div>
 
                 {/* Simulated Student Query & Response */}
@@ -825,7 +825,7 @@ export function StudentOnboarding() {
                     <MessageSquare className="h-3.5 w-3.5 text-cyan-400 shrink-0 mt-0.5" />
                     <div>
                       <span className="text-[10px] text-slate-400 block uppercase">Sample Student Query:</span>
-                      <span>"{languageExamples[selectedLanguage].query}"</span>
+                      <span>&ldquo;{languageExamples[selectedLanguage].query}&rdquo;</span>
                     </div>
                   </div>
 
@@ -833,13 +833,13 @@ export function StudentOnboarding() {
                     <Brain className="h-3.5 w-3.5 text-emerald-400 shrink-0 mt-0.5" />
                     <div>
                       <span className="text-[10px] text-slate-400 block uppercase">AI Tutor Response:</span>
-                      <span>"{languageExamples[selectedLanguage].queryResponse}"</span>
+                      <span>&ldquo;{languageExamples[selectedLanguage].queryResponse}&rdquo;</span>
                     </div>
                   </div>
                 </div>
 
                 <p className="text-[11px] text-slate-400 font-mono pt-1">
-                  💡 <strong>Note:</strong> You can speak or type in natural mixed queries like <em>"Bhai mujhe SQL JOIN simple example ke saath samjha"</em> anytime!
+                  💡 <strong>Note:</strong> You can speak or type in natural mixed queries like <em>&ldquo;Bhai mujhe SQL JOIN simple example ke saath samjha&rdquo;</em> anytime!
                 </p>
               </GlassCard>
             </motion.div>

@@ -83,11 +83,11 @@ export default function LoginPage() {
               </Badge>
             </div>
             <h1 className="text-3xl font-extrabold tracking-tight text-foreground font-mono">
-              Sign In to <span className="text-cyan-400">Kaushal</span>
-              <span className="text-emerald-400">Setu</span>
+              Sign In to <span className="text-white">Skill</span>
+              <span className="bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">ora</span>
             </h1>
             <p className="text-xs text-muted-foreground max-w-sm font-mono">
-              Connecting Skills. Bridging Opportunities.
+              Learn Smart • Improve Continuously • Own Your Future
             </p>
           </div>
         </FadeIn>
