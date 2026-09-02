@@ -22,24 +22,24 @@ export async function getCandidateContext(
   if (!intelligence) return null;
 
   const verifiedSkillsList = profile.skills
-    .map((s) => `${s.skillName} (${s.level}, ${s.proficiencyScore}%)`)
+    .map((s: any) => `${s.skillName} (${s.level}, ${s.proficiencyScore}%)`)
     .join(", ");
 
   const verifiedProjectsList = profile.projects
-    .map((p) => `"${p.title}": ${p.summary} [Tech: ${p.techStack.join(", ")}]`)
+    .map((p: any) => `"${p.title}": ${p.summary} [Tech: ${p.techStack.join(", ")}]`)
     .join("; ");
 
   const strongSkillsList = intelligence.strongSkills
-    .map((s) => `${s.skillName} (${s.score}%)`)
+    .map((s: any) => `${s.skillName} (${s.score}%)`)
     .join(", ");
 
   const weakSkillsList = intelligence.weakSkills
-    .map((s) => `${s.skillName} (${s.score}%)`)
+    .map((s: any) => `${s.skillName} (${s.score}%)`)
     .join(", ");
 
   const gapsList = intelligence.skillGaps
     .map(
-      (g) =>
+      (g: any) =>
         `${g.skillName} [Status: ${g.gapCategory}, Student: ${g.studentScore}%, Target Req: ${g.requiredScore}%, Deficit: ${g.gapDifference} pts, Action: ${g.recommendation}]`
     )
     .join("\n- ");

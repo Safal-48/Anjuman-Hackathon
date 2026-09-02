@@ -6,6 +6,9 @@ import {
   SkillGapCategory,
   SkillLevel,
   QuestionCategory,
+  TopicMasteryBreakdown,
+  DiagnosticInsight,
+  RecurringMistakePattern,
 } from "@/lib/supabase/types";
 
 export interface ComputedScores {
@@ -15,6 +18,8 @@ export interface ComputedScores {
   aptitudeScore: number;
   careerAlignmentScore: number;
   skillBreakdowns: SkillScoreBreakdown[];
+  topicBreakdowns: TopicMasteryBreakdown[];
+  diagnosticInsights: DiagnosticInsight;
   strongSkills: SkillScoreBreakdown[];
   weakSkills: SkillScoreBreakdown[];
 }
@@ -30,7 +35,7 @@ export function mapScoreToSkillLevel(score: number): SkillLevel {
 }
 
 /**
- * Deterministically computes category scores and skill breakdowns from assessment responses
+ * Deterministically computes category scores, skill breakdowns, and sub-skill/topic mastery from assessment responses
  */
 export function computeAssessmentScores(
   questions: AssessmentQuestion[],
@@ -44,14 +49,21 @@ export function computeAssessmentScores(
     career_interest: { earned: 0, possible: 0 },
   };
 
-  // Skill-specific accumulators: skillTag -> { category, earned, possible }
-  const skillMap = new Map<string, { category: string; earned: number; possible: number }>();
+  // Skill-specific accumulators: skillTag -> { category, earned, possible, correct, total }
+  const skillMap = new Map<string, { category: string; earned: number; possible: number; correct: number; total: number }>();
+
+  // Sub-topic accumulators: `${skillTag}:::${subTopic}` -> { skillName, topicName, earned, possible, correct, total }
+  const topicMap = new Map<string, { skillName: string; topicName: string; earned: number; possible: number; correct: number; total: number }>();
+
+  // Mistake tracker for pattern identification
+  const missedTopicCounts: Record<string, number> = {};
 
   questions.forEach((q) => {
     const selectedOptionId = responses[q.id];
     const selectedOption = q.options.find((opt) => opt.id === selectedOptionId);
 
     const weightEarned = selectedOption ? selectedOption.scoreWeight : 0;
+    const isCorrect = selectedOption?.isCorrect === true || weightEarned >= 0.8;
     const maxWeight = 1.0;
 
     // Accumulate category points
@@ -59,19 +71,44 @@ export function computeAssessmentScores(
     categoryTotals[q.category].possible += maxWeight;
 
     // Accumulate skill tag points
-    const current = skillMap.get(q.skillTag) || {
+    const currentSkill = skillMap.get(q.skillTag) || {
       category: formatCategoryName(q.category),
       earned: 0,
       possible: 0,
+      correct: 0,
+      total: 0,
     };
-    current.earned += weightEarned;
-    current.possible += maxWeight;
-    skillMap.set(q.skillTag, current);
+    currentSkill.earned += weightEarned;
+    currentSkill.possible += maxWeight;
+    currentSkill.total += 1;
+    if (isCorrect) currentSkill.correct += 1;
+    skillMap.set(q.skillTag, currentSkill);
+
+    // Accumulate sub-topic points
+    const subTopic = q.subTopic || "Core Foundations";
+    const topicKey = `${q.skillTag}:::${subTopic}`;
+    const currentTopic = topicMap.get(topicKey) || {
+      skillName: q.skillTag,
+      topicName: subTopic,
+      earned: 0,
+      possible: 0,
+      correct: 0,
+      total: 0,
+    };
+    currentTopic.earned += weightEarned;
+    currentTopic.possible += maxWeight;
+    currentTopic.total += 1;
+    if (isCorrect) {
+      currentTopic.correct += 1;
+    } else {
+      missedTopicCounts[subTopic] = (missedTopicCounts[subTopic] || 0) + 1;
+    }
+    topicMap.set(topicKey, currentTopic);
   });
 
   const getPercentage = (cat: QuestionCategory): number => {
     const { earned, possible } = categoryTotals[cat];
-    if (possible === 0) return 75; // baseline default if no questions in category
+    if (possible === 0) return 75; // baseline default
     return Math.round((earned / possible) * 100);
   };
 
@@ -81,7 +118,6 @@ export function computeAssessmentScores(
   const careerAlignmentScore = getPercentage("career_interest");
 
   // Weighted composite score (Explainable Formula)
-  // Technical: 40%, Soft Skills: 25%, Aptitude: 25%, Career: 10%
   const overallReadinessScore = Math.round(
     technicalScore * 0.4 +
     softSkillScore * 0.25 +
@@ -105,6 +141,105 @@ export function computeAssessmentScores(
     };
   });
 
+  // Generate granular topic/sub-skill mastery breakdowns (e.g. SQL JOINs: 42%, Filtering: 78%)
+  const topicBreakdowns: TopicMasteryBreakdown[] = Array.from(topicMap.values()).map((t) => {
+    const score = t.possible > 0 ? Math.round((t.earned / t.possible) * 100) : 70;
+    let status: "Mastered" | "Proficient" | "Needs Attention" | "Critical Gap" = "Proficient";
+    let priority: "High" | "Medium" | "Low" = "Low";
+
+    if (score >= 80) {
+      status = "Mastered";
+      priority = "Low";
+    } else if (score >= 65) {
+      status = "Proficient";
+      priority = "Medium";
+    } else if (score >= 50) {
+      status = "Needs Attention";
+      priority = "Medium";
+    } else {
+      status = "Critical Gap";
+      priority = "High";
+    }
+
+    return {
+      skillName: t.skillName,
+      topicName: t.topicName,
+      score,
+      status,
+      questionsCount: t.total,
+      correctCount: t.correct,
+      priority,
+    };
+  });
+
+  // Calculate Diagnostic Insights
+  const strongAreas = topicBreakdowns
+    .filter((t) => t.score >= 75)
+    .map((t) => ({
+      topic: `${t.skillName} → ${t.topicName}`,
+      score: t.score,
+      rationale: `Strong conceptual grasp (${t.score}% mastery). Ready for production implementation.`,
+    }));
+
+  const weakAreas = topicBreakdowns
+    .filter((t) => t.score >= 50 && t.score < 75)
+    .map((t) => ({
+      topic: `${t.skillName} → ${t.topicName}`,
+      score: t.score,
+      deficit: 80 - t.score,
+      rationale: `Moderate conceptual friction (${t.score}%). Requires targeted practice sandbox.`,
+    }));
+
+  const criticalGaps = topicBreakdowns
+    .filter((t) => t.score < 50)
+    .map((t) => ({
+      topic: `${t.skillName} → ${t.topicName}`,
+      score: t.score,
+      deficit: 85 - t.score,
+      immediateAction: `Immediate intervention required (Score: ${t.score}%). Study fundamentals before progressing.`,
+    }));
+
+  // Identify recurring mistake patterns
+  const recurringMistakes: RecurringMistakePattern[] = [];
+  if (missedTopicCounts["JOINs"] || missedTopicCounts["Subqueries"]) {
+    recurringMistakes.push({
+      id: "rm-sql-join",
+      patternName: "Relational Set Coupling vs. Correlated Subquery Optimization",
+      affectedTopics: ["SQL → JOINs", "SQL → Subqueries"],
+      mistakeFrequency: (missedTopicCounts["JOINs"] || 0) + (missedTopicCounts["Subqueries"] || 0),
+      explanation: "Tendency to select nested subqueries where indexed INNER/LEFT JOINs yield O(N) rather than O(N²) execution plans.",
+      remedyAction: "Review SQL Execution Plan and practice Join predicates in the Interactive Sandbox.",
+    });
+  }
+
+  if (missedTopicCounts["Distributed Systems"] || missedTopicCounts["System Architecture"]) {
+    recurringMistakes.push({
+      id: "rm-dist-consensus",
+      patternName: "Distributed Consensus Failure Mode Recovery",
+      affectedTopics: ["Distributed Systems → Consensus", "System Architecture → Raft"],
+      mistakeFrequency: 2,
+      explanation: "Confusion between Split-Brain leader election vs. Quorum commit acknowledgments under network partition.",
+      remedyAction: "Explore Raft visualizer walk-through and complete consensus failure drill.",
+    });
+  }
+
+  // Topics requiring immediate attention
+  const immediateAttentionTopics = topicBreakdowns
+    .filter((t) => t.priority === "High" || t.score < 60)
+    .map((t) => ({
+      topic: `${t.skillName}: ${t.topicName}`,
+      urgency: t.score < 45 ? ("Immediate" as const) : ("High" as const),
+      remedialResourceUrl: `/learning/resources?highlight=${encodeURIComponent(t.topicName)}`,
+    }));
+
+  const diagnosticInsights: DiagnosticInsight = {
+    strongAreas,
+    weakAreas,
+    criticalGaps,
+    recurringMistakes,
+    immediateAttentionTopics,
+  };
+
   const strongSkills = skillBreakdowns.filter((s) => s.strengthType === "strong");
   const weakSkills = skillBreakdowns.filter((s) => s.strengthType === "weak");
 
@@ -115,6 +250,8 @@ export function computeAssessmentScores(
     aptitudeScore,
     careerAlignmentScore,
     skillBreakdowns,
+    topicBreakdowns,
+    diagnosticInsights,
     strongSkills,
     weakSkills,
   };
@@ -133,7 +270,6 @@ export function calculateExplainableGaps(
   });
 
   return targetRole.requiredSkills.map((req) => {
-    // Find closest matching student skill or fallback to default baseline
     const studentScore = studentSkillMap.get(req.skillName.toLowerCase()) ?? 50;
     const requiredScore = req.requiredScore;
     const gapDifference = requiredScore - studentScore;

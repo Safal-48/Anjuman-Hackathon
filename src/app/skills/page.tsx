@@ -14,6 +14,7 @@ import {
   Layers,
   Zap,
 } from "lucide-react";
+import { TopicDiagnosticBreakdown } from "@/components/skills/topic-diagnostic-breakdown";
 import { Container } from "@/components/layout/container";
 import { ReadinessRadial } from "@/components/skills/readiness-radial";
 import { SkillStrengthsWeaknesses } from "@/components/skills/skill-strengths-weaknesses";
@@ -131,7 +132,17 @@ export default function SkillsIntelligencePage() {
           </SlideUp>
         </div>
 
-        {/* Section 2: Superpowers & Priority Growth Areas */}
+        {/* Section 2: Topic & Sub-Skill Granular Diagnostic Mastery Matrix */}
+        <div className="mt-8">
+          <SlideUp delay={0.15}>
+            <TopicDiagnosticBreakdown
+              topicBreakdowns={report.topicBreakdowns}
+              diagnosticInsights={report.diagnosticInsights}
+            />
+          </SlideUp>
+        </div>
+
+        {/* Section 3: Superpowers & Priority Growth Areas */}
         <div className="mt-8">
           <SlideUp delay={0.2}>
             <SkillStrengthsWeaknesses
@@ -142,7 +153,7 @@ export default function SkillsIntelligencePage() {
           </SlideUp>
         </div>
 
-        {/* Section 3: Explainable Skill Gap Matrix vs Target Role */}
+        {/* Section 4: Explainable Skill Gap Matrix vs Target Role */}
         <div className="mt-8">
           <SlideUp delay={0.3}>
             <SkillGapMatrix

@@ -25,12 +25,12 @@ export const DEFAULT_TARGET_ROLES: TargetRoleBenchmark[] = [
     requiredSkills: [
       { skillName: "Python & PyTorch", category: "AI & Machine Learning", requiredScore: 90, weight: 1.5 },
       { skillName: "Distributed Systems", category: "Cloud & DevOps", requiredScore: 85, weight: 1.3 },
+      { skillName: "SQL & Data Engineering", category: "Data Systems", requiredScore: 85, weight: 1.2 },
       { skillName: "React / Next.js", category: "Web Systems", requiredScore: 75, weight: 0.8 },
       { skillName: "Algorithms & Complexity", category: "Core Aptitude", requiredScore: 85, weight: 1.2 },
       { skillName: "System Architecture", category: "Technical Architecture", requiredScore: 90, weight: 1.4 },
       { skillName: "Problem Solving", category: "Cognitive Aptitude", requiredScore: 85, weight: 1.0 },
       { skillName: "Team Collaboration", category: "Soft Skills", requiredScore: 80, weight: 0.9 },
-      { skillName: "Communication & Mentorship", category: "Soft Skills", requiredScore: 75, weight: 0.8 },
     ],
   },
   {
@@ -41,279 +41,318 @@ export const DEFAULT_TARGET_ROLES: TargetRoleBenchmark[] = [
     requiredSkills: [
       { skillName: "React / Next.js", category: "Web Systems", requiredScore: 95, weight: 1.5 },
       { skillName: "TypeScript", category: "Web Systems", requiredScore: 90, weight: 1.4 },
+      { skillName: "SQL & Data Engineering", category: "Data Systems", requiredScore: 88, weight: 1.3 },
       { skillName: "Distributed Systems", category: "Cloud & DevOps", requiredScore: 85, weight: 1.2 },
       { skillName: "System Architecture", category: "Technical Architecture", requiredScore: 88, weight: 1.3 },
       { skillName: "Algorithms & Complexity", category: "Core Aptitude", requiredScore: 80, weight: 1.0 },
-      { skillName: "Problem Solving", category: "Cognitive Aptitude", requiredScore: 80, weight: 1.0 },
       { skillName: "Team Collaboration", category: "Soft Skills", requiredScore: 85, weight: 1.0 },
-      { skillName: "Communication & Mentorship", category: "Soft Skills", requiredScore: 80, weight: 0.9 },
     ],
   },
   {
-    id: "cloud_devops_sre",
-    title: "Cloud DevOps & Reliability Engineer (SRE)",
-    description: "Builds automated CI/CD pipelines, container orchestration meshes, and high-availability infrastructure.",
+    id: "data_analyst_engineer",
+    title: "Data Analyst & Business Intelligence Engineer",
+    description: "Specializes in relational database queries, data modeling, SQL analytics, and Power BI dashboards.",
     requiredReadinessScore: 80,
     requiredSkills: [
-      { skillName: "Distributed Systems", category: "Cloud & DevOps", requiredScore: 92, weight: 1.5 },
-      { skillName: "System Architecture", category: "Technical Architecture", requiredScore: 85, weight: 1.3 },
-      { skillName: "Algorithms & Complexity", category: "Core Aptitude", requiredScore: 75, weight: 1.0 },
-      { skillName: "Problem Solving", category: "Cognitive Aptitude", requiredScore: 85, weight: 1.1 },
-      { skillName: "Team Collaboration", category: "Soft Skills", requiredScore: 80, weight: 0.9 },
-      { skillName: "Communication & Mentorship", category: "Soft Skills", requiredScore: 75, weight: 0.8 },
-    ],
-  },
-  {
-    id: "cybersecurity_specialist",
-    title: "Cybersecurity & Cryptography Specialist",
-    description: "Secures distributed protocols, performs vulnerability analysis, and reinforces cryptographic identity layers.",
-    requiredReadinessScore: 84,
-    requiredSkills: [
-      { skillName: "Distributed Systems", category: "Cloud & DevOps", requiredScore: 88, weight: 1.3 },
-      { skillName: "System Architecture", category: "Technical Architecture", requiredScore: 90, weight: 1.4 },
-      { skillName: "Algorithms & Complexity", category: "Core Aptitude", requiredScore: 90, weight: 1.4 },
-      { skillName: "Problem Solving", category: "Cognitive Aptitude", requiredScore: 90, weight: 1.2 },
-      { skillName: "Team Collaboration", category: "Soft Skills", requiredScore: 75, weight: 0.8 },
+      { skillName: "SQL & Data Engineering", category: "Data Systems", requiredScore: 92, weight: 1.6 },
+      { skillName: "Python & Data Structures", category: "Data Science", requiredScore: 85, weight: 1.3 },
+      { skillName: "Statistics & Aptitude", category: "Core Aptitude", requiredScore: 85, weight: 1.2 },
+      { skillName: "Problem Solving", category: "Cognitive Aptitude", requiredScore: 80, weight: 1.0 },
+      { skillName: "Communication", category: "Soft Skills", requiredScore: 80, weight: 0.9 },
     ],
   },
 ];
 
 export const DEFAULT_QUESTIONS: AssessmentQuestion[] = [
-  // 1. Technical: Next.js / Web Systems
+  // --------------------------------------------------------------------------
+  // 1. SQL TOPICS & SUB-SKILLS
+  // --------------------------------------------------------------------------
   {
-    id: "q-tech-01",
+    id: "q-sql-01",
     category: "technical",
-    skillTag: "React / Next.js",
-    difficulty: "medium",
-    questionText: "In Next.js App Router, how does React Server Components (RSC) impact client-side bundle size and data fetching latency?",
+    skillTag: "SQL & Relational Databases",
+    subTopic: "Basics",
+    difficulty: "easy",
+    questionText: "Which SQL clause is used to eliminate duplicate rows from a query result set?",
     questionType: "single_choice",
     displayOrder: 1,
-    explanation: "React Server Components execute entirely on the server and stream pre-rendered HTML without shipping component JS to the client bundle.",
+    explanation: "The `DISTINCT` keyword following `SELECT` removes duplicate records from the returned dataset.",
     options: [
-      { id: "opt-1a", text: "RSC ships component code to the client and requires client-side re-fetching.", scoreWeight: 0.0, isCorrect: false },
-      { id: "opt-1b", text: "RSC executes only on the server, zeroing client JS bundle overhead and co-locating data queries next to the database.", scoreWeight: 1.0, isCorrect: true },
-      { id: "opt-1c", text: "RSC converts all code into static WebAssembly modules that run in the browser worker thread.", scoreWeight: 0.2, isCorrect: false },
-      { id: "opt-1d", text: "RSC only works when client-side Hydration is completely disabled.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-s1a", text: "SELECT UNIQUE col FROM table;", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-s1b", text: "SELECT DISTINCT col FROM table;", scoreWeight: 1.0, isCorrect: true },
+      { id: "opt-s1c", text: "SELECT DIFFERENT col FROM table;", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-s1d", text: "SELECT DEDUPLICATE col FROM table;", scoreWeight: 0.0, isCorrect: false },
     ],
   },
-  // 2. Technical: Python & PyTorch
   {
-    id: "q-tech-02",
+    id: "q-sql-02",
     category: "technical",
-    skillTag: "Python & PyTorch",
-    difficulty: "hard",
-    questionText: "When training a deep neural network with PyTorch, what is the primary consequence of omitting `optimizer.zero_grad()` prior to `loss.backward()`?",
+    skillTag: "SQL & Relational Databases",
+    subTopic: "Filtering",
+    difficulty: "easy",
+    questionText: "When filtering records in SQL, which operator allows you to specify multiple discrete candidate values in a `WHERE` predicate?",
     questionType: "single_choice",
     displayOrder: 2,
-    explanation: "PyTorch accumulates gradients by default; failing to zero them causes unintended gradient accumulation across iterations.",
+    explanation: "The `IN` operator allows checking if a column value matches any value within a specified list or subquery.",
     options: [
-      { id: "opt-2a", text: "Gradients from subsequent batches accumulate into existing gradients, causing destabilized parameter updates.", scoreWeight: 1.0, isCorrect: true },
-      { id: "opt-2b", text: "The GPU VRAM is immediately deallocated, throwing a CUDA runtime exception.", scoreWeight: 0.1, isCorrect: false },
-      { id: "opt-2c", text: "The learning rate decays to zero automatically.", scoreWeight: 0.0, isCorrect: false },
-      { id: "opt-2d", text: "The network switches to inference mode implicitly.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-s2a", text: "WHERE status IN ('active', 'pending', 'verified')", scoreWeight: 1.0, isCorrect: true },
+      { id: "opt-s2b", text: "WHERE status WITHIN ('active', 'pending')", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-s2c", text: "WHERE status CONTAINS ('active')", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-s2d", text: "WHERE status MATCH ('active')", scoreWeight: 0.0, isCorrect: false },
     ],
   },
-  // 3. Technical: Distributed Systems
   {
-    id: "q-tech-03",
+    id: "q-sql-03",
     category: "technical",
-    skillTag: "Distributed Systems",
-    difficulty: "hard",
-    questionText: "Under the CAP theorem, during an active network partition in a distributed multi-region database, what fundamental trade-off must be chosen?",
+    skillTag: "SQL & Relational Databases",
+    subTopic: "Aggregation",
+    difficulty: "medium",
+    questionText: "What is the critical semantic difference between `WHERE` and `HAVING` clauses in SQL?",
     questionType: "single_choice",
     displayOrder: 3,
-    explanation: "When network partition (P) occurs, a distributed system must choose between returning consistent, up-to-date data (C) or guaranteeing immediate availability (A).",
+    explanation: "`WHERE` filters individual rows before grouping occurs, while `HAVING` filters aggregated group records after `GROUP BY` calculation.",
     options: [
-      { id: "opt-3a", text: "Choose between Linear Consistency (C) vs High Availability (A).", scoreWeight: 1.0, isCorrect: true },
-      { id: "opt-3b", text: "Choose between ACID compliance vs Data Encryption at rest.", scoreWeight: 0.0, isCorrect: false },
-      { id: "opt-3c", text: "Choose between Monolithic deployment vs Microservices.", scoreWeight: 0.0, isCorrect: false },
-      { id: "opt-3d", text: "Choose between TCP socket streaming vs UDP broadcast packets.", scoreWeight: 0.1, isCorrect: false },
+      { id: "opt-s3a", text: "WHERE filters rows before aggregation; HAVING filters aggregated group metrics post-GROUP BY.", scoreWeight: 1.0, isCorrect: true },
+      { id: "opt-s3b", text: "HAVING filters rows before aggregation; WHERE filters groups.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-s3c", text: "WHERE and HAVING are 100% interchangeable synonyms in standard ANSI SQL.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-s3d", text: "HAVING can only be used with subqueries.", scoreWeight: 0.0, isCorrect: false },
     ],
   },
-  // 4. Technical: System Architecture
   {
-    id: "q-tech-04",
+    id: "q-sql-04",
     category: "technical",
-    skillTag: "System Architecture",
+    skillTag: "SQL & Relational Databases",
+    subTopic: "GROUP BY",
     difficulty: "medium",
-    questionText: "What architecture pattern is most suitable for handling sudden traffic spikes in an event-driven telemetry pipeline without dropping incoming payloads?",
+    questionText: "In SQL, what happens if you select a non-aggregated column that is NOT included in the `GROUP BY` clause under standard SQL modes?",
     questionType: "single_choice",
     displayOrder: 4,
-    explanation: "Message broker buffers (e.g. Kafka/RabbitMQ) decouple producers from consumers, smoothing peak ingestion loads.",
+    explanation: "Standard ANSI SQL raises an error because the engine cannot determine which row's value to represent for the grouped tuple.",
     options: [
-      { id: "opt-4a", text: "Synchronous blocking HTTP POST requests directly into the primary relational database.", scoreWeight: 0.0, isCorrect: false },
-      { id: "opt-4b", text: "Distributed message queue buffer (e.g., Apache Kafka / Redis Streams) with asynchronous worker pooling.", scoreWeight: 1.0, isCorrect: true },
-      { id: "opt-4c", text: "Client-side infinite retry loop with zero exponential backoff.", scoreWeight: 0.0, isCorrect: false },
-      { id: "opt-4d", text: "Server-Sent Events without backpressure buffers.", scoreWeight: 0.2, isCorrect: false },
+      { id: "opt-s4a", text: "The engine raises a syntax error (or unpredictable non-deterministic values without ONLY_FULL_GROUP_BY).", scoreWeight: 1.0, isCorrect: true },
+      { id: "opt-s4b", text: "The engine automatically computes the average across all non-grouped columns.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-s4c", text: "The engine automatically drops that column from the output.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-s4d", text: "The query automatically converts to a DISTINCT subquery.", scoreWeight: 0.0, isCorrect: false },
     ],
   },
-  // 5. Soft Skill: Team Collaboration
   {
-    id: "q-soft-01",
-    category: "soft_skill",
-    skillTag: "Team Collaboration",
+    id: "q-sql-05",
+    category: "technical",
+    skillTag: "SQL & Relational Databases",
+    subTopic: "JOINs",
     difficulty: "medium",
-    questionText: "A high-severity blocker arises in a cross-functional sprint between frontend and backend leads 24 hours before hackathon submission. What is the optimal approach?",
+    questionText: "You have a `Customers` table (100 rows) and an `Orders` table (50 rows). A `LEFT JOIN` on `Customers.id = Orders.customer_id` will return:",
     questionType: "single_choice",
     displayOrder: 5,
-    explanation: "Effective collaboration requires immediate alignment on unified interface contracts (API schema / mock responses) so teams unblock in parallel.",
+    explanation: "A `LEFT JOIN` preserves all rows from the left table (`Customers`), populating matching order fields or `NULL` if a customer has zero orders.",
     options: [
-      { id: "opt-5a", text: "Agree on an immutable OpenAPI/TypeScript contract immediately, mock endpoints on the frontend, and resolve backend logic in parallel.", scoreWeight: 1.0, isCorrect: true },
-      { id: "opt-5b", text: "Halt all frontend development until the backend is completely refactored and deployed.", scoreWeight: 0.1, isCorrect: false },
-      { id: "opt-5c", text: "Rewrite the entire backend code without informing the frontend team.", scoreWeight: 0.0, isCorrect: false },
-      { id: "opt-5d", text: "Escalate blame to team management and request a submission extension.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-s5a", text: "At least 100 rows (all customers preserved, with NULLs for customers without orders).", scoreWeight: 1.0, isCorrect: true },
+      { id: "opt-s5b", text: "Exactly 50 rows (only customers with active orders).", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-s5c", text: "Exactly 5000 rows (Cartesian product).", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-s5d", text: "Only customers who have placed more than 2 orders.", scoreWeight: 0.0, isCorrect: false },
     ],
   },
-  // 6. Soft Skill: Communication & Mentorship
   {
-    id: "q-soft-02",
-    category: "soft_skill",
-    skillTag: "Communication & Mentorship",
-    difficulty: "medium",
-    questionText: "When conducting code reviews on a junior engineer's pull request containing suboptimal $O(N^2)$ algorithmic loops, what feedback style fosters the best engineering outcome?",
+    id: "q-sql-06",
+    category: "technical",
+    skillTag: "SQL & Relational Databases",
+    subTopic: "Subqueries",
+    difficulty: "hard",
+    questionText: "What is the primary performance drawback of a Correlated Subquery evaluated in a `WHERE` clause compared to a JOIN or Window Function?",
     questionType: "single_choice",
     displayOrder: 6,
-    explanation: "Constructive code reviews provide educational context, quantify latency implications, and suggest idiomatic alternatives.",
+    explanation: "A correlated subquery references columns from the outer query, causing the inner query to re-execute for each individual row of the outer table (O(N*M) complexity).",
     options: [
-      { id: "opt-6a", text: "Reject the PR with 'Too slow' without explanation.", scoreWeight: 0.0, isCorrect: false },
-      { id: "opt-6b", text: "Highlight the time complexity bottleneck, explain the scale impact at 100k records, and suggest an $O(N)$ hash-map approach with documentation references.", scoreWeight: 1.0, isCorrect: true },
-      { id: "opt-6c", text: "Merge the PR immediately and silently fix it in a private branch later.", scoreWeight: 0.2, isCorrect: false },
-      { id: "opt-6d", text: "Tell the developer that performance does not matter in modern computing.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-s6a", text: "It executes row-by-row for every candidate row of the outer query, resulting in O(N*M) performance bottlenecks.", scoreWeight: 1.0, isCorrect: true },
+      { id: "opt-s6b", text: "Correlated subqueries cannot access indexed columns.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-s6c", text: "They cause immediate deadlocks on read-only transactions.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-s6d", text: "They can only return scalar string values.", scoreWeight: 0.0, isCorrect: false },
     ],
   },
-  // 7. Aptitude: Algorithms & Complexity
+  {
+    id: "q-sql-07",
+    category: "technical",
+    skillTag: "SQL & Relational Databases",
+    subTopic: "Advanced SQL",
+    difficulty: "hard",
+    questionText: "What does `DENSE_RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC)` compute?",
+    questionType: "single_choice",
+    displayOrder: 7,
+    explanation: "`DENSE_RANK()` assigns ranks within each department partition by salary without skipping rank numbers when ties occur.",
+    options: [
+      { id: "opt-s7a", text: "Consecutive ranking of salaries within each department without skipping rank numbers on ties (e.g. 1, 2, 2, 3).", scoreWeight: 1.0, isCorrect: true },
+      { id: "opt-s7b", text: "Skipping ranks on ties (e.g. 1, 2, 2, 4).", scoreWeight: 0.2, isCorrect: false },
+      { id: "opt-s7c", text: "The cumulative running total salary per department.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-s7d", text: "A random distribution hash for sharding.", scoreWeight: 0.0, isCorrect: false },
+    ],
+  },
+
+  // --------------------------------------------------------------------------
+  // 2. PYTHON & MACHINE LEARNING
+  // --------------------------------------------------------------------------
+  {
+    id: "q-py-01",
+    category: "technical",
+    skillTag: "Python & Core Programming",
+    subTopic: "Data Structures",
+    difficulty: "medium",
+    questionText: "In Python, what is the average time complexity of checking membership (`x in collection`) for a `set` vs. a `list`?",
+    questionType: "single_choice",
+    displayOrder: 8,
+    explanation: "Python `set` uses hash tables yielding O(1) average lookup, whereas `list` requires linear O(N) scan.",
+    options: [
+      { id: "opt-p1a", text: "Set: O(1) average hash lookup; List: O(N) linear iteration.", scoreWeight: 1.0, isCorrect: true },
+      { id: "opt-p1b", text: "Both Set and List have O(log N) binary search complexity.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-p1c", text: "Set: O(N); List: O(1).", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-p1d", text: "Set lookup requires sorting the collection on every query.", scoreWeight: 0.0, isCorrect: false },
+    ],
+  },
+  {
+    id: "q-py-02",
+    category: "technical",
+    skillTag: "Python & Core Programming",
+    subTopic: "Async Concurrency",
+    difficulty: "hard",
+    questionText: "What is the primary benefit of `asyncio.gather(*tasks)` in Python asynchronous architectures?",
+    questionType: "single_choice",
+    displayOrder: 9,
+    explanation: "`asyncio.gather()` schedules multiple coroutines concurrently on the event loop and awaits all results concurrently without blocking.",
+    options: [
+      { id: "opt-p2a", text: "Executes multiple asynchronous coroutines concurrently on the event loop and returns an aggregated result list.", scoreWeight: 1.0, isCorrect: true },
+      { id: "opt-p2b", text: "Spawns multiple OS processes to bypass the Python GIL for CPU-bound tasks.", scoreWeight: 0.2, isCorrect: false },
+      { id: "opt-p2c", text: "Forces tasks to execute strictly sequentially in FIFO order.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-p2d", text: "Automatically parallelizes execution across GPU cores.", scoreWeight: 0.0, isCorrect: false },
+    ],
+  },
+
+  // --------------------------------------------------------------------------
+  // 3. DISTRIBUTED SYSTEMS & ARCHITECTURE
+  // --------------------------------------------------------------------------
+  {
+    id: "q-dist-01",
+    category: "technical",
+    skillTag: "Distributed Systems",
+    subTopic: "Consensus",
+    difficulty: "hard",
+    questionText: "In the Raft consensus algorithm, how does a cluster guarantee safety and prevent split-brain leader commits during network partition?",
+    questionType: "single_choice",
+    displayOrder: 10,
+    explanation: "A Raft leader must receive write acknowledgments from a strict majority quorum (`N/2 + 1`) of active nodes before committing a log entry.",
+    options: [
+      { id: "opt-d1a", text: "Writes require majority quorum confirmation (`N/2 + 1` nodes); a minority partition cannot commit log entries.", scoreWeight: 1.0, isCorrect: true },
+      { id: "opt-d1b", text: "Any isolated node can commit writes locally and reconcile later via eventual consistency.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-d1c", text: "Raft requires 100% unanimous agreement from all nodes before acknowledging any write.", scoreWeight: 0.1, isCorrect: false },
+      { id: "opt-d1d", text: "Leaders are elected strictly using physical hardware timestamp comparisons.", scoreWeight: 0.0, isCorrect: false },
+    ],
+  },
+
+  // --------------------------------------------------------------------------
+  // 4. APTITUDE & COMPLEXITY
+  // --------------------------------------------------------------------------
   {
     id: "q-apt-01",
     category: "aptitude",
     skillTag: "Algorithms & Complexity",
+    subTopic: "Graph Theory",
     difficulty: "medium",
-    questionText: "What is the worst-case time complexity of searching for an element in an unsorted array of size $N$ versus a balanced Binary Search Tree (AVL/Red-Black)?",
+    questionText: "What is the time complexity of Breadth-First Search (BFS) on an unweighted graph represented as an Adjacency List with `V` vertices and `E` edges?",
     questionType: "single_choice",
-    displayOrder: 7,
-    explanation: "Unsorted array lookup is linear $O(N)$, whereas a balanced BST maintains height $O(\\log N)$.",
+    displayOrder: 11,
+    explanation: "BFS visits each vertex once and traverses each edge once, leading to O(V + E) complexity.",
     options: [
-      { id: "opt-7a", text: "Unsorted Array: $O(N)$, Balanced BST: $O(\\log N)$.", scoreWeight: 1.0, isCorrect: true },
-      { id: "opt-7b", text: "Unsorted Array: $O(1)$, Balanced BST: $O(N)$.", scoreWeight: 0.0, isCorrect: false },
-      { id: "opt-7c", text: "Unsorted Array: $O(N \\log N)$, Balanced BST: $O(N^2)$.", scoreWeight: 0.0, isCorrect: false },
-      { id: "opt-7d", text: "Both data structures have identical $O(1)$ worst-case time complexity.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-a1a", text: "O(V + E)", scoreWeight: 1.0, isCorrect: true },
+      { id: "opt-a1b", text: "O(V * E)", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-a1c", text: "O(V²)", scoreWeight: 0.2, isCorrect: false },
+      { id: "opt-a1d", text: "O(log V)", scoreWeight: 0.0, isCorrect: false },
     ],
   },
-  // 8. Aptitude: Problem Solving & Logic
+
+  // --------------------------------------------------------------------------
+  // 5. SOFT SKILL: COLLABORATION
+  // --------------------------------------------------------------------------
   {
-    id: "q-apt-02",
-    category: "aptitude",
-    skillTag: "Problem Solving",
-    difficulty: "hard",
-    questionText: "You are designing an LRU (Least Recently Used) cache with $O(1)$ get and $O(1)$ put operations. Which combined data structure achieves this optimality?",
+    id: "q-soft-01",
+    category: "soft_skill",
+    skillTag: "Team Collaboration",
+    subTopic: "Conflict Resolution",
+    difficulty: "medium",
+    questionText: "A critical architectural disagreement arises between frontend and backend leads 48 hours before launch. What is the optimal engineering approach?",
     questionType: "single_choice",
-    displayOrder: 8,
-    explanation: "A Hash Map provides $O(1)$ key lookup, while a Doubly Linked List enables $O(1)$ node removal and insertion at head/tail.",
+    displayOrder: 12,
+    explanation: "Collaborative engineering teams formalize unified interface contracts (e.g. OpenAPI / TypeScript schemas) and write automated contract tests.",
     options: [
-      { id: "opt-8a", text: "Hash Map combined with a Doubly Linked List.", scoreWeight: 1.0, isCorrect: true },
-      { id: "opt-8b", text: "Single Array with Binary Search.", scoreWeight: 0.1, isCorrect: false },
-      { id: "opt-8c", text: "Min-Heap priority queue.", scoreWeight: 0.3, isCorrect: false },
-      { id: "opt-8d", text: "Singly Linked List with bubble sort.", scoreWeight: 0.0, isCorrect: false },
-    ],
-  },
-  // 9. Career Interest: Domain Focus
-  {
-    id: "q-car-01",
-    category: "career_interest",
-    skillTag: "Career & Domain Focus",
-    difficulty: "easy",
-    questionText: "Which engineering domain best matches your target technical leadership and career ambition over the next 24-36 months?",
-    questionType: "single_choice",
-    displayOrder: 9,
-    explanation: "Domain alignment helps calibrate target role recommendations.",
-    options: [
-      { id: "opt-9a", text: "Distributed AI Architecture, High-Performance Inference, and LLM Infrastructure.", scoreWeight: 1.0, isCorrect: true },
-      { id: "opt-9b", text: "Full-Stack Web Systems, High-Concurrency APIs, and Reactive Cloud Platforms.", scoreWeight: 0.9, isCorrect: true },
-      { id: "opt-9c", text: "Cloud DevOps, Kubernetes SRE, and Autonomous CI/CD Mesh Systems.", scoreWeight: 0.9, isCorrect: true },
-      { id: "opt-9d", text: "Cybersecurity, Zero-Trust Cryptographic Infrastructure, and Protocol Defense.", scoreWeight: 0.9, isCorrect: true },
+      { id: "opt-so1a", text: "Define a shared TypeScript interface / API schema contract and unblock parallel progress via mock stubs.", scoreWeight: 1.0, isCorrect: true },
+      { id: "opt-so1b", text: "Delay all frontend development until the backend is 100% deployed to production.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-so1c", text: "Rewrite the entire backend in Python without consulting the team.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-so1d", text: "Cancel the release indefinitely.", scoreWeight: 0.0, isCorrect: false },
     ],
   },
 ];
 
-// Initialize in-memory singleton
-if (!globalAssessmentStore._titanQuestions) {
-  globalAssessmentStore._titanQuestions = [...DEFAULT_QUESTIONS];
-  globalAssessmentStore._titanSessions = new Map<string, AssessmentSession>();
-  globalAssessmentStore._titanReports = new Map<string, SkillIntelligenceReport>();
-  globalAssessmentStore._titanTargetRoles = [...DEFAULT_TARGET_ROLES];
-
-  // Pre-seed demo student skill evaluation with realistic authentic performance
-  const demoStudentId = DEMO_USERS["student@titan.ai"].id;
-  const demoTargetRole = DEFAULT_TARGET_ROLES[0]; // AI Systems Engineer
-
-  // Realistic student baseline: Strong in Web Systems & PyTorch, developing in Distributed Systems & Algorithm complexity
-  const initialResponses: Record<string, string> = {
-    "q-tech-01": "opt-1b", // 1.0 (Next.js - Expert)
-    "q-tech-02": "opt-2a", // 1.0 (PyTorch - Expert)
-    "q-tech-03": "opt-3d", // 0.1 (Distributed Systems - Developing gap)
-    "q-tech-04": "opt-4b", // 1.0 (System Architecture - Advanced)
-    "q-soft-01": "opt-5a", // 1.0 (Team Collaboration - Strong)
-    "q-soft-02": "opt-6c", // 0.2 (Communication/Mentorship - Intermediate)
-    "q-apt-01": "opt-7c",  // 0.0 (Algorithms & Complexity - Priority Gap)
-    "q-apt-02": "opt-8a",  // 1.0 (Problem Solving & Logic - Advanced)
-    "q-car-01": "opt-9a",  // 1.0 (Career Domain Focus - Aligned)
-  };
-
-  const computed = computeAssessmentScores(DEFAULT_QUESTIONS, initialResponses);
-  const gaps = calculateExplainableGaps(computed.skillBreakdowns, demoTargetRole);
-
-  const demoReport: SkillIntelligenceReport = {
-    id: "eval-demo-01",
-    userId: demoStudentId,
-    overallReadinessScore: computed.overallReadinessScore,
-    technicalScore: computed.technicalScore,
-    softSkillScore: computed.softSkillScore,
-    aptitudeScore: computed.aptitudeScore,
-    careerAlignmentScore: computed.careerAlignmentScore,
-    skillBreakdowns: computed.skillBreakdowns,
-    strongSkills: computed.strongSkills,
-    weakSkills: computed.weakSkills,
-    targetRole: demoTargetRole,
-    skillGaps: gaps,
-    evaluatedAt: new Date().toISOString(),
-  };
-
-  globalAssessmentStore._titanReports!.set(demoStudentId, demoReport);
-  // Also pre-seed for generic student ID fallback
-  globalAssessmentStore._titanReports!.set("usr-demo-student-01", demoReport);
-  globalAssessmentStore._titanReports!.set("usr-student-01", demoReport);
+export async function getAllQuestions(category?: string): Promise<AssessmentQuestion[]> {
+  if (!globalAssessmentStore._titanQuestions) {
+    globalAssessmentStore._titanQuestions = [...DEFAULT_QUESTIONS];
+  }
+  if (category && category !== "all") {
+    return globalAssessmentStore._titanQuestions.filter((q) => q.category === category);
+  }
+  return globalAssessmentStore._titanQuestions;
 }
 
-/**
- * Fetch all assessment questions
- */
-export async function getAssessmentQuestions(category?: string): Promise<AssessmentQuestion[]> {
-  const all = globalAssessmentStore._titanQuestions || DEFAULT_QUESTIONS;
-  if (!category) return all;
-  return all.filter((q) => q.category === category);
+export async function getAdaptiveDiagnosticQuestions(context?: {
+  primaryLearningGoal?: string;
+  skills?: string[];
+  currentLevel?: string;
+}): Promise<AssessmentQuestion[]> {
+  const all = await getAllQuestions();
+
+  // If student specifically targeted SQL or Python, ensure their core sub-topics appear first
+  if (context?.primaryLearningGoal?.toLowerCase().includes("sql")) {
+    const sqlQuestions = all.filter((q) => q.skillTag.includes("SQL"));
+    const otherQuestions = all.filter((q) => !q.skillTag.includes("SQL"));
+    return [...sqlQuestions, ...otherQuestions];
+  }
+
+  if (context?.primaryLearningGoal?.toLowerCase().includes("python")) {
+    const pyQuestions = all.filter((q) => q.skillTag.includes("Python") || q.skillTag.includes("AI"));
+    const otherQuestions = all.filter((q) => !q.skillTag.includes("Python") && !q.skillTag.includes("AI"));
+    return [...pyQuestions, ...otherQuestions];
+  }
+
+  return all;
 }
 
-/**
- * Fetch all target roles
- */
 export async function getTargetRoles(): Promise<TargetRoleBenchmark[]> {
-  return globalAssessmentStore._titanTargetRoles || DEFAULT_TARGET_ROLES;
+  if (!globalAssessmentStore._titanTargetRoles) {
+    globalAssessmentStore._titanTargetRoles = [...DEFAULT_TARGET_ROLES];
+  }
+  return globalAssessmentStore._titanTargetRoles;
 }
 
-/**
- * Get active assessment session for a user (to resume without data loss)
- */
-export async function getActiveSession(userId: string): Promise<AssessmentSession | null> {
-  const session = globalAssessmentStore._titanSessions?.get(userId);
-  if (!session || session.status !== "in_progress") return null;
-  return session;
+export async function getTargetRoleById(id: string): Promise<TargetRoleBenchmark | null> {
+  const roles = await getTargetRoles();
+  return roles.find((r) => r.id === id) || roles[0] || null;
 }
 
-/**
- * Start or restart an assessment session
- */
-export async function startAssessmentSession(userId: string): Promise<AssessmentSession> {
-  const session: AssessmentSession = {
-    id: `sess-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+export async function getAssessmentSession(userId: string): Promise<AssessmentSession | null> {
+  if (!globalAssessmentStore._titanSessions) {
+    globalAssessmentStore._titanSessions = new Map();
+  }
+  return globalAssessmentStore._titanSessions.get(userId) || null;
+}
+
+export async function saveAssessmentAnswer(
+  userId: string,
+  questionId: string,
+  optionId: string,
+  currentQuestionIndex: number = 0
+): Promise<AssessmentSession> {
+  if (!globalAssessmentStore._titanSessions) {
+    globalAssessmentStore._titanSessions = new Map();
+  }
+
+  const existing = globalAssessmentStore._titanSessions.get(userId) || {
+    id: `sess-${Date.now()}`,
     userId,
     status: "in_progress",
     currentQuestionIndex: 0,
@@ -321,68 +360,44 @@ export async function startAssessmentSession(userId: string): Promise<Assessment
     startedAt: new Date().toISOString(),
   };
 
-  globalAssessmentStore._titanSessions!.set(userId, session);
-  return session;
+  existing.responses[questionId] = optionId;
+  existing.currentQuestionIndex = currentQuestionIndex;
+  globalAssessmentStore._titanSessions.set(userId, existing);
+
+  return existing;
 }
 
-/**
- * Save an answer to an in-progress session
- */
-export async function saveAssessmentAnswer(
-  userId: string,
-  questionId: string,
-  optionId: string,
-  questionIndex?: number
-): Promise<AssessmentSession | null> {
-  let session = globalAssessmentStore._titanSessions?.get(userId);
-  if (!session || session.status !== "in_progress") {
-    session = await startAssessmentSession(userId);
-  }
-
-  session.responses[questionId] = optionId;
-  if (typeof questionIndex === "number") {
-    session.currentQuestionIndex = questionIndex;
-  }
-
-  globalAssessmentStore._titanSessions!.set(userId, session);
-  return session;
-}
-
-/**
- * Submit assessment, compute deterministic scores, and sync to student profile
- */
 export async function submitAssessmentSession(
   userId: string,
-  targetRoleId: string = "ai_systems_engineer"
+  targetRoleId?: string
 ): Promise<SkillIntelligenceReport> {
-  let session = globalAssessmentStore._titanSessions?.get(userId);
-  if (!session) {
-    session = await startAssessmentSession(userId);
-  }
+  const session = await getAssessmentSession(userId);
+  const questions = await getAllQuestions();
+  const responses = session?.responses || {};
 
-  session.status = "completed";
-  session.completedAt = new Date().toISOString();
-  globalAssessmentStore._titanSessions!.set(userId, session);
+  // Compute multi-vector scores & sub-topic granular mastery
+  const computed = computeAssessmentScores(questions, responses);
 
-  const questions = globalAssessmentStore._titanQuestions || DEFAULT_QUESTIONS;
-  const computed = computeAssessmentScores(questions, session.responses);
+  // Select target role
+  const targetRole = targetRoleId
+    ? (await getTargetRoleById(targetRoleId)) || DEFAULT_TARGET_ROLES[0]
+    : DEFAULT_TARGET_ROLES[0];
 
-  const targetRole =
-    (globalAssessmentStore._titanTargetRoles || DEFAULT_TARGET_ROLES).find((r) => r.id === targetRoleId) ||
-    DEFAULT_TARGET_ROLES[0];
-
+  // Calculate explainable gaps
   const skillGaps = calculateExplainableGaps(computed.skillBreakdowns, targetRole);
 
   const report: SkillIntelligenceReport = {
-    id: `report-${Date.now()}`,
+    id: `rep-${Date.now()}`,
     userId,
-    sessionId: session.id,
+    sessionId: session?.id,
     overallReadinessScore: computed.overallReadinessScore,
     technicalScore: computed.technicalScore,
     softSkillScore: computed.softSkillScore,
     aptitudeScore: computed.aptitudeScore,
     careerAlignmentScore: computed.careerAlignmentScore,
     skillBreakdowns: computed.skillBreakdowns,
+    topicBreakdowns: computed.topicBreakdowns,
+    diagnosticInsights: computed.diagnosticInsights,
     strongSkills: computed.strongSkills,
     weakSkills: computed.weakSkills,
     targetRole,
@@ -390,44 +405,97 @@ export async function submitAssessmentSession(
     evaluatedAt: new Date().toISOString(),
   };
 
-  globalAssessmentStore._titanReports!.set(userId, report);
+  if (!globalAssessmentStore._titanReports) {
+    globalAssessmentStore._titanReports = new Map();
+  }
+  globalAssessmentStore._titanReports.set(userId, report);
 
-  // Sync readiness score with user's student profile
-  const user = getUserById(userId);
-  if (user && user.studentProfile) {
-    user.studentProfile.readinessScore = computed.overallReadinessScore;
-    user.updatedAt = new Date().toISOString();
+  if (session) {
+    session.status = "completed";
+    session.completedAt = new Date().toISOString();
+    globalAssessmentStore._titanSessions?.set(userId, session);
   }
 
   return report;
 }
 
-/**
- * Get the latest Skill Intelligence Report for a user
- */
-export async function getSkillIntelligenceReport(
+export async function getLatestSkillReport(
   userId: string,
   targetRoleId?: string
 ): Promise<SkillIntelligenceReport | null> {
-  let report = globalAssessmentStore._titanReports?.get(userId);
-  if (!report) {
-    const baseReport = globalAssessmentStore._titanReports?.get("usr-demo-student-01");
-    if (baseReport) {
-      report = { ...baseReport, id: `report-${Date.now()}`, userId };
-      globalAssessmentStore._titanReports!.set(userId, report);
-    } else {
-      report = await submitAssessmentSession(userId, targetRoleId || "ai_systems_engineer");
-    }
+  if (!globalAssessmentStore._titanReports) {
+    globalAssessmentStore._titanReports = new Map();
   }
 
-  if (targetRoleId && report.targetRole.id !== targetRoleId) {
-    const role = (globalAssessmentStore._titanTargetRoles || DEFAULT_TARGET_ROLES).find((r) => r.id === targetRoleId);
-    if (role) {
-      report.targetRole = role;
-      report.skillGaps = calculateExplainableGaps(report.skillBreakdowns, role);
-      globalAssessmentStore._titanReports!.set(userId, report);
-    }
-  }
+  const report = globalAssessmentStore._titanReports.get(userId);
+  if (report) return report;
 
-  return report;
+  // Generate deterministic baseline report if none exists
+  const questions = await getAllQuestions();
+  const sampleResponses: Record<string, string> = {
+    "q-sql-01": "opt-s1b",
+    "q-sql-02": "opt-s2a",
+    "q-sql-03": "opt-s3a",
+    "q-sql-04": "opt-s4a",
+    "q-sql-05": "opt-s5b", // deliberately wrong for sub-topic demo (e.g. JOINs: 42%)
+    "q-sql-06": "opt-s6a",
+    "q-sql-07": "opt-s7b",
+    "q-py-01": "opt-p1a",
+    "q-py-02": "opt-p2a",
+    "q-dist-01": "opt-d1a",
+    "q-apt-01": "opt-a1a",
+    "q-soft-01": "opt-so1a",
+  };
+
+  const computed = computeAssessmentScores(questions, sampleResponses);
+  const targetRole = targetRoleId
+    ? (await getTargetRoleById(targetRoleId)) || DEFAULT_TARGET_ROLES[0]
+    : DEFAULT_TARGET_ROLES[0];
+  const skillGaps = calculateExplainableGaps(computed.skillBreakdowns, targetRole);
+
+  const fallbackReport: SkillIntelligenceReport = {
+    id: `rep-default-${userId}`,
+    userId,
+    overallReadinessScore: computed.overallReadinessScore,
+    technicalScore: computed.technicalScore,
+    softSkillScore: computed.softSkillScore,
+    aptitudeScore: computed.aptitudeScore,
+    careerAlignmentScore: computed.careerAlignmentScore,
+    skillBreakdowns: computed.skillBreakdowns,
+    topicBreakdowns: computed.topicBreakdowns,
+    diagnosticInsights: computed.diagnosticInsights,
+    strongSkills: computed.strongSkills,
+    weakSkills: computed.weakSkills,
+    targetRole,
+    skillGaps,
+    evaluatedAt: new Date().toISOString(),
+  };
+
+  globalAssessmentStore._titanReports.set(userId, fallbackReport);
+  return fallbackReport;
+}
+
+// Backwards-Compatible API Aliases
+export const getAssessmentQuestions = getAllQuestions;
+export const getActiveSession = getAssessmentSession;
+export const getSkillIntelligenceReport = getLatestSkillReport;
+
+export async function startAssessmentSession(userId: string): Promise<AssessmentSession> {
+  const existing = await getAssessmentSession(userId);
+  if (existing && existing.status === "in_progress") return existing;
+  
+  const newSess: AssessmentSession = {
+    id: `sess-${Date.now()}`,
+    userId,
+    status: "in_progress",
+    currentQuestionIndex: 0,
+    responses: {},
+    startedAt: new Date().toISOString(),
+  };
+
+  if (!globalAssessmentStore._titanSessions) {
+    globalAssessmentStore._titanSessions = new Map();
+  }
+  globalAssessmentStore._titanSessions.set(userId, newSess);
+  return newSess;
 }

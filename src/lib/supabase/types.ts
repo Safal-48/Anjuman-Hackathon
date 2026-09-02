@@ -54,6 +54,7 @@ export interface AssessmentQuestion {
   id: string;
   category: QuestionCategory;
   skillTag: string;
+  subTopic?: string;
   difficulty: "easy" | "medium" | "hard";
   questionText: string;
   questionType: QuestionType;
@@ -70,6 +71,25 @@ export interface AssessmentSession {
   responses: Record<string, string>; // questionId -> optionId
   startedAt: string;
   completedAt?: string;
+}
+
+export interface TopicMasteryBreakdown {
+  skillName: string;
+  topicName: string;
+  score: number; // 0 to 100
+  status: "Mastered" | "Proficient" | "Needs Attention" | "Critical Gap";
+  questionsCount: number;
+  correctCount: number;
+  priority: "High" | "Medium" | "Low";
+}
+
+export interface RecurringMistakePattern {
+  id: string;
+  patternName: string;
+  affectedTopics: string[];
+  mistakeFrequency: number;
+  explanation: string;
+  remedyAction: string;
 }
 
 export interface SkillScoreBreakdown {
@@ -103,6 +123,14 @@ export interface SkillGapItem {
   recommendation: string;
 }
 
+export interface DiagnosticInsight {
+  strongAreas: Array<{ topic: string; score: number; rationale: string }>;
+  weakAreas: Array<{ topic: string; score: number; deficit: number; rationale: string }>;
+  criticalGaps: Array<{ topic: string; score: number; deficit: number; immediateAction: string }>;
+  recurringMistakes: RecurringMistakePattern[];
+  immediateAttentionTopics: Array<{ topic: string; urgency: "Immediate" | "High"; remedialResourceUrl: string }>;
+}
+
 export interface SkillIntelligenceReport {
   id: string;
   userId: string;
@@ -113,6 +141,8 @@ export interface SkillIntelligenceReport {
   aptitudeScore: number;
   careerAlignmentScore: number;
   skillBreakdowns: SkillScoreBreakdown[];
+  topicBreakdowns?: TopicMasteryBreakdown[];
+  diagnosticInsights?: DiagnosticInsight;
   strongSkills: SkillScoreBreakdown[];
   weakSkills: SkillScoreBreakdown[];
   targetRole: TargetRoleBenchmark;
