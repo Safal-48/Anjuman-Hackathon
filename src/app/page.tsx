@@ -64,7 +64,7 @@ const EcosystemVisualizerCanvas = dynamic(
 );
 
 const SkilloraEcosystemVisualizer = dynamic(
-  () => import("@/components/3d/Skillora-ecosystem-visualizer").then((mod) => mod.SkilloraEcosystemVisualizer),
+  () => import("@/components/3d/skillora-ecosystem-visualizer").then((mod) => mod.SkilloraEcosystemVisualizer),
   {
     ssr: false,
     loading: () => <Skeleton className="h-96 w-full rounded-2xl" />,

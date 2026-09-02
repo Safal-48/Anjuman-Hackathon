@@ -92,7 +92,7 @@ export function SkilloraLogo({
 }
 
 // Aliases for seamless backwards-compatibility
-export const SkilloraIcon = SkilloraIcon;
-export const SkilloraLogo = SkilloraLogo;
+export const KaushalSetuIcon = SkilloraIcon;
+export const KaushalSetuLogo = SkilloraLogo;
 
 export default SkilloraLogo;

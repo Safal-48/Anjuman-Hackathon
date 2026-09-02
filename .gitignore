@@ -35,3 +35,10 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+# binaries & tunnel logs
+cloudflared.exe
+*.exe
+tunnel*.log
+tunnel*.txt
+public-*.txt
