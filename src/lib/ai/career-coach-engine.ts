@@ -254,6 +254,406 @@ export function generateCoachResponse(
 } {
   const query = userQuery.toLowerCase().trim();
 
+  // LEARNING ASSISTANT QUERY 1: "What should I learn today?" / "What to learn today"
+  if (
+    query.includes("what should i learn today") ||
+    query.includes("what to learn today") ||
+    query.includes("what should i study today") ||
+    query.includes("today's plan") ||
+    query.includes("learn today")
+  ) {
+    return {
+      replyText: `### 🎯 Today's Hyper-Personalized Learning Intervention
+
+Reviewing your live Skill DNA and recent diagnostic telemetry:
+- **Primary Goal:** Software & Cloud Platform Engineering
+- **Available Time:** 30 minutes
+- **Learning Style:** Interactive Sandboxes & Practice
+
+#### 🔴 Rank #1 Highest-Impact Blocker: **SQL JOINs (Current: 42% | Target: 75%)**
+You recently logged **3 recurring mistakes** when handling NULL propagation in \`LEFT JOIN\` vs \`INNER JOIN\` predicates. This is blocking your progress on Subqueries and ORM queries.
+
+#### ⏱️ Your 30-Minute Micro Learning Plan:
+1. **00:00 – 05:00 (5 mins) • Concept Refresh:**
+   - Review relational set overlap (Inner vs Left vs Full Outer joins).
+2. **05:00 – 20:00 (15 mins) • Hands-on Sandbox Practice:**
+   - Solve 3 interactive join queries on the E-Commerce schema in the KaushalSetu sandbox.
+3. **20:00 – 30:00 (10 mins) • Verification Diagnostic Probe:**
+   - Take the 5-question targeted probe to upgrade your Skill DNA from *42% (Critical Gap)* to *75%+ (Proficient)*.
+
+**Projected Outcome:** Resolving this today grants an immediate **+12% boost** to your Backend Engineering readiness!`,
+      groundedContextTags: [
+        "Priority: SQL JOINs (42% -> 75%)",
+        "Available Time: 30 Mins",
+        "Recurring Mistakes: 3 Logged",
+        "Style: Interactive Sandbox",
+      ],
+      recommendedActions: [
+        {
+          label: "Launch SQL JOINs Sandbox (15 mins)",
+          href: "/learning/resources?highlight=JOINs",
+          module: "Skills",
+          priority: "High",
+          badgeText: "Recommended First Step",
+        },
+        {
+          label: "Take Targeted SQL Reassessment Probe",
+          href: "/assessment",
+          module: "Skills",
+          priority: "Medium",
+          badgeText: "Prove Mastery",
+        },
+      ],
+      suggestedFollowUps: [
+        "Why am I weak in SQL?",
+        "Explain JOINs in Hinglish",
+        "Give me practice questions",
+        "I only have 20 minutes today",
+      ],
+    };
+  }
+
+  // LEARNING ASSISTANT QUERY 2: "Why am I weak in SQL?" / "Why weak in sql"
+  if (
+    query.includes("why am i weak in sql") ||
+    query.includes("why weak in sql") ||
+    query.includes("why is my sql score low") ||
+    query.includes("sql weakness")
+  ) {
+    return {
+      replyText: `### 🔍 Diagnostic Telemetry Audit: Why You Are Weak in SQL
+
+Your overall SQL score is **51%**, but the AI Diagnostic Engine evaluated individual sub-topics rather than an unhelpful blanket percentage:
+
+#### 📊 Sub-Skill Breakdown:
+- ✅ **Basics & SELECT**: **86%** *(Mastered)*
+- ✅ **WHERE Filtering & IN**: **78%** *(Proficient)*
+- 🟡 **Aggregation (COUNT, AVG)**: **71%** *(Proficient)*
+- 🟡 **GROUP BY vs HAVING**: **69%** *(Needs Attention)*
+- 🔴 **Relational JOINs**: **42%** *(Critical Gap)*
+- 🟡 **Correlated Subqueries**: **51%** *(Needs Attention)*
+- 🔴 **Advanced SQL (Window Functions)**: **32%** *(Critical Gap)*
+
+#### ⚠️ Recurring Mistake Pattern Identified:
+*"Relational Set Coupling vs. Correlated Subquery Optimization"*
+- **Specific Error:** In 3 consecutive questions, you used nested subqueries ($O(N^2)$ scan latency) where indexed \`INNER/LEFT JOIN\` ($O(N)$ execution plan) was required.
+- **NULL Handling:** You also selected \`INNER JOIN\` when non-matching customer records needed to be preserved with \`LEFT JOIN\` + \`COALESCE()\`.
+
+#### 💡 The Remedy:
+You do **not** need to relearn all of SQL from scratch! Focus exclusively on **JOIN predicates** for 25 minutes to turn this into a strong area.`,
+      groundedContextTags: [
+        "SQL Overall: 51%",
+        "JOINs Deficit: 42%",
+        "Advanced SQL: 32%",
+        "Recurring Pattern: Correlated Subquery Confusion",
+      ],
+      recommendedActions: [
+        {
+          label: "Launch SQL JOINs Remedial Sandbox",
+          href: "/learning/resources?highlight=JOINs",
+          module: "Skills",
+          priority: "High",
+          badgeText: "Targeted Fix",
+        },
+        {
+          label: "View Topic Mastery Matrix",
+          href: "/skills",
+          module: "Skills",
+          priority: "Medium",
+          badgeText: "Audit Skill DNA",
+        },
+      ],
+      suggestedFollowUps: [
+        "Explain JOINs in Hinglish",
+        "Give me practice questions",
+        "Give me a 30-minute study plan",
+        "What should I learn before Power BI?",
+      ],
+    };
+  }
+
+  // LEARNING ASSISTANT QUERY 3: "Give me a 30-minute study plan" / "30 min study plan"
+  if (
+    query.includes("30-minute study plan") ||
+    query.includes("30 minute study plan") ||
+    query.includes("30 min study plan") ||
+    query.includes("30 mins") ||
+    query.includes("30 minute")
+  ) {
+    return {
+      replyText: `### ⏱️ Realistic 30-Minute High-Yield Study Session
+
+Configured for: **Safal Sharma** (CS & AI @ IIT BHU) • Target: **Cloud Systems Engineer**
+
+| Time Window | Activity | Format | Target Goal |
+|---|---|---|---|
+| **00:00 – 05:00** | **Concept Micro-Brief** | Reading / Diagram | Master the Venn overlap & NULL behavior of \`LEFT JOIN\` vs \`INNER JOIN\` |
+| **05:00 – 18:00** | **Interactive Sandbox Drill** | Code Execution | Execute 3 SQL queries joining \`Customers\` + \`Orders\` + \`Payments\` tables |
+| **18:00 – 25:00** | **Diagnostic Reassessment** | 5 Multiple-Choice Questions | Verify that you no longer confuse subqueries with join predicates |
+| **25:00 – 30:00** | **Skill DNA Auto-Sync** | Telemetry Sync | Platform verifies your new score and updates your Live Skill DNA |
+
+#### 🚀 Instant Launch:
+Click below to start Step 1 directly in the KaushalSetu Interactive Sandbox!`,
+      groundedContextTags: [
+        "Duration: 30 Minutes",
+        "Structure: 5m Prep + 13m Code + 7m Quiz + 5m Sync",
+        "Focus: SQL JOINs",
+      ],
+      recommendedActions: [
+        {
+          label: "Start 30-Min Session (Sandbox)",
+          href: "/learning/resources?highlight=JOINs",
+          module: "Skills",
+          priority: "High",
+          badgeText: "Timer Activated",
+        },
+        {
+          label: "Practice Arena Drills",
+          href: "/practice",
+          module: "Skills",
+          priority: "Medium",
+          badgeText: "Hands-on Arena",
+        },
+      ],
+      suggestedFollowUps: [
+        "Explain JOINs in Hinglish",
+        "Give me practice questions",
+        "What should I learn before Power BI?",
+      ],
+    };
+  }
+
+  // LEARNING ASSISTANT QUERY 4: "I only have 20 minutes today" / "20 min" / "15 min"
+  if (
+    query.includes("20 minutes") ||
+    query.includes("20 min") ||
+    query.includes("15 minutes") ||
+    query.includes("15 min") ||
+    query.includes("short time") ||
+    query.includes("only have 20")
+  ) {
+    return {
+      replyText: `### ⚡ Express 20-Minute Focused Micro-Intervention
+
+No problem! A consistent 20 minutes is far more effective than cramming for hours once a week.
+
+#### 🎯 Micro-Session Target: **SQL LEFT JOIN NULL Preservation**
+- **00:00 – 04:00 (4 mins) • Visual Rule:**
+  - Remember: When a customer has no orders, \`LEFT JOIN\` produces \`NULL\` in the order columns. Use \`COALESCE(Orders.Amount, 0)\` to avoid arithmetic errors.
+- **04:00 – 14:00 (10 mins) • 2 Hands-on Problems:**
+  - Problem 1: Return all registered users who placed zero orders in the last 30 days.
+  - Problem 2: Calculate total lifetime value including customers with $0 revenue.
+- **14:00 – 20:00 (6 mins) • Quick 3-Question Probe:**
+  - Verify retention and update your Skill DNA.
+
+Click below to launch your 20-minute timer and open the sandbox!`,
+      groundedContextTags: [
+        "Duration: 20 Minutes (High-Intensity)",
+        "Focus: LEFT JOIN NULL Preservation",
+        "Style: Quick Coding Probe",
+      ],
+      recommendedActions: [
+        {
+          label: "Launch 20-Min Express Sandbox",
+          href: "/learning/resources?highlight=JOINs",
+          module: "Skills",
+          priority: "High",
+          badgeText: "20 Min Express",
+        },
+      ],
+      suggestedFollowUps: [
+        "Explain JOINs in Hinglish",
+        "Give me practice questions",
+        "What should I learn before Power BI?",
+      ],
+    };
+  }
+
+  // LEARNING ASSISTANT QUERY 5: "Explain JOINs in Hinglish" / "Hindi"
+  if (
+    query.includes("explain joins in hinglish") ||
+    query.includes("hinglish") ||
+    query.includes("hindi") && query.includes("join")
+  ) {
+    return {
+      replyText: `### 🤖 AI Tutor: SQL JOIN Concept (Hinglish Mode)
+
+Bhai ekdum simple real-world example se samjho! 💡
+
+Maan lo tum **Zomato** ka database bana rahe ho:
+1. **\`Customers\` Table:**
+   - \`id\`, \`name\`, \`city\` (Jaise: *Safal*, *Rahul*, *Priya*)
+2. **\`Orders\` Table:**
+   - \`order_id\`, \`customer_id\`, \`item_name\`, \`amount\`
+
+Agar humein dekhna hai ki *"Kis customer ne kya khana order kiya?"*, toh hum common column (\`customer_id\`) ke basis par **JOIN** karte hain:
+
+\`\`\`sql
+SELECT 
+    Customers.name, 
+    Orders.item_name, 
+    Orders.amount
+FROM Customers
+INNER JOIN Orders ON Customers.id = Orders.customer_id;
+\`\`\`
+
+#### 🔑 4 Simple Types (Jo exam aur interview mein puchte hain):
+1. **INNER JOIN**: Sirf wahi log aayenge jinhone order kiya hai (Matching rows only).
+2. **LEFT JOIN**: **Saare customers aayenge!** Agar kisi ne order nahi bhi kiya, toh uska naam aayega aur order columns mein \`NULL\` hoga.
+3. **RIGHT JOIN**: Saare orders aayenge chahe customer record mile ya na mile.
+4. **FULL OUTER JOIN**: Dono tables ka complete data aayega (Matching + Non-matching).
+
+#### ⚠️ Tumhari Common Galti:
+Diagnostic test mein tumne \`INNER JOIN\` use kar diya tha jab question bol raha tha *"Show ALL customers including those with no orders"*. Wahan **LEFT JOIN** lagta hai!
+
+Kya tum abhi 2 practice questions solve karna chahte ho?`,
+      groundedContextTags: [
+        "Language: Hinglish",
+        "Concept: SQL Relational Joins",
+        "Relatable Analogy: Zomato E-Commerce",
+      ],
+      recommendedActions: [
+        {
+          label: "Solve SQL JOINs Practice Questions",
+          href: "/learning/resources?highlight=JOINs",
+          module: "Skills",
+          priority: "High",
+          badgeText: "Practice Now",
+        },
+      ],
+      suggestedFollowUps: [
+        "Give me practice questions",
+        "What should I learn before Power BI?",
+        "Why am I weak in SQL?",
+      ],
+    };
+  }
+
+  // LEARNING ASSISTANT QUERY 6: "Give me practice questions" / "Practice quiz"
+  if (
+    query.includes("practice questions") ||
+    query.includes("practice quiz") ||
+    query.includes("give me questions") ||
+    query.includes("give me quiz")
+  ) {
+    return {
+      replyText: `### 📝 Targeted Diagnostic Practice: SQL & Data Systems
+
+Here are **2 high-frequency questions** designed specifically around your identified mistake patterns:
+
+---
+
+#### ❓ Question 1 (JOIN Semantics & NULL Handling):
+You have a \`Users\` table (200 rows) and an \`ActivityLog\` table (150 rows). You execute:
+\`\`\`sql
+SELECT u.name, COUNT(a.id) AS total_events
+FROM Users u
+LEFT JOIN ActivityLog a ON u.id = a.user_id
+GROUP BY u.name;
+\`\`\`
+If 30 users have **zero** activity logs, how many rows will be returned?
+
+- **A)** 170 rows
+- **B)** 200 rows (Correct! All users preserved with \`total_events = 0\`)
+- **C)** 150 rows
+- **D)** Syntax Error due to GROUP BY
+
+---
+
+#### ❓ Question 2 (Subquery vs. JOIN Performance):
+Why is \`WHERE user_id IN (SELECT user_id FROM Orders WHERE amount > 500)\` often slower than \`INNER JOIN (SELECT DISTINCT user_id FROM Orders WHERE amount > 500) o ON u.id = o.user_id\` in legacy relational engines?
+
+- **A)** Subqueries force temporary table spills and prevent index join pushes.
+- **B)** Subqueries cannot return integers.
+- **C)** \`IN\` automatically causes deadlocks.
+
+---
+
+Want to answer these directly in the interactive test runner?`,
+      groundedContextTags: [
+        "Topic: SQL JOINs & Subqueries",
+        "Question Count: 2",
+        "Difficulty: Intermediate",
+      ],
+      recommendedActions: [
+        {
+          label: "Open Full Interactive Assessment",
+          href: "/assessment",
+          module: "Skills",
+          priority: "High",
+          badgeText: "Live Test Runner",
+        },
+      ],
+      suggestedFollowUps: [
+        "Explain JOINs in Hinglish",
+        "What should I learn before Power BI?",
+        "What should I learn today?",
+      ],
+    };
+  }
+
+  // LEARNING ASSISTANT QUERY 7: "What should I learn before Power BI?" / "Prerequisites for Power BI"
+  if (
+    query.includes("what should i learn before power bi") ||
+    query.includes("before power bi") ||
+    query.includes("prerequisites for power bi") ||
+    query.includes("learn before power bi")
+  ) {
+    return {
+      replyText: `### 🗺️ Prerequisite Dependency Graph: Before Learning Power BI
+
+Your Skill DNA currently tags **Power BI at 34% (Self-Declared)**. If you jump directly into advanced DAX formulas without foundational data modeling, you will struggle with calculated columns vs measures.
+
+Here is the exact **learning sequence** that builds genuine enterprise BI competence:
+
+\`\`\`
+1. SQL Relational Data Modeling (Current: 51% -> Target: 75%)
+   └── Master Primary/Foreign Keys, One-to-Many Relationships, and JOINs.
+          │
+          ▼
+2. Star Schema & Data Normalization (1NF -> 3NF)
+   └── Learn Fact Tables vs. Dimension Tables (Date, Customer, Product).
+          │
+          ▼
+3. Power BI Basics & Power Query (ETL)
+   └── Clean, transform, and merge CSV/Database connections.
+          │
+          ▼
+4. DAX Formulas (CALCULATE, FILTER, RELATED)
+   └── Build dynamic measures and KPI cards.
+\`\`\`
+
+#### 🎯 Strategic Recommendation:
+Spend **25 minutes mastering SQL JOINs & Star Schemas first**. Once your SQL score reaches **75%**, Power BI data transformations will feel 3x easier!`,
+      groundedContextTags: [
+        "Prerequisite Chain: SQL -> Star Schema -> Power BI -> DAX",
+        "Current SQL: 51%",
+        "Target Power BI: 75%",
+      ],
+      recommendedActions: [
+        {
+          label: "Master SQL JOINs Prerequisite First",
+          href: "/learning/resources?highlight=JOINs",
+          module: "Skills",
+          priority: "High",
+          badgeText: "Prerequisite #1",
+        },
+        {
+          label: "View Power BI Roadmap Node",
+          href: "/roadmap",
+          module: "Portfolio",
+          priority: "Medium",
+          badgeText: "Learning Path",
+        },
+      ],
+      suggestedFollowUps: [
+        "What should I learn today?",
+        "Why am I weak in SQL?",
+        "Explain JOINs in Hinglish",
+      ],
+    };
+  }
+
   // QUESTION 1: "Why am I not ready for this role?" / "Why not ready"
   if (
     query.includes("why am i not ready") ||
@@ -263,6 +663,7 @@ export function generateCoachResponse(
   ) {
     return {
       replyText: `### 🎯 Telemetry Audit for: **${context.targetRole}**
+
 
 Based on your live KaushalSetu data, your overall Career Readiness score is **${context.overallCareerReadinessScore}% (Tier 2 Competitive)**. You are already in the top quartile of campus applicants, but here is exactly why you aren't at **Tier-1 Prime Status (88%+)** yet:
 
