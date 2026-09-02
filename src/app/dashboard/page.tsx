@@ -49,6 +49,7 @@ import { SkillGapHeatmap } from "@/components/analytics/skill-gap-heatmap";
 import { PlacementFunnelChart } from "@/components/analytics/placement-funnel-chart";
 import { InstitutionFilterBar } from "@/components/analytics/institution-filter-bar";
 import { AcademicianCollaborationCard } from "@/components/analytics/academician-collaboration-card";
+import { LearningCommandCenter } from "@/components/dashboard/learning-command-center";
 
 export default function DashboardPage() {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -238,6 +239,19 @@ export default function DashboardPage() {
               {activeRoleView === "student" && (
                 <SlideUp>
                   <div className="space-y-14">
+                    {/* ========================================================================= */}
+                    {/* SECTION 0: NEXT BEST ACTION LEARNING COMMAND CENTER (STEP 13 SPEC)        */}
+                    {/* ========================================================================= */}
+                    <LearningCommandCenter
+                      goalTitle="Become a Data Analyst"
+                      currentProgress={68}
+                      currentGap="SQL JOINs"
+                      nextBestActionTitle="Practice SQL JOINs"
+                      nextBestActionDuration="15 min"
+                      nextBestActionWhy="Your recent accuracy is 43%, and JOINs are highly relevant to your selected goal."
+                      nextBestActionUrl="/learning/intervention"
+                    />
+
                     {/* ========================================================================= */}
                     {/* SECTION 1: TELEMETRY METRICS GRID (HIGH-END GLOW CARDS)                   */}
                     {/* ========================================================================= */}
