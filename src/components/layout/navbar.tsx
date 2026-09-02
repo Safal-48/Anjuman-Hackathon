@@ -38,11 +38,13 @@ import { Badge } from "@/components/ui/badge";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { NotificationBell } from "@/components/marketplace/notification-bell";
 import { useAuth } from "@/lib/auth/auth-context";
+import { JudgeDemoJourneyModal } from "@/components/demo/judge-demo-journey-modal";
 
 export function Navbar() {
   const [scrolled, setScrolled] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [openDropdown, setOpenDropdown] = React.useState<string | null>(null);
+  const [showJudgeDemoModal, setShowJudgeDemoModal] = React.useState(false);
   const { user, isAuthenticated, logout } = useAuth();
   const pathname = usePathname();
 
@@ -66,7 +68,7 @@ export function Navbar() {
     {
       title: "Learning Assistant",
       desc: "Interactive Socratic AI Tutor contextually aware of your skill gaps",
-      href: "/career-coach",
+      href: "/learning/assistant",
       icon: Bot,
       badge: "AI Tutor",
       color: "text-cyan-400 bg-cyan-500/10 border-cyan-500/30",
@@ -81,10 +83,10 @@ export function Navbar() {
     },
     {
       title: "Learning Roadmap",
-      desc: "Personalized 4-phase adaptive milestone study plan",
-      href: "/ai-career",
+      desc: "Personalized continuous adaptive milestone study plan",
+      href: "/learning/roadmap",
       icon: Layers,
-      badge: "4-Phase Plan",
+      badge: "Dynamic Plan",
       color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/30",
     },
     {
@@ -107,11 +109,11 @@ export function Navbar() {
 
   const myProgressItems = [
     {
-      title: "Performance Command Center",
-      desc: "Weighted learning mastery score & next best action pipeline",
-      href: "/career-readiness",
+      title: "Learning Progress & Proven Skills",
+      desc: "Weighted learning mastery score & evidence-based proof matrix",
+      href: "/progress/performance",
       icon: Zap,
-      badge: "Readiness Index",
+      badge: "Evidence Matrix",
       color: "text-cyan-400 bg-cyan-500/10 border-cyan-500/30",
     },
     {
@@ -409,7 +411,18 @@ export function Navbar() {
           </nav>
 
           {/* Right Action Bar */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
+            {/* Hackathon Judge / Presentation Demo Tour Button */}
+            <Button
+              onClick={() => setShowJudgeDemoModal(true)}
+              variant="cyber"
+              size="sm"
+              className="hidden md:inline-flex font-mono text-[11px] gap-1.5 shadow-glow h-8 px-3"
+            >
+              <Award className="h-3.5 w-3.5 text-cyan-300" />
+              <span>Judge Tour</span>
+            </Button>
+
             <ThemeToggle />
             <NotificationBell />
 
@@ -541,6 +554,12 @@ export function Navbar() {
           </div>
         )}
       </Container>
+
+      {/* 14-Step God-Level Student Journey Presentation Modal */}
+      <JudgeDemoJourneyModal
+        isOpen={showJudgeDemoModal}
+        onClose={() => setShowJudgeDemoModal(false)}
+      />
     </header>
   );
 }
