@@ -122,6 +122,132 @@ export const ASSESSMENT_SUBJECTS: AssessmentSubject[] = [
     difficulty: "Adaptive",
     recommendedRoles: ["Data Scientist", "Business Intelligence Analyst", "Analytics Engineer"],
   },
+  {
+    id: "mobile_app",
+    title: "Mobile App Engineering (iOS & Android)",
+    tagline: "React Native, Flutter, Kotlin, Swift, Offline Caching & Mobile Architecture",
+    category: "Mobile Systems",
+    iconName: "Smartphone",
+    gradient: "from-blue-500/20 to-cyan-600/20",
+    accentColor: "text-blue-400",
+    skillsCovered: ["React Native & Flutter", "Kotlin / Swift", "Mobile State Management", "Offline SQLite Sync", "App Performance"],
+    questionCount: 10,
+    estimatedMinutes: 15,
+    difficulty: "Adaptive",
+    recommendedRoles: ["Mobile Engineer", "React Native Developer", "iOS/Android Architect"],
+  },
+  {
+    id: "blockchain_web3",
+    title: "Blockchain & Smart Contract Security",
+    tagline: "Solidity, Ethereum EVM, Smart Contract Auditing, Cryptography & Gas Optimization",
+    category: "Web3 & Decentralized Systems",
+    iconName: "Coins",
+    gradient: "from-amber-500/20 to-yellow-600/20",
+    accentColor: "text-amber-400",
+    skillsCovered: ["Solidity & Smart Contracts", "EVM Gas Optimization", "Reentrancy & Security Audits", "Cryptographic Signatures", "DeFi Protocols"],
+    questionCount: 10,
+    estimatedMinutes: 15,
+    difficulty: "Adaptive",
+    recommendedRoles: ["Smart Contract Engineer", "Web3 Developer", "Blockchain Security Auditor"],
+  },
+  {
+    id: "system_design",
+    title: "System Design & High-Scalability Architecture",
+    tagline: "Microservices, Redis Caching, Kafka Event Streaming, Sharding & CAP Theorem",
+    category: "Distributed Architecture",
+    iconName: "Cpu",
+    gradient: "from-indigo-500/20 to-violet-600/20",
+    accentColor: "text-indigo-400",
+    skillsCovered: ["Microservices Design", "Distributed Caching (Redis)", "Event Streaming (Kafka)", "Database Sharding", "CAP & PACELC Theorem"],
+    questionCount: 10,
+    estimatedMinutes: 15,
+    difficulty: "Adaptive",
+    recommendedRoles: ["Principal Architect", "Senior Backend Engineer", "Distributed Systems Specialist"],
+  },
+  {
+    id: "genai_llm",
+    title: "Generative AI & LLM Systems Engineering",
+    tagline: "LangChain, LlamaIndex, RAG Architectures, Vector DBs, Prompt Optimization & Agents",
+    category: "Generative AI",
+    iconName: "Bot",
+    gradient: "from-emerald-500/20 to-green-600/20",
+    accentColor: "text-emerald-400",
+    skillsCovered: ["RAG Retrieval Architectures", "Vector DBs (Pinecone/pgvector)", "Prompt Engineering & Guardrails", "Autonomous AI Agents", "LLM Fine-Tuning"],
+    questionCount: 10,
+    estimatedMinutes: 15,
+    difficulty: "Adaptive",
+    recommendedRoles: ["GenAI Engineer", "LLM Application Architect", "AI Solutions Engineer"],
+  },
+  {
+    id: "embedded_iot",
+    title: "Embedded Systems, IoT & Edge Computing",
+    tagline: "Embedded C/C++, ESP32/ARM, MQTT Protocols, FreeRTOS, Sensors & Edge AI",
+    category: "Hardware & Edge Systems",
+    iconName: "CircuitBoard",
+    gradient: "from-teal-500/20 to-cyan-600/20",
+    accentColor: "text-teal-400",
+    skillsCovered: ["Embedded C / C++", "FreeRTOS & Concurrency", "MQTT / CoAP Protocols", "I2C / SPI Sensor Buses", "Edge AI Inference"],
+    questionCount: 10,
+    estimatedMinutes: 15,
+    difficulty: "Adaptive",
+    recommendedRoles: ["Embedded Firmware Engineer", "IoT Systems Architect", "Edge Device Developer"],
+  },
+  {
+    id: "qa_automation",
+    title: "Software Testing & QA Automation Engineering",
+    tagline: "Playwright, Cypress, Selenium, CI/CD Test Suites, API Testing & Load Testing",
+    category: "Quality Assurance",
+    iconName: "CheckSquare",
+    gradient: "from-lime-500/20 to-emerald-600/20",
+    accentColor: "text-lime-400",
+    skillsCovered: ["Playwright & Cypress E2E", "API Testing (Postman)", "CI/CD Automated Test Matrix", "Load Testing (k6/JMeter)", "Unit Testing (Jest)"],
+    questionCount: 10,
+    estimatedMinutes: 15,
+    difficulty: "Adaptive",
+    recommendedRoles: ["QA Automation Engineer", "SDET", "Performance Test Architect"],
+  },
+  {
+    id: "game_dev",
+    title: "Game Development & Real-Time 3D Graphics",
+    tagline: "Unity, Unreal Engine, C#, HLSL Shaders, Physics Engines & 3D Math",
+    category: "Interactive Graphics",
+    iconName: "Gamepad2",
+    gradient: "from-purple-500/20 to-pink-600/20",
+    accentColor: "text-purple-400",
+    skillsCovered: ["Unity / Unreal Engine", "C# & C++ Scripting", "3D Vectors & Quaternions", "HLSL / GLSL Shaders", "Physics Optimization"],
+    questionCount: 10,
+    estimatedMinutes: 15,
+    difficulty: "Adaptive",
+    recommendedRoles: ["Game Developer", "Graphics Programmer", "Unity/Unreal Technical Artist"],
+  },
+  {
+    id: "sre_observability",
+    title: "Site Reliability Engineering (SRE) & Observability",
+    tagline: "Prometheus, Grafana, OpenTelemetry, Chaos Engineering, Incident Response & SLOs",
+    category: "Reliability & Operations",
+    iconName: "Activity",
+    gradient: "from-orange-500/20 to-amber-600/20",
+    accentColor: "text-orange-400",
+    skillsCovered: ["SLIs, SLOs & Error Budgets", "Prometheus & Grafana Metrics", "Distributed Tracing (OTel)", "Chaos Engineering & Failover", "Incident Runbooks"],
+    questionCount: 10,
+    estimatedMinutes: 15,
+    difficulty: "Adaptive",
+    recommendedRoles: ["SRE", "Observability Engineer", "Infrastructure Operations Lead"],
+  },
+  {
+    id: "data_engineering",
+    title: "Big Data & Data Pipeline Engineering",
+    tagline: "Apache Spark, Kafka, Airflow ETL, Snowflake, Delta Lake & dbt Modeling",
+    category: "Data Platforms",
+    iconName: "Workflow",
+    gradient: "from-sky-500/20 to-blue-600/20",
+    accentColor: "text-sky-400",
+    skillsCovered: ["Apache Spark Compute", "Apache Airflow DAGs", "Data Lakes & Delta Lake", "Kafka Stream Processing", "Snowflake & dbt Modeling"],
+    questionCount: 10,
+    estimatedMinutes: 15,
+    difficulty: "Adaptive",
+    recommendedRoles: ["Data Engineer", "Data Platform Architect", "Big Data Specialist"],
+  },
 ];
 
 export const DEFAULT_TARGET_ROLES: TargetRoleBenchmark[] = [
@@ -522,6 +648,211 @@ export const DEFAULT_QUESTIONS: AssessmentQuestion[] = [
       { id: "opt-ds1d", text: "Vectorized operations cannot operate on numeric columns.", scoreWeight: 0.0, isCorrect: false },
     ],
   },
+  // --------------------------------------------------------------------------
+  // 8. MOBILE APP ENGINEERING (mobile_app)
+  // --------------------------------------------------------------------------
+  {
+    id: "q-mob-01",
+    category: "technical",
+    skillTag: "Mobile Engineering",
+    subTopic: "React Native / Flutter State & Bridge",
+    difficulty: "medium",
+    questionText: "In React Native's New Architecture (Fabric & TurboModules), how does JavaScript communicate with native UI threads compared to the legacy JSON bridge?",
+    questionType: "single_choice",
+    displayOrder: 20,
+    explanation: "JavaScript Interface (JSI) enables C++ host objects to be directly invoked synchronously by JS runtime without serializing JSON payloads across an asynchronous bridge.",
+    options: [
+      { id: "opt-mob1a", text: "JSI allows JavaScript to hold direct C++ references to native methods without async JSON serialization.", scoreWeight: 1.0, isCorrect: true },
+      { id: "opt-mob1b", text: "It uses WebSockets to transmit binary frames over localhost port 8081.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-mob1c", text: "It compiles all JavaScript directly into ARM64 assembly at compile-time.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-mob1d", text: "There is no difference; it is solely a rebranding of the old bridge.", scoreWeight: 0.0, isCorrect: false },
+    ],
+  },
+  {
+    id: "q-mob-02",
+    category: "technical",
+    skillTag: "Mobile Engineering",
+    subTopic: "Offline SQLite & State Sync",
+    difficulty: "hard",
+    questionText: "When building offline-first mobile sync with SQLite/WatermelonDB, what is the best strategy to resolve concurrent optimistic update conflicts?",
+    questionType: "single_choice",
+    displayOrder: 21,
+    explanation: "Conflict-free Replicated Data Types (CRDTs) or Last-Write-Wins with monotonic Lamport timestamps and version vectors reliably reconcile distributed edits without data loss.",
+    options: [
+      { id: "opt-mob2a", text: "Vector clocks / CRDTs or monotonic version timestamps with field-level delta merging.", scoreWeight: 1.0, isCorrect: true },
+      { id: "opt-mob2b", text: "Always overwriting local SQLite database with raw server snapshot upon connection.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-mob2c", text: "Blocking the UI and preventing user input until Wi-Fi reconnects.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-mob2d", text: "Deleting corrupted client rows and prompting user to re-type data.", scoreWeight: 0.0, isCorrect: false },
+    ],
+  },
+
+  // --------------------------------------------------------------------------
+  // 9. BLOCKCHAIN & SMART CONTRACT SECURITY (blockchain_web3)
+  // --------------------------------------------------------------------------
+  {
+    id: "q-bc-01",
+    category: "technical",
+    skillTag: "Blockchain & Web3",
+    subTopic: "Smart Contract Reentrancy Vulnerability",
+    difficulty: "hard",
+    questionText: "How does the Checks-Effects-Interactions pattern prevent Reentrancy attacks in Ethereum Solidity smart contracts?",
+    questionType: "single_choice",
+    displayOrder: 22,
+    explanation: "Updating internal balances (Effects) before making external ether transfers (Interactions) prevents a malicious receiver contract's fallback from draining funds recursively.",
+    options: [
+      { id: "opt-bc1a", text: "It mutates internal state/balances before transferring funds or calling external contracts.", scoreWeight: 1.0, isCorrect: true },
+      { id: "opt-bc1b", text: "It encrypts the contract bytecode with AES-256 before EVM execution.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-bc1c", text: "It restricts gas limits to 21,000 for all contract function calls.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-bc1d", text: "It forces transactions to execute on Layer-2 Polygon rollups only.", scoreWeight: 0.0, isCorrect: false },
+    ],
+  },
+
+  // --------------------------------------------------------------------------
+  // 10. SYSTEM DESIGN & HIGH-SCALABILITY ARCHITECTURE (system_design)
+  // --------------------------------------------------------------------------
+  {
+    id: "q-sd-01",
+    category: "technical",
+    skillTag: "System Design",
+    subTopic: "Distributed Caching & Cache-Aside Invalidation",
+    difficulty: "hard",
+    questionText: "Under the Cache-Aside pattern with Redis, what prevents race conditions between concurrent DB reads and DB updates?",
+    questionType: "single_choice",
+    displayOrder: 23,
+    explanation: "Invalidating (deleting) the Redis cache key upon database update—rather than updating cache in-place—ensures fresh data is lazily re-populated without stale overwrites.",
+    options: [
+      { id: "opt-sd1a", text: "Deleting the cache key upon DB write rather than updating cache value directly, combined with short TTLs.", scoreWeight: 1.0, isCorrect: true },
+      { id: "opt-sd1b", text: "Disabling database indexes on foreign keys.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-sd1c", text: "Using synchronous HTTP blocking locks on the client browser.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-sd1d", text: "Routing all read traffic directly to primary SQL leader node only.", scoreWeight: 0.0, isCorrect: false },
+    ],
+  },
+
+  // --------------------------------------------------------------------------
+  // 11. GENERATIVE AI & LLM SYSTEMS ENGINEERING (genai_llm)
+  // --------------------------------------------------------------------------
+  {
+    id: "q-gen-01",
+    category: "technical",
+    skillTag: "Generative AI & LLM",
+    subTopic: "RAG Chunking & Vector Cosine Similarity",
+    difficulty: "medium",
+    questionText: "In production RAG (Retrieval-Augmented Generation), why is semantic chunking with overlap superior to fixed character chunking?",
+    questionType: "single_choice",
+    displayOrder: 24,
+    explanation: "Semantic chunking preserves complete conceptual boundaries and sentences while overlap ensures context is not truncated across embedding token windows.",
+    options: [
+      { id: "opt-gen1a", text: "It preserves coherent syntactic context and prevents splitting mid-sentence or mid-thought across vector embeddings.", scoreWeight: 1.0, isCorrect: true },
+      { id: "opt-gen1b", text: "It decreases embedding storage costs in Pinecone by exactly 90%.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-gen1c", text: "It removes the requirement for a retriever or re-ranking model.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-gen1d", text: "Fixed character chunking is not supported by OpenAI text-embedding-3.", scoreWeight: 0.0, isCorrect: false },
+    ],
+  },
+
+  // --------------------------------------------------------------------------
+  // 12. EMBEDDED SYSTEMS & IOT (embedded_iot)
+  // --------------------------------------------------------------------------
+  {
+    id: "q-emb-01",
+    category: "technical",
+    skillTag: "Embedded Systems & IoT",
+    subTopic: "Interrupt Service Routines (ISR) & FreeRTOS",
+    difficulty: "hard",
+    questionText: "Why must dynamic memory allocation (`malloc`/`free`) and blocking delays NEVER be used inside an Interrupt Service Routine (ISR)?",
+    questionType: "single_choice",
+    displayOrder: 25,
+    explanation: "ISRs execute at elevated hardware priority; blocking or non-deterministic heap operations cause deadlocks, priority inversions, and system lockups.",
+    options: [
+      { id: "opt-emb1a", text: "Heap allocation is non-deterministic and can cause deadlocks or priority inversions in critical ISR context.", scoreWeight: 1.0, isCorrect: true },
+      { id: "opt-emb1b", text: "ISRs only run on 64-bit multi-core processors.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-emb1c", text: "Microcontroller flash memory is strictly read-only at runtime.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-emb1d", text: "C++ compilers automatically delete all ISR code containing heap calls.", scoreWeight: 0.0, isCorrect: false },
+    ],
+  },
+
+  // --------------------------------------------------------------------------
+  // 13. SOFTWARE TESTING & QA AUTOMATION (qa_automation)
+  // --------------------------------------------------------------------------
+  {
+    id: "q-qa-01",
+    category: "technical",
+    skillTag: "QA Automation",
+    subTopic: "Playwright / Cypress Flaky Test Mitigation",
+    difficulty: "medium",
+    questionText: "In Playwright and modern E2E automation, what is the best practice to prevent flaky tests caused by asynchronous network calls and DOM animations?",
+    questionType: "single_choice",
+    displayOrder: 26,
+    explanation: "Auto-waiting locators and explicit API response assertions (`waitForResponse` / `expect(locator).toBeVisible()`) eliminate arbitrary hardcoded sleep timeouts.",
+    options: [
+      { id: "opt-qa1a", text: "Using web-first assertions and auto-waiting locators instead of hardcoded thread sleeps (`sleep(5000)`).", scoreWeight: 1.0, isCorrect: true },
+      { id: "opt-qa1b", text: "Increasing browser viewport zoom to 200%.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-qa1c", text: "Running all tests sequentially in a single single-threaded worker process.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-qa1d", text: "Disabling JavaScript in headless Chromium browser settings.", scoreWeight: 0.0, isCorrect: false },
+    ],
+  },
+
+  // --------------------------------------------------------------------------
+  // 14. GAME DEVELOPMENT & 3D GRAPHICS (game_dev)
+  // --------------------------------------------------------------------------
+  {
+    id: "q-gm-01",
+    category: "technical",
+    skillTag: "Game Development",
+    subTopic: "Quaternions & Gimbal Lock in 3D Math",
+    difficulty: "hard",
+    questionText: "Why are Quaternions preferred over Euler angles for representing 3D rotations in game engines like Unity and Unreal?",
+    questionType: "single_choice",
+    displayOrder: 27,
+    explanation: "Quaternions avoid Gimbal Lock (loss of one rotational degree of freedom when axes align) and allow smooth Spherical Linear Interpolation (SLERP).",
+    options: [
+      { id: "opt-gm1a", text: "They eliminate Gimbal Lock and provide smooth spherical interpolation (SLERP) without rotational singularity.", scoreWeight: 1.0, isCorrect: true },
+      { id: "opt-gm1b", text: "They reduce polygon triangle count on 3D mesh models.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-gm1c", text: "Euler angles cannot represent negative coordinates in Cartesian space.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-gm1d", text: "Quaternions are computed strictly on CPU without GPU pipeline.", scoreWeight: 0.0, isCorrect: false },
+    ],
+  },
+
+  // --------------------------------------------------------------------------
+  // 15. SITE RELIABILITY ENGINEERING & OBSERVABILITY (sre_observability)
+  // --------------------------------------------------------------------------
+  {
+    id: "q-sre-01",
+    category: "technical",
+    skillTag: "Site Reliability & SRE",
+    subTopic: "SLIs, SLOs & Error Budgets",
+    difficulty: "medium",
+    questionText: "In SRE practices, what action is triggered when a production service exhausts 100% of its monthly 99.9% Error Budget?",
+    questionType: "single_choice",
+    displayOrder: 28,
+    explanation: "When an Error Budget is burned, feature releases are frozen and engineering effort is dedicated solely to stability, reliability, and bug fixes.",
+    options: [
+      { id: "opt-sre1a", text: "Feature deployments are frozen and engineering priority pivots entirely to reliability and bug hardening.", scoreWeight: 1.0, isCorrect: true },
+      { id: "opt-sre1b", text: "The cloud cluster shuts down all worker nodes automatically.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-sre1c", text: "All user accounts are downgraded to free tier.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-sre1d", text: "HTTP requests are redirected to a static DNS 404 page.", scoreWeight: 0.0, isCorrect: false },
+    ],
+  },
+
+  // --------------------------------------------------------------------------
+  // 16. BIG DATA & DATA PIPELINE ENGINEERING (data_engineering)
+  // --------------------------------------------------------------------------
+  {
+    id: "q-de-01",
+    category: "technical",
+    skillTag: "Data Engineering",
+    subTopic: "Apache Spark Shuffle & Partition Skew",
+    difficulty: "hard",
+    questionText: "In Apache Spark distributed computing, what causes a severe 'Straggler Task' during large-scale `groupBy` / `join` stages?",
+    questionType: "single_choice",
+    displayOrder: 29,
+    explanation: "Data skew causes one or few partition keys to hold a disproportionate percentage of records, overloading a single executor while others sit idle.",
+    options: [
+      { id: "opt-de1a", text: "Data partitioning skew where a single hot key sends millions of records to one executor node.", scoreWeight: 1.0, isCorrect: true },
+      { id: "opt-de1b", text: "Using Parquet columnar format instead of CSV text files.", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-de1c", text: "Enabling Spark Adaptive Query Execution (AQE).", scoreWeight: 0.0, isCorrect: false },
+      { id: "opt-de1d", text: "Allocating too much JVM heap space to driver process.", scoreWeight: 0.0, isCorrect: false },
+    ],
+  },
 ];
 
 // Global in-memory storage for Assessment Questions, Sessions, and Reports
@@ -593,6 +924,33 @@ export async function getAllQuestions(category?: string, subjectId?: string): Pr
           q.skillTag.includes("Python") ||
           q.skillTag.includes("SQL")
         );
+        break;
+      case "mobile_app":
+        questions = questions.filter((q) => q.skillTag.includes("Mobile"));
+        break;
+      case "blockchain_web3":
+        questions = questions.filter((q) => q.skillTag.includes("Blockchain") || q.skillTag.includes("Web3"));
+        break;
+      case "system_design":
+        questions = questions.filter((q) => q.skillTag.includes("System Design"));
+        break;
+      case "genai_llm":
+        questions = questions.filter((q) => q.skillTag.includes("Generative AI") || q.skillTag.includes("LLM"));
+        break;
+      case "embedded_iot":
+        questions = questions.filter((q) => q.skillTag.includes("Embedded"));
+        break;
+      case "qa_automation":
+        questions = questions.filter((q) => q.skillTag.includes("QA Automation") || q.skillTag.includes("Testing"));
+        break;
+      case "game_dev":
+        questions = questions.filter((q) => q.skillTag.includes("Game Development"));
+        break;
+      case "sre_observability":
+        questions = questions.filter((q) => q.skillTag.includes("Site Reliability") || q.skillTag.includes("SRE"));
+        break;
+      case "data_engineering":
+        questions = questions.filter((q) => q.skillTag.includes("Data Engineering") || q.skillTag.includes("Spark"));
         break;
       default:
         break;
