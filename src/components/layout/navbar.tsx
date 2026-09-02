@@ -25,6 +25,11 @@ import {
   Sliders,
   CheckCircle2,
   LayoutDashboard,
+  Target,
+  BookOpen,
+  TrendingUp,
+  Clock,
+  Play,
 } from "lucide-react";
 import { Container } from "./container";
 import { KaushalSetuIcon } from "@/components/ui/logo";
@@ -56,104 +61,102 @@ export function Navbar() {
     return () => window.removeEventListener("click", handleClickOutside);
   }, []);
 
-  const aiSuiteItems = [
+  // Primary Navigation Definitions (Step 2 PRD Specification)
+  const myLearningItems = [
     {
-      title: "AI Mock Interview Studio",
-      desc: "Voice & text simulator with dynamic follow-ups & performance popups",
+      title: "Learning Assistant",
+      desc: "Interactive Socratic AI Tutor contextually aware of your skill gaps",
+      href: "/career-coach",
+      icon: Bot,
+      badge: "AI Tutor",
+      color: "text-cyan-400 bg-cyan-500/10 border-cyan-500/30",
+    },
+    {
+      title: "My Skill DNA",
+      desc: "Multi-vector diagnostic competency map & benchmark gap radar",
+      href: "/skills",
+      icon: Brain,
+      badge: "Skill DNA",
+      color: "text-violet-400 bg-violet-500/10 border-violet-500/30",
+    },
+    {
+      title: "Learning Roadmap",
+      desc: "Personalized 4-phase adaptive milestone study plan",
+      href: "/ai-career",
+      icon: Layers,
+      badge: "4-Phase Plan",
+      color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/30",
+    },
+    {
+      title: "Recommended Resources",
+      desc: "Multi-modal curated videos, sandboxes & docs prioritized by deficit",
+      href: "/learning/resources",
+      icon: BookOpen,
+      badge: "Adaptive Queue",
+      color: "text-amber-400 bg-amber-500/10 border-amber-500/30",
+    },
+    {
+      title: "Practice Arena",
+      desc: "AI oral defense exams, multi-agent GD roundtables & coding drills",
+      href: "/practice",
+      icon: Play,
+      badge: "Oral Drills",
+      color: "text-cyan-400 bg-cyan-500/10 border-cyan-500/30",
+    },
+  ];
+
+  const myProgressItems = [
+    {
+      title: "Performance Command Center",
+      desc: "Weighted learning mastery score & next best action pipeline",
+      href: "/career-readiness",
+      icon: Zap,
+      badge: "Readiness Index",
+      color: "text-cyan-400 bg-cyan-500/10 border-cyan-500/30",
+    },
+    {
+      title: "Skill Growth & Delta",
+      desc: "Empirical pre- vs. post-intervention trajectory and mastery velocity",
+      href: "/progress/growth",
+      icon: TrendingUp,
+      badge: "Mastery Velocity",
+      color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/30",
+    },
+    {
+      title: "Learning History",
+      desc: "Auditable chronological ledger of assessments, drills & credentials",
+      href: "/progress/history",
+      icon: Clock,
+      badge: "Activity Ledger",
+      color: "text-violet-400 bg-violet-500/10 border-violet-500/30",
+    },
+  ];
+
+  const careerToolsItems = [
+    {
+      title: "Resume / ATS Studio",
+      desc: "Deterministic entity extraction and role compatibility grading",
+      href: "/resume-analyzer",
+      icon: FileText,
+      badge: "ATS 0-100",
+      color: "text-amber-400 bg-amber-500/10 border-amber-500/30",
+    },
+    {
+      title: "AI Mock Interview",
+      desc: "Voice & text oral exam with real-time technical depth evaluation",
       href: "/mock-interview",
       icon: Sparkles,
       badge: "Voice AI",
       color: "text-cyan-400 bg-cyan-500/10 border-cyan-500/30",
     },
     {
-      title: "AI GD Roundtable",
-      desc: "Multi-agent virtual discussion room with 5 AI peer personas",
-      href: "/group-discussion",
-      icon: Users,
-      badge: "Multi-Agent",
-      color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/30",
-    },
-    {
-      title: "AI Career Coach",
-      desc: "Grounded conversational advisor with live profile telemetry",
-      href: "/career-coach",
-      icon: Bot,
-      badge: "Grounded AI",
-      color: "text-violet-400 bg-violet-500/10 border-violet-500/30",
-    },
-    {
-      title: "Resume ATS Studio",
-      desc: "5-stage standalone ATS audit with Google XYZ recommendations",
-      href: "/resume-analyzer",
-      icon: FileText,
-      badge: "ATS 0-100",
-      color: "text-amber-400 bg-amber-500/10 border-amber-500/30",
-    },
-  ];
-
-  const readinessItems = [
-    {
-      title: "Career Readiness Command Center",
-      desc: "5-pillar weighted scoring & 3-step Next Best Action pipeline",
-      href: "/career-readiness",
-      icon: Zap,
-      badge: "5-Pillar Score",
-      color: "text-cyan-400 bg-cyan-500/10 border-cyan-500/30",
-    },
-    {
-      title: "Skill Intelligence & Labs",
-      desc: "Verified skill assessments, telemetry benchmarks, and deficit drills",
-      href: "/skills",
-      icon: Brain,
-      badge: "Verified Labs",
-      color: "text-violet-400 bg-violet-500/10 border-violet-500/30",
-    },
-    {
-      title: "Digital Portfolio (GitHub Provenance)",
-      desc: "Cryptographic commit telemetry, code provenance, and verified badges",
-      href: "/portfolio",
-      icon: ShieldCheck,
-      badge: "Git Proof",
-      color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/30",
-    },
-  ];
-
-  const enterpriseItems = [
-    {
-      title: "Candidate Intelligence Suite",
-      desc: "Explainable candidate match scoring with requirements configurator",
-      href: "/dashboard/industry/candidate-intelligence",
-      icon: Sliders,
-      badge: "Explainable Match",
-      color: "text-violet-400 bg-violet-500/10 border-violet-500/30",
-    },
-    {
-      title: "Industry Recruiter Command",
-      desc: "Talent pipeline manager, market skill demand radar & role postings",
-      href: "/dashboard/industry",
-      icon: Building2,
-      badge: "Recruiter Suite",
-      color: "text-cyan-400 bg-cyan-500/10 border-cyan-500/30",
-    },
-    {
-      title: "Opportunities Marketplace",
-      desc: "Pre-screened role marketplace with pre-submission readiness gating",
+      title: "Opportunity Marketplace",
+      desc: "Explainable matching for verified internships & industry projects",
       href: "/opportunities",
       icon: Compass,
-      badge: "70% Threshold",
+      badge: "Verified Matches",
       color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/30",
     },
-  ];
-
-  const loggedInNavItems = [
-    { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { label: "AI Coach", href: "/career-coach", icon: Bot },
-    { label: "Readiness", href: "/career-readiness", icon: Zap },
-    { label: "AI Interview", href: "/mock-interview", icon: Sparkles },
-    { label: "GD Room", href: "/group-discussion", icon: Users },
-    { label: "Resume ATS", href: "/resume-analyzer", icon: FileText },
-    { label: "Opportunities", href: "/opportunities", icon: Compass },
-    { label: "Skills", href: "/skills", icon: Brain },
   ];
 
   return (
@@ -180,387 +183,360 @@ export function Navbar() {
                   </span>
                 </div>
                 <span className="text-[9px] font-mono tracking-widest text-slate-400 uppercase mt-1 hidden sm:inline font-semibold">
-                  Intelligent Career Operating System
+                  AI Personalized Learning Assistant
                 </span>
               </div>
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-1.5 xl:gap-2">
-            {isAuthenticated ? (
-              // Authenticated Navigation Pills
-              loggedInNavItems.map((item) => {
-                const isActive = pathname === item.href;
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all duration-200 whitespace-nowrap ${
-                      isActive
-                        ? "bg-cyan-500/15 text-cyan-300 border border-cyan-500/40 shadow-glow-sm"
-                        : "text-slate-300 hover:text-white hover:bg-white/[0.06]"
-                    }`}
-                  >
-                    <Icon className="h-3.5 w-3.5" />
-                    <span>{item.label}</span>
-                  </Link>
-                );
-              })
-            ) : (
-              // Public Mega-Menu Dropdowns (Professional & Non-Crowded)
-              <>
-                {/* 1. AI Studios Dropdown */}
-                <div className="relative" onClick={(e) => e.stopPropagation()}>
-                  <button
-                    type="button"
-                    onClick={() => setOpenDropdown(openDropdown === "ai" ? null : "ai")}
-                    className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-mono font-bold tracking-wide transition-all whitespace-nowrap ${
-                      openDropdown === "ai" || pathname?.startsWith("/mock-interview") || pathname?.startsWith("/group-discussion") || pathname?.startsWith("/career-coach") || pathname?.startsWith("/resume-analyzer")
-                        ? "bg-cyan-500/15 text-cyan-300 border border-cyan-500/40 shadow-glow-sm"
-                        : "text-slate-200 hover:text-white hover:bg-white/[0.06]"
-                    }`}
-                  >
-                    <Sparkles className="h-3.5 w-3.5 text-cyan-400" />
-                    <span>AI Studios</span>
-                    <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${openDropdown === "ai" ? "rotate-180 text-cyan-400" : "text-muted-foreground"}`} />
-                  </button>
+          {/* Desktop Navigation - Repositioned for Education & Personalized Learning */}
+          <nav className="hidden xl:flex items-center gap-1.5">
+            {/* 1. HOME */}
+            <Link
+              href={isAuthenticated ? "/dashboard" : "/"}
+              className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all whitespace-nowrap ${
+                pathname === "/" || pathname === "/dashboard"
+                  ? "bg-cyan-500/15 text-cyan-300 border border-cyan-500/40 shadow-glow-sm"
+                  : "text-slate-300 hover:text-white hover:bg-white/[0.06]"
+              }`}
+            >
+              HOME
+            </Link>
 
-                  {openDropdown === "ai" && (
-                    <div className="absolute top-full left-0 mt-2 w-[480px] p-3 rounded-2xl bg-slate-950/95 backdrop-blur-2xl border border-cyan-500/30 shadow-2xl space-y-1.5 animate-in fade-in slide-in-from-top-2 duration-200 z-50">
-                      <div className="px-3 py-1 text-[10px] font-mono font-bold uppercase tracking-widest text-cyan-400 border-b border-white/[0.08] pb-1.5">
-                        Interactive AI Capabilities
-                      </div>
-                      <div className="grid grid-cols-1 gap-1.5 pt-1">
-                        {aiSuiteItems.map((item) => {
-                          const Icon = item.icon;
-                          return (
-                            <Link
-                              key={item.href}
-                              href={item.href}
-                              onClick={() => setOpenDropdown(null)}
-                              className="p-2.5 rounded-xl bg-slate-900/50 hover:bg-slate-900 border border-transparent hover:border-cyan-500/30 transition-all flex items-start gap-3 group"
-                            >
-                              <div className={`p-2 rounded-lg border ${item.color} shrink-0 group-hover:scale-105 transition-transform`}>
-                                <Icon className="h-4 w-4" />
-                              </div>
-                              <div className="space-y-0.5 flex-1 min-w-0">
-                                <div className="flex items-center justify-between">
-                                  <span className="text-xs font-bold text-foreground font-mono group-hover:text-cyan-300 transition-colors">
-                                    {item.title}
-                                  </span>
-                                  <Badge variant="glass" size="sm" className="font-mono text-[9px]">
-                                    {item.badge}
-                                  </Badge>
-                                </div>
-                                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                                  {item.desc}
-                                </p>
-                              </div>
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
+            {/* 2. ASSESS */}
+            <Link
+              href="/assessment"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all whitespace-nowrap ${
+                pathname?.startsWith("/assessment")
+                  ? "bg-cyan-500/15 text-cyan-300 border border-cyan-500/40 shadow-glow-sm"
+                  : "text-slate-300 hover:text-white hover:bg-white/[0.06]"
+              }`}
+            >
+              <Brain className="h-3.5 w-3.5 text-cyan-400" />
+              <span>ASSESS</span>
+            </Link>
+
+            {/* 3. MY LEARNING Dropdown */}
+            <div className="relative" onClick={(e) => e.stopPropagation()}>
+              <button
+                type="button"
+                onClick={() => setOpenDropdown(openDropdown === "learning" ? null : "learning")}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-semibold tracking-wide transition-all whitespace-nowrap ${
+                  openDropdown === "learning" || pathname?.startsWith("/career-coach") || pathname?.startsWith("/skills") || pathname?.startsWith("/ai-career") || pathname?.startsWith("/learning") || pathname?.startsWith("/practice")
+                    ? "bg-cyan-500/15 text-cyan-300 border border-cyan-500/40 shadow-glow-sm"
+                    : "text-slate-300 hover:text-white hover:bg-white/[0.06]"
+                }`}
+              >
+                <BookOpen className="h-3.5 w-3.5 text-cyan-400" />
+                <span>MY LEARNING</span>
+                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${openDropdown === "learning" ? "rotate-180 text-cyan-400" : "text-muted-foreground"}`} />
+              </button>
+
+              {openDropdown === "learning" && (
+                <div className="absolute top-full left-0 mt-2 w-[480px] p-3 rounded-2xl bg-slate-950/95 backdrop-blur-2xl border border-cyan-500/30 shadow-2xl space-y-1.5 animate-in fade-in slide-in-from-top-2 duration-200 z-50">
+                  <div className="px-3 py-1 text-[10px] font-mono font-bold uppercase tracking-widest text-cyan-400 border-b border-white/[0.08] pb-1.5">
+                    Adaptive Learning Suite
+                  </div>
+                  <div className="grid grid-cols-1 gap-1.5 pt-1">
+                    {myLearningItems.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={() => setOpenDropdown(null)}
+                          className="p-2.5 rounded-xl bg-slate-900/50 hover:bg-slate-900 border border-transparent hover:border-cyan-500/30 transition-all flex items-start gap-3 group"
+                        >
+                          <div className={`p-2 rounded-lg border ${item.color} shrink-0 group-hover:scale-105 transition-transform`}>
+                            <Icon className="h-4 w-4" />
+                          </div>
+                          <div className="space-y-0.5 flex-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-bold text-foreground font-mono group-hover:text-cyan-300 transition-colors">
+                                {item.title}
+                              </span>
+                              <Badge variant="glass" size="sm" className="font-mono text-[9px]">
+                                {item.badge}
+                              </Badge>
+                            </div>
+                            <p className="text-[11px] text-muted-foreground leading-relaxed">
+                              {item.desc}
+                            </p>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
                 </div>
+              )}
+            </div>
 
-                {/* 2. Readiness & Skills Dropdown */}
-                <div className="relative" onClick={(e) => e.stopPropagation()}>
-                  <button
-                    type="button"
-                    onClick={() => setOpenDropdown(openDropdown === "readiness" ? null : "readiness")}
-                    className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-mono font-bold tracking-wide transition-all whitespace-nowrap ${
-                      openDropdown === "readiness" || pathname?.startsWith("/career-readiness") || pathname?.startsWith("/skills") || pathname?.startsWith("/portfolio")
-                        ? "bg-cyan-500/15 text-cyan-300 border border-cyan-500/40 shadow-glow-sm"
-                        : "text-slate-200 hover:text-white hover:bg-white/[0.06]"
-                    }`}
-                  >
-                    <Zap className="h-3.5 w-3.5 text-violet-400" />
-                    <span>Readiness & Skills</span>
-                    <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${openDropdown === "readiness" ? "rotate-180 text-violet-400" : "text-muted-foreground"}`} />
-                  </button>
+            {/* 4. MY PROGRESS Dropdown */}
+            <div className="relative" onClick={(e) => e.stopPropagation()}>
+              <button
+                type="button"
+                onClick={() => setOpenDropdown(openDropdown === "progress" ? null : "progress")}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-semibold tracking-wide transition-all whitespace-nowrap ${
+                  openDropdown === "progress" || pathname?.startsWith("/career-readiness") || pathname?.startsWith("/progress")
+                    ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/40 shadow-glow-sm"
+                    : "text-slate-300 hover:text-white hover:bg-white/[0.06]"
+                }`}
+              >
+                <TrendingUp className="h-3.5 w-3.5 text-emerald-400" />
+                <span>MY PROGRESS</span>
+                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${openDropdown === "progress" ? "rotate-180 text-emerald-400" : "text-muted-foreground"}`} />
+              </button>
 
-                  {openDropdown === "readiness" && (
-                    <div className="absolute top-full left-0 mt-2 w-[460px] p-3 rounded-2xl bg-slate-950/95 backdrop-blur-2xl border border-violet-500/30 shadow-2xl space-y-1.5 animate-in fade-in slide-in-from-top-2 duration-200 z-50">
-                      <div className="px-3 py-1 text-[10px] font-mono font-bold uppercase tracking-widest text-violet-400 border-b border-white/[0.08] pb-1.5">
-                        Verification & Career Benchmarking
-                      </div>
-                      <div className="grid grid-cols-1 gap-1.5 pt-1">
-                        {readinessItems.map((item) => {
-                          const Icon = item.icon;
-                          return (
-                            <Link
-                              key={item.href}
-                              href={item.href}
-                              onClick={() => setOpenDropdown(null)}
-                              className="p-2.5 rounded-xl bg-slate-900/50 hover:bg-slate-900 border border-transparent hover:border-violet-500/30 transition-all flex items-start gap-3 group"
-                            >
-                              <div className={`p-2 rounded-lg border ${item.color} shrink-0 group-hover:scale-105 transition-transform`}>
-                                <Icon className="h-4 w-4" />
-                              </div>
-                              <div className="space-y-0.5 flex-1 min-w-0">
-                                <div className="flex items-center justify-between">
-                                  <span className="text-xs font-bold text-foreground font-mono group-hover:text-violet-300 transition-colors">
-                                    {item.title}
-                                  </span>
-                                  <Badge variant="glass" size="sm" className="font-mono text-[9px]">
-                                    {item.badge}
-                                  </Badge>
-                                </div>
-                                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                                  {item.desc}
-                                </p>
-                              </div>
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
+              {openDropdown === "progress" && (
+                <div className="absolute top-full left-0 mt-2 w-[460px] p-3 rounded-2xl bg-slate-950/95 backdrop-blur-2xl border border-emerald-500/30 shadow-2xl space-y-1.5 animate-in fade-in slide-in-from-top-2 duration-200 z-50">
+                  <div className="px-3 py-1 text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-400 border-b border-white/[0.08] pb-1.5">
+                    Progress & Mastery Velocity
+                  </div>
+                  <div className="grid grid-cols-1 gap-1.5 pt-1">
+                    {myProgressItems.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={() => setOpenDropdown(null)}
+                          className="p-2.5 rounded-xl bg-slate-900/50 hover:bg-slate-900 border border-transparent hover:border-emerald-500/30 transition-all flex items-start gap-3 group"
+                        >
+                          <div className={`p-2 rounded-lg border ${item.color} shrink-0 group-hover:scale-105 transition-transform`}>
+                            <Icon className="h-4 w-4" />
+                          </div>
+                          <div className="space-y-0.5 flex-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-bold text-foreground font-mono group-hover:text-emerald-300 transition-colors">
+                                {item.title}
+                              </span>
+                              <Badge variant="glass" size="sm" className="font-mono text-[9px]">
+                                {item.badge}
+                              </Badge>
+                            </div>
+                            <p className="text-[11px] text-muted-foreground leading-relaxed">
+                              {item.desc}
+                            </p>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
                 </div>
+              )}
+            </div>
 
-                {/* 3. Opportunities Direct Link */}
-                <Link
-                  href="/opportunities"
-                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-mono font-bold tracking-wide transition-all whitespace-nowrap ${
-                    pathname === "/opportunities"
-                      ? "bg-cyan-500/15 text-cyan-300 border border-cyan-500/40 shadow-glow-sm"
-                      : "text-slate-200 hover:text-white hover:bg-white/[0.06]"
-                  }`}
-                >
-                  <Compass className="h-3.5 w-3.5 text-emerald-400" />
-                  <span>Opportunities</span>
-                </Link>
+            {/* 5. MY GOALS */}
+            <Link
+              href="/learning/goals"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all whitespace-nowrap ${
+                pathname?.startsWith("/learning/goals")
+                  ? "bg-cyan-500/15 text-cyan-300 border border-cyan-500/40 shadow-glow-sm"
+                  : "text-slate-300 hover:text-white hover:bg-white/[0.06]"
+              }`}
+            >
+              <Target className="h-3.5 w-3.5 text-cyan-400" />
+              <span>MY GOALS</span>
+            </Link>
 
-                {/* 4. Enterprise & Recruiters Dropdown */}
-                <div className="relative" onClick={(e) => e.stopPropagation()}>
-                  <button
-                    type="button"
-                    onClick={() => setOpenDropdown(openDropdown === "enterprise" ? null : "enterprise")}
-                    className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-mono font-bold tracking-wide transition-all whitespace-nowrap ${
-                      openDropdown === "enterprise" || pathname?.startsWith("/dashboard/industry")
-                        ? "bg-cyan-500/15 text-cyan-300 border border-cyan-500/40 shadow-glow-sm"
-                        : "text-slate-200 hover:text-white hover:bg-white/[0.06]"
-                    }`}
-                  >
-                    <Building2 className="h-3.5 w-3.5 text-cyan-400" />
-                    <span>Recruiter Suite</span>
-                    <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${openDropdown === "enterprise" ? "rotate-180 text-cyan-400" : "text-muted-foreground"}`} />
-                  </button>
+            {/* 6. CAREER TOOLS Dropdown */}
+            <div className="relative" onClick={(e) => e.stopPropagation()}>
+              <button
+                type="button"
+                onClick={() => setOpenDropdown(openDropdown === "career" ? null : "career")}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-semibold tracking-wide transition-all whitespace-nowrap ${
+                  openDropdown === "career" || pathname?.startsWith("/resume-analyzer") || pathname?.startsWith("/mock-interview") || pathname?.startsWith("/opportunities")
+                    ? "bg-violet-500/15 text-violet-300 border border-violet-500/40 shadow-glow-sm"
+                    : "text-slate-300 hover:text-white hover:bg-white/[0.06]"
+                }`}
+              >
+                <Sparkles className="h-3.5 w-3.5 text-violet-400" />
+                <span>CAREER TOOLS</span>
+                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${openDropdown === "career" ? "rotate-180 text-violet-400" : "text-muted-foreground"}`} />
+              </button>
 
-                  {openDropdown === "enterprise" && (
-                    <div className="absolute top-full right-0 mt-2 w-[460px] p-3 rounded-2xl bg-slate-950/95 backdrop-blur-2xl border border-cyan-500/30 shadow-2xl space-y-1.5 animate-in fade-in slide-in-from-top-2 duration-200 z-50">
-                      <div className="px-3 py-1 text-[10px] font-mono font-bold uppercase tracking-widest text-cyan-400 border-b border-white/[0.08] pb-1.5">
-                        Industry & Hiring Intelligence
-                      </div>
-                      <div className="grid grid-cols-1 gap-1.5 pt-1">
-                        {enterpriseItems.map((item) => {
-                          const Icon = item.icon;
-                          return (
-                            <Link
-                              key={item.href}
-                              href={item.href}
-                              onClick={() => setOpenDropdown(null)}
-                              className="p-2.5 rounded-xl bg-slate-900/50 hover:bg-slate-900 border border-transparent hover:border-cyan-500/30 transition-all flex items-start gap-3 group"
-                            >
-                              <div className={`p-2 rounded-lg border ${item.color} shrink-0 group-hover:scale-105 transition-transform`}>
-                                <Icon className="h-4 w-4" />
-                              </div>
-                              <div className="space-y-0.5 flex-1 min-w-0">
-                                <div className="flex items-center justify-between">
-                                  <span className="text-xs font-bold text-foreground font-mono group-hover:text-cyan-300 transition-colors">
-                                    {item.title}
-                                  </span>
-                                  <Badge variant="glass" size="sm" className="font-mono text-[9px]">
-                                    {item.badge}
-                                  </Badge>
-                                </div>
-                                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                                  {item.desc}
-                                </p>
-                              </div>
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
+              {openDropdown === "career" && (
+                <div className="absolute top-full right-0 mt-2 w-[460px] p-3 rounded-2xl bg-slate-950/95 backdrop-blur-2xl border border-violet-500/30 shadow-2xl space-y-1.5 animate-in fade-in slide-in-from-top-2 duration-200 z-50">
+                  <div className="px-3 py-1 text-[10px] font-mono font-bold uppercase tracking-widest text-violet-400 border-b border-white/[0.08] pb-1.5">
+                    Career Bridge & ATS Suite
+                  </div>
+                  <div className="grid grid-cols-1 gap-1.5 pt-1">
+                    {careerToolsItems.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={() => setOpenDropdown(null)}
+                          className="p-2.5 rounded-xl bg-slate-900/50 hover:bg-slate-900 border border-transparent hover:border-violet-500/30 transition-all flex items-start gap-3 group"
+                        >
+                          <div className={`p-2 rounded-lg border ${item.color} shrink-0 group-hover:scale-105 transition-transform`}>
+                            <Icon className="h-4 w-4" />
+                          </div>
+                          <div className="space-y-0.5 flex-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-bold text-foreground font-mono group-hover:text-violet-300 transition-colors">
+                                {item.title}
+                              </span>
+                              <Badge variant="glass" size="sm" className="font-mono text-[9px]">
+                                {item.badge}
+                              </Badge>
+                            </div>
+                            <p className="text-[11px] text-muted-foreground leading-relaxed">
+                              {item.desc}
+                            </p>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
                 </div>
+              )}
+            </div>
 
-                {/* 5. Ecosystem Overview Link */}
-                <Link
-                  href="/#ecosystem-3d"
-                  className="px-3 py-2 rounded-xl text-xs font-mono font-bold text-slate-300 hover:text-white hover:bg-white/[0.06] transition-all whitespace-nowrap"
-                >
-                  Ecosystem
-                </Link>
-              </>
-            )}
+            {/* 7. PORTFOLIO */}
+            <Link
+              href="/portfolio"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all whitespace-nowrap ${
+                pathname === "/portfolio"
+                  ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/40 shadow-glow-sm"
+                  : "text-slate-300 hover:text-white hover:bg-white/[0.06]"
+              }`}
+            >
+              <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+              <span>PORTFOLIO</span>
+            </Link>
           </nav>
 
-          {/* Right Actions */}
+          {/* Right Action Bar */}
           <div className="flex items-center gap-3">
             <ThemeToggle />
+            <NotificationBell />
 
-            {isAuthenticated && user ? (
+            {isAuthenticated ? (
               <div className="flex items-center gap-2">
-                <NotificationBell />
-
-                {/* User Profile Pill & Sign Out */}
-                <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-white/10">
-                  <Link href="/dashboard" className="flex items-center gap-2 group">
-                    <div className="h-8 w-8 rounded-lg bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 group-hover:scale-105 transition-transform">
-                      <User className="h-4 w-4" />
-                    </div>
-                    <div className="text-left hidden md:block">
-                      <div className="text-xs font-bold text-foreground leading-none truncate max-w-[100px] font-mono">
-                        {user.fullName.split(" ")[0]}
-                      </div>
-                      <span className="text-[10px] font-mono text-cyan-400 uppercase">
-                        {user.role}
-                      </span>
-                    </div>
-                  </Link>
-
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-muted-foreground hover:text-rose-400"
-                    onClick={() => logout()}
-                    title="Sign Out"
-                  >
-                    <LogOut className="h-4 w-4" />
+                <Link href="/profile">
+                  <Button variant="outline" size="sm" className="gap-2 border-white/10 hover:border-cyan-500/40">
+                    <User className="h-3.5 w-3.5 text-cyan-400" />
+                    <span className="hidden sm:inline font-mono text-xs">{user?.fullName || "Student Profile"}</span>
                   </Button>
-                </div>
+                </Link>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={logout}
+                  className="text-slate-400 hover:text-rose-400 hover:bg-rose-500/10"
+                >
+                  <LogOut className="h-4 w-4" />
+                </Button>
               </div>
             ) : (
-              <div className="hidden sm:flex items-center gap-2.5">
+              <div className="flex items-center gap-2">
                 <Link href="/login">
-                  <Button variant="ghost" size="sm" className="text-xs font-mono font-bold text-slate-200 hover:text-white px-3.5">
-                    Sign In
+                  <Button variant="ghost" size="sm" className="font-mono text-xs text-slate-300 hover:text-white">
+                    Log In
                   </Button>
                 </Link>
                 <Link href="/register">
-                  <Button variant="glow" size="sm" className="text-xs font-mono font-bold px-4 shadow-cyan-500/20 shadow-md">
-                    Launch Studio →
+                  <Button variant="cyber" size="sm" className="font-mono text-xs gap-1.5">
+                    Start Learning <ArrowRight className="h-3.5 w-3.5" />
                   </Button>
                 </Link>
               </div>
             )}
 
-            {/* Mobile menu trigger */}
-            <Button
-              variant="glass"
-              size="icon"
-              className="h-9 w-9 lg:hidden"
+            {/* Mobile Menu Button */}
+            <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              aria-label="Open menu"
+              className="xl:hidden p-2 rounded-xl text-slate-300 hover:text-white bg-slate-900/60 border border-white/10"
             >
-              {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-            </Button>
+              {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
           </div>
         </div>
 
         {/* Mobile Navigation Drawer */}
         {mobileOpen && (
-          <div className="lg:hidden border-t border-white/[0.08] bg-slate-950/95 backdrop-blur-2xl px-4 py-5 space-y-4 rounded-b-2xl shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200 max-h-[80vh] overflow-y-auto font-mono text-xs">
-            {/* AI Studios Group */}
-            <div className="space-y-1.5">
-              <span className="text-[10px] uppercase font-bold text-cyan-400 tracking-wider block px-2">
-                AI Studios
-              </span>
-              {aiSuiteItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center justify-between p-2 rounded-xl text-slate-300 hover:text-cyan-300 hover:bg-white/5"
-                >
-                  <span>{item.title}</span>
-                  <Badge variant="glass" size="sm" className="text-[9px]">
-                    {item.badge}
-                  </Badge>
-                </Link>
-              ))}
+          <div className="xl:hidden py-4 border-t border-white/[0.08] space-y-4 animate-in fade-in slide-in-from-top-3 duration-200">
+            <div className="grid grid-cols-2 gap-2">
+              <Link
+                href={isAuthenticated ? "/dashboard" : "/"}
+                onClick={() => setMobileOpen(false)}
+                className="p-2.5 rounded-xl bg-slate-900/60 border border-white/10 text-xs font-mono font-bold text-white flex items-center gap-2"
+              >
+                <LayoutDashboard className="h-4 w-4 text-cyan-400" />
+                <span>HOME</span>
+              </Link>
+              <Link
+                href="/assessment"
+                onClick={() => setMobileOpen(false)}
+                className="p-2.5 rounded-xl bg-slate-900/60 border border-white/10 text-xs font-mono font-bold text-white flex items-center gap-2"
+              >
+                <Brain className="h-4 w-4 text-cyan-400" />
+                <span>ASSESS</span>
+              </Link>
             </div>
 
-            {/* Readiness & Verification */}
-            <div className="space-y-1.5 pt-2 border-t border-white/[0.08]">
-              <span className="text-[10px] uppercase font-bold text-violet-400 tracking-wider block px-2">
-                Readiness & Skills
-              </span>
-              {readinessItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center justify-between p-2 rounded-xl text-slate-300 hover:text-violet-300 hover:bg-white/5"
-                >
-                  <span>{item.title}</span>
-                  <Badge variant="glass" size="sm" className="text-[9px]">
-                    {item.badge}
-                  </Badge>
-                </Link>
-              ))}
-            </div>
-
-            {/* Recruiter & Opportunities */}
-            <div className="space-y-1.5 pt-2 border-t border-white/[0.08]">
-              <span className="text-[10px] uppercase font-bold text-emerald-400 tracking-wider block px-2">
-                Recruiter & Marketplace
-              </span>
-              {enterpriseItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center justify-between p-2 rounded-xl text-slate-300 hover:text-emerald-300 hover:bg-white/5"
-                >
-                  <span>{item.title}</span>
-                  <Badge variant="glass" size="sm" className="text-[9px]">
-                    {item.badge}
-                  </Badge>
-                </Link>
-              ))}
-            </div>
-
-            {/* User Controls */}
-            <div className="pt-3 border-t border-white/[0.08] flex flex-col gap-2">
-              {isAuthenticated && user ? (
-                <>
-                  <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="w-full">
-                    <Button variant="cyber" size="sm" className="w-full justify-center text-xs font-mono">
-                      Open Dashboard ({user.role.toUpperCase()})
-                    </Button>
-                  </Link>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    className="w-full justify-center text-xs font-mono"
-                    onClick={() => {
-                      setMobileOpen(false);
-                      logout();
-                    }}
+            {/* MY LEARNING SECTION */}
+            <div className="space-y-1">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-cyan-400 px-1">MY LEARNING</span>
+              <div className="grid grid-cols-1 gap-1 pt-1">
+                {myLearningItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="p-2 rounded-lg bg-slate-900/40 hover:bg-slate-900 text-xs font-mono text-slate-300 hover:text-white flex items-center justify-between"
                   >
-                    Sign Out
-                  </Button>
-                </>
-              ) : (
-                <div className="grid grid-cols-2 gap-2">
-                  <Link href="/login" onClick={() => setMobileOpen(false)} className="w-full">
-                    <Button variant="glass" size="sm" className="w-full justify-center text-xs font-mono">
-                      Sign In
-                    </Button>
+                    <span className="flex items-center gap-2">
+                      <item.icon className="h-3.5 w-3.5 text-cyan-400" />
+                      {item.title}
+                    </span>
+                    <Badge variant="glass" size="sm" className="text-[9px]">{item.badge}</Badge>
                   </Link>
-                  <Link href="/register" onClick={() => setMobileOpen(false)} className="w-full">
-                    <Button variant="glow" size="sm" className="w-full justify-center text-xs font-mono">
-                      Register
-                    </Button>
+                ))}
+              </div>
+            </div>
+
+            {/* MY PROGRESS SECTION */}
+            <div className="space-y-1">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-emerald-400 px-1">MY PROGRESS</span>
+              <div className="grid grid-cols-1 gap-1 pt-1">
+                {myProgressItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="p-2 rounded-lg bg-slate-900/40 hover:bg-slate-900 text-xs font-mono text-slate-300 hover:text-white flex items-center justify-between"
+                  >
+                    <span className="flex items-center gap-2">
+                      <item.icon className="h-3.5 w-3.5 text-emerald-400" />
+                      {item.title}
+                    </span>
+                    <Badge variant="glass" size="sm" className="text-[9px]">{item.badge}</Badge>
                   </Link>
-                </div>
-              )}
+                ))}
+              </div>
+            </div>
+
+            {/* CAREER & GOALS */}
+            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/[0.06]">
+              <Link
+                href="/learning/goals"
+                onClick={() => setMobileOpen(false)}
+                className="p-2.5 rounded-xl bg-slate-900/60 border border-white/10 text-xs font-mono font-bold text-white flex items-center gap-2"
+              >
+                <Target className="h-4 w-4 text-cyan-400" />
+                <span>MY GOALS</span>
+              </Link>
+              <Link
+                href="/portfolio"
+                onClick={() => setMobileOpen(false)}
+                className="p-2.5 rounded-xl bg-slate-900/60 border border-white/10 text-xs font-mono font-bold text-white flex items-center gap-2"
+              >
+                <ShieldCheck className="h-4 w-4 text-emerald-400" />
+                <span>PORTFOLIO</span>
+              </Link>
             </div>
           </div>
         )}
@@ -568,5 +544,3 @@ export function Navbar() {
     </header>
   );
 }
-
-export default Navbar;
