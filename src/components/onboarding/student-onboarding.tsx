@@ -316,10 +316,15 @@ export function StudentOnboarding() {
 
               {/* Primary Learning Goal Chips */}
               <div>
-                <label className="text-xs font-mono text-slate-300 block mb-2 font-bold">
-                  Select Your Primary Learning Goal <span className="text-rose-400">*</span>
-                </label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-xs font-mono text-slate-300 font-bold flex items-center gap-1.5">
+                    <Target className="h-3.5 w-3.5 text-cyan-400" />
+                    <span>Select or Type Your Primary Learning Goal</span> <span className="text-rose-400">*</span>
+                  </label>
+                  <span className="text-[10px] font-mono text-cyan-400/80">Custom Goals Supported</span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3">
                   {primaryGoalPresets.map((goal) => {
                     const isSelected = selectedGoal === goal;
                     return (
@@ -338,6 +343,35 @@ export function StudentOnboarding() {
                       </button>
                     );
                   })}
+                </div>
+
+                {/* Direct Typing for Custom Goal */}
+                <div className="space-y-1.5 pt-1">
+                  <div className="relative">
+                    <Input
+                      value={primaryGoalPresets.includes(selectedGoal) ? "" : selectedGoal || ""}
+                      onChange={(e) => {
+                        setValue("primaryLearningGoal", e.target.value, { shouldValidate: true });
+                      }}
+                      placeholder="✍️ Or type your own custom goal (e.g. Master Docker & Kubernetes, Crack FAANG SWE...)"
+                      className={`bg-slate-900/70 border text-xs text-white placeholder:text-slate-500 transition-all ${
+                        !primaryGoalPresets.includes(selectedGoal) && selectedGoal
+                          ? "border-cyan-400 bg-cyan-950/20 shadow-glow-sm"
+                          : "border-white/10 hover:border-white/20 focus:border-cyan-400"
+                      }`}
+                    />
+                  </div>
+
+                  {!primaryGoalPresets.includes(selectedGoal) && selectedGoal && (
+                    <div className="flex items-center gap-1 text-[11px] font-mono text-cyan-300 pt-0.5">
+                      <CheckCircle2 className="h-3 w-3 text-cyan-400 shrink-0" />
+                      <span>Custom Goal Set: &ldquo;{selectedGoal}&rdquo;</span>
+                    </div>
+                  )}
+
+                  {errors.primaryLearningGoal && (
+                    <p className="text-xs text-rose-400 mt-1">{errors.primaryLearningGoal.message}</p>
+                  )}
                 </div>
               </div>
 
