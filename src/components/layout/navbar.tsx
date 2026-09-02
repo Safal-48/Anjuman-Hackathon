@@ -35,16 +35,13 @@ import { Container } from "./container";
 import { SkilloraLogo, SkilloraIcon } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { NotificationBell } from "@/components/marketplace/notification-bell";
 import { useAuth } from "@/lib/auth/auth-context";
-import { JudgeDemoJourneyModal } from "@/components/demo/judge-demo-journey-modal";
 
 export function Navbar() {
   const [scrolled, setScrolled] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [openDropdown, setOpenDropdown] = React.useState<string | null>(null);
-  const [showJudgeDemoModal, setShowJudgeDemoModal] = React.useState(false);
   const { user, isAuthenticated, logout } = useAuth();
   const pathname = usePathname();
 
@@ -399,18 +396,6 @@ export function Navbar() {
 
           {/* Right Action Bar */}
           <div className="flex items-center gap-2.5">
-            {/* Hackathon Judge / Presentation Demo Tour Button */}
-            <Button
-              onClick={() => setShowJudgeDemoModal(true)}
-              variant="cyber"
-              size="sm"
-              className="hidden md:inline-flex font-mono text-[11px] gap-1.5 shadow-glow h-8 px-3"
-            >
-              <Award className="h-3.5 w-3.5 text-cyan-300" />
-              <span>Judge Tour</span>
-            </Button>
-
-            <ThemeToggle />
             <NotificationBell />
 
             {isAuthenticated ? (
@@ -541,12 +526,6 @@ export function Navbar() {
           </div>
         )}
       </Container>
-
-      {/* 14-Step God-Level Student Journey Presentation Modal */}
-      <JudgeDemoJourneyModal
-        isOpen={showJudgeDemoModal}
-        onClose={() => setShowJudgeDemoModal(false)}
-      />
     </header>
   );
 }
