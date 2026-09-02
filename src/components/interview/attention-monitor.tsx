@@ -27,6 +27,7 @@ import { AttentionEngine, DetectionResult } from "@/lib/attention/attention-engi
 import { audioAlert } from "@/lib/attention/audio-alert";
 
 export interface AttentionMonitorProps {
+  initialStream?: MediaStream | null;
   onAlertChange?: (isAlert: boolean, message: string) => void;
   onSummaryReady?: (summary: AttentionSummary) => void;
   onStatusChange?: (status: AttentionStatus) => void;
@@ -36,6 +37,7 @@ export interface AttentionMonitorProps {
 }
 
 export function AttentionMonitor({
+  initialStream,
   onAlertChange,
   onSummaryReady,
   onStatusChange,
@@ -46,6 +48,7 @@ export function AttentionMonitor({
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const engineRef = useRef<AttentionEngine | null>(null);
+  const isMountedRef = useRef<boolean>(true);
 
   const [permissionState, setPermissionState] = useState<"idle" | "requesting" | "granted" | "denied" | "error">("idle");
   const [status, setStatus] = useState<AttentionStatus>("INITIALIZING");
@@ -57,8 +60,74 @@ export function AttentionMonitor({
   const [showInfo, setShowInfo] = useState<boolean>(false);
   const [confidence, setConfidence] = useState<number>(0);
 
-  // Initialize camera and engine
-  const startCamera = useCallback(async () => {
+  // Setup engine on an active video element
+  const bindStreamToVideo = useCallback((stream: MediaStream) => {
+    streamRef.current = stream;
+    setPermissionState("granted");
+
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.srcObject = stream;
+    video.muted = true;
+    video.playsInline = true;
+
+    // Start engine as soon as video stream dimensions and metadata are ready
+    const startAnalysis = () => {
+      video.play().catch((e) => console.warn("Video play handled:", e));
+
+      if (!engineRef.current) {
+        engineRef.current = new AttentionEngine();
+      }
+
+      engineRef.current.setCallbacks({
+        onStatusChange: (newStatus, newDir) => {
+          if (!isMountedRef.current) return;
+          setStatus(newStatus);
+          setDirection(newDir);
+          onStatusChange?.(newStatus);
+        },
+        onAlertTrigger: (alertActive, msg) => {
+          if (!isMountedRef.current) return;
+          setIsAlert(alertActive);
+          setAlertMessage(msg);
+          onAlertChange?.(alertActive, msg);
+        },
+        onMetricsUpdate: (result) => {
+          if (!isMountedRef.current) return;
+          setConfidence(result.confidence);
+        },
+      });
+
+      engineRef.current.start(video);
+      setStatus("FOCUSED");
+      onStatusChange?.("FOCUSED");
+    };
+
+    if (video.readyState >= 2) {
+      startAnalysis();
+    } else {
+      video.onloadeddata = startAnalysis;
+      video.onloadedmetadata = startAnalysis;
+    }
+  }, [onAlertChange, onStatusChange]);
+
+  // Initialize or re-acquire camera stream with automatic retry
+  const startCamera = useCallback(async (retryCount: number = 0) => {
+    if (!isMountedRef.current) return;
+
+    // 1. If an initial active stream is passed from the permission gate, use it directly (0ms delay!)
+    if (initialStream && initialStream.active && initialStream.getVideoTracks().length > 0) {
+      bindStreamToVideo(initialStream);
+      return;
+    }
+
+    // 2. Check if streamRef already holds an active stream
+    if (streamRef.current && streamRef.current.active && streamRef.current.getVideoTracks().some(t => t.readyState === "live")) {
+      bindStreamToVideo(streamRef.current);
+      return;
+    }
+
     if (typeof window === "undefined" || !navigator.mediaDevices?.getUserMedia) {
       setPermissionState("denied");
       setStatus("UNAVAILABLE");
@@ -69,59 +138,45 @@ export function AttentionMonitor({
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
-          width: { ideal: 320 },
-          height: { ideal: 240 },
+          width: { ideal: 320, min: 240 },
+          height: { ideal: 240, min: 180 },
           facingMode: "user",
+          frameRate: { ideal: 15, max: 20 },
         },
         audio: false,
       });
 
-      streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        await videoRef.current.play().catch(() => {});
+      if (!isMountedRef.current) {
+        stream.getTracks().forEach((t) => t.stop());
+        return;
       }
 
-      setPermissionState("granted");
-
-      // Initialize Attention Engine
-      if (!engineRef.current) {
-        engineRef.current = new AttentionEngine();
-      }
-
-      engineRef.current.setCallbacks({
-        onStatusChange: (newStatus, newDir) => {
-          setStatus(newStatus);
-          setDirection(newDir);
-          onStatusChange?.(newStatus);
-        },
-        onAlertTrigger: (alertActive, msg) => {
-          setIsAlert(alertActive);
-          setAlertMessage(msg);
-          onAlertChange?.(alertActive, msg);
-        },
-        onMetricsUpdate: (result) => {
-          setConfidence(result.confidence);
-        },
-      });
-
-      if (videoRef.current) {
-        engineRef.current.start(videoRef.current);
-      }
+      bindStreamToVideo(stream);
     } catch (err: unknown) {
-      console.warn("AttentionMonitor: Camera permission or device access denied:", err);
-      setPermissionState("denied");
-      setStatus("UNAVAILABLE");
-      onStatusChange?.("UNAVAILABLE");
+      console.warn(`AttentionMonitor: Camera init attempt ${retryCount + 1} failed:`, err);
+      // If hardware lock was still busy from a previous track release, retry after 400ms
+      if (retryCount < 2 && isMountedRef.current) {
+        setTimeout(() => {
+          if (isMountedRef.current) {
+            startCamera(retryCount + 1);
+          }
+        }, 400 * (retryCount + 1));
+      } else {
+        setPermissionState("denied");
+        setStatus("UNAVAILABLE");
+        onStatusChange?.("UNAVAILABLE");
+      }
     }
-  }, [onAlertChange, onStatusChange]);
+  }, [initialStream, bindStreamToVideo, onStatusChange]);
 
-  // Handle active session toggles
+  // Handle mounting and unmounting
   useEffect(() => {
+    isMountedRef.current = true;
     startCamera();
 
     return () => {
-      // Clean up camera stream and engine
+      isMountedRef.current = false;
+      // Clean up local camera stream and engine
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop());
         streamRef.current = null;
@@ -129,23 +184,18 @@ export function AttentionMonitor({
       if (engineRef.current) {
         const summary = engineRef.current.stop();
         onSummaryReady?.(summary);
+        engineRef.current = null;
       }
     };
   }, [startCamera, onSummaryReady]);
 
-  // Ensure video element plays the live stream immediately upon granting
+  // Ensure video element plays the live stream if stream becomes available later
   useEffect(() => {
     if (permissionState === "granted" && streamRef.current && videoRef.current) {
       const video = videoRef.current;
-      video.srcObject = streamRef.current;
-      video.muted = true;
-      video.playsInline = true;
-
-      const playPromise = video.play();
-      if (playPromise !== undefined) {
-        playPromise.catch((e) => {
-          console.warn("Video auto-play handled:", e);
-        });
+      if (!video.srcObject) {
+        video.srcObject = streamRef.current;
+        video.play().catch(() => {});
       }
     }
   }, [permissionState]);
@@ -159,98 +209,93 @@ export function AttentionMonitor({
 
   // Render Status Badge Content
   const renderStatusBadge = () => {
-    if (permissionState === "denied" || permissionState === "error") {
-      return (
-        <Badge variant="outline" size="sm" className="font-mono text-[10px] bg-slate-900/90 text-slate-400 border-slate-700">
-          <CameraOff className="h-3 w-3 mr-1" />
-          Camera Unavailable
-        </Badge>
-      );
-    }
-
-    if (permissionState === "requesting" || status === "INITIALIZING") {
-      return (
-        <Badge variant="outline" size="sm" className="font-mono text-[10px] bg-cyan-950/80 text-cyan-300 border-cyan-500/40 animate-pulse">
-          <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
-          Initializing...
-        </Badge>
-      );
-    }
-
-    if (isAlert || status === "DEVIATION_WARNING") {
-      return (
-        <Badge variant="destructive" size="sm" className="font-mono text-[10px] animate-pulse shadow-[0_0_12px_rgba(244,63,94,0.4)]">
-          <AlertTriangle className="h-3 w-3 mr-1" />
-          {ATTENTION_CONFIG.LABELS.LOOK_AT_SCREEN}
-        </Badge>
-      );
-    }
-
-    if (status === "FACE_LOST_WARNING") {
-      return (
-        <Badge variant="amber" size="sm" className="font-mono text-[10px] animate-pulse">
-          <Eye className="h-3 w-3 mr-1" />
-          {ATTENTION_CONFIG.LABELS.FACE_LOST}
-        </Badge>
-      );
-    }
-
-    return (
-      <Badge variant="emerald" size="sm" className="font-mono text-[10px] shadow-[0_0_10px_rgba(16,185,129,0.3)]">
-        <CheckCircle2 className="h-3 w-3 mr-1 text-emerald-400" />
-        {ATTENTION_CONFIG.LABELS.FOCUSED}
-      </Badge>
-    );
-  };
-
-  // If permission denied / unavailable fallback state
-  if (permissionState === "denied" || permissionState === "error") {
-    return (
-      <div className={`p-3 rounded-2xl bg-slate-900/70 border border-white/10 backdrop-blur-md text-xs text-muted-foreground space-y-2 ${className}`}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5 font-mono text-[11px] text-slate-300">
-            <CameraOff className="h-3.5 w-3.5 text-slate-400" />
-            <span>Presence Monitor</span>
+    switch (status) {
+      case "FOCUSED":
+        return (
+          <div className="flex items-center gap-1.5 text-emerald-400 font-mono text-[11px] font-semibold">
+            <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+            <span>Attention: Focused</span>
           </div>
-          <Badge variant="outline" size="sm" className="font-mono text-[9px] text-slate-400 border-slate-700">
-            OFFLINE
-          </Badge>
-        </div>
-        <p className="text-[11px] leading-relaxed text-slate-400">
-          Camera access was not granted. Attention monitoring is marked <strong>Unavailable</strong>. Interview continues normally.
-        </p>
-        <Button
-          variant="glass"
-          size="sm"
-          className="w-full text-[11px] font-mono h-7"
-          onClick={startCamera}
-        >
-          <RefreshCw className="h-3 w-3 mr-1.5" />
-          Retry Camera Access
-        </Button>
-      </div>
-    );
-  }
+        );
+      case "DEVIATION_WARNING":
+        return (
+          <div className="flex items-center gap-1.5 text-rose-400 font-mono text-[11px] font-bold animate-pulse">
+            <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+            <span>⚠ Attention Check</span>
+          </div>
+        );
+      case "FACE_LOST_WARNING":
+        return (
+          <div className="flex items-center gap-1.5 text-amber-400 font-mono text-[11px] font-bold animate-pulse">
+            <Eye className="h-3.5 w-3.5 shrink-0" />
+            <span>Camera Centering Needed</span>
+          </div>
+        );
+      case "UNAVAILABLE":
+        return (
+          <div className="flex items-center gap-1.5 text-slate-400 font-mono text-[10px]">
+            <CameraOff className="h-3.5 w-3.5 shrink-0 text-slate-500" />
+            <span>Monitor Offline</span>
+          </div>
+        );
+      default:
+        return (
+          <div className="flex items-center gap-1.5 text-cyan-400 font-mono text-[10px]">
+            <RefreshCw className="h-3 w-3 animate-spin shrink-0" />
+            <span>Calibrating...</span>
+          </div>
+        );
+    }
+  };
 
   return (
     <div
-      className={`relative rounded-2xl overflow-hidden transition-all duration-300 backdrop-blur-xl border ${
+      className={`rounded-2xl border transition-all duration-300 overflow-hidden shadow-lg ${
         isAlert
-          ? "border-rose-500/60 bg-rose-950/20 shadow-[0_0_20px_rgba(244,63,94,0.3)]"
-          : "border-white/10 bg-slate-950/80 shadow-2xl"
+          ? "border-rose-500/80 bg-rose-950/20 shadow-rose-900/30"
+          : "border-cyan-500/30 bg-slate-950/90 shadow-cyan-950/20"
       } ${className}`}
     >
       {/* Top Header Controls */}
-      <div className="flex items-center justify-between px-3 py-2 border-b border-white/[0.08] bg-slate-900/60">
-        <div className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
-          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-200 flex items-center gap-1">
-            <Eye className="h-3 w-3 text-cyan-400" />
+      <div className="px-3 py-2 bg-slate-900/95 border-b border-white/[0.08] flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <div className="relative flex items-center justify-center">
+            <span
+              className={`h-2 w-2 rounded-full ${
+                status === "FOCUSED"
+                  ? "bg-emerald-400 animate-ping opacity-75"
+                  : isAlert
+                  ? "bg-rose-500 animate-ping"
+                  : "bg-cyan-400"
+              }`}
+            />
+            <span
+              className={`absolute h-2 w-2 rounded-full ${
+                status === "FOCUSED"
+                  ? "bg-emerald-400"
+                  : isAlert
+                  ? "bg-rose-500"
+                  : "bg-cyan-400"
+              }`}
+            />
+          </div>
+          <span className="text-[10px] font-mono font-bold tracking-wider text-slate-200 uppercase">
             Attention Monitor
           </span>
         </div>
 
         <div className="flex items-center gap-1">
+          {permissionState === "denied" && (
+            <button
+              type="button"
+              onClick={() => startCamera(0)}
+              title="Retry Camera"
+              className="p-1 rounded-lg text-rose-400 hover:text-white hover:bg-rose-500/20 transition-colors text-[10px] font-mono flex items-center gap-1"
+            >
+              <RefreshCw className="h-3 w-3" /> Retry
+            </button>
+          )}
+
           <button
             type="button"
             onClick={handleToggleSound}
@@ -301,7 +346,7 @@ export function AttentionMonitor({
 
       {/* Video & Tracking Canvas Area */}
       {!isMinimized && (
-        <div className="relative aspect-[4/3] bg-black/80 overflow-hidden flex items-center justify-center">
+        <div className="relative aspect-[4/3] bg-black/90 overflow-hidden flex items-center justify-center">
           <video
             ref={videoRef}
             playsInline

@@ -39,6 +39,7 @@ interface InterviewSessionRoomProps {
   interviewer: InterviewerPersona;
   initialQuestion: InterviewQuestion;
   sessionId: string;
+  initialStream?: MediaStream | null;
   onInterviewComplete: (evaluations: SingleQuestionEvaluation[], attentionSummary?: AttentionSummary) => void;
   onCancelInterview: () => void;
 }
@@ -48,6 +49,7 @@ export function InterviewSessionRoom({
   interviewer,
   initialQuestion,
   sessionId,
+  initialStream,
   onInterviewComplete,
   onCancelInterview,
 }: InterviewSessionRoomProps) {
@@ -339,6 +341,7 @@ export function InterviewSessionRoom({
 
           {/* Real-time AI Attention & Presence Monitor */}
           <AttentionMonitor
+            initialStream={initialStream}
             onAlertChange={(alertActive, msg) => {
               setIsAttentionAlert(alertActive);
               setAttentionAlertMsg(msg);

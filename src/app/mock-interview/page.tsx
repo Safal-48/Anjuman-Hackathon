@@ -51,6 +51,7 @@ export default function DedicatedMockInterviewPage() {
   const [activeConfig, setActiveConfig] = useState<InterviewConfig | null>(null);
   const [activeInterviewer, setActiveInterviewer] = useState<InterviewerPersona | null>(null);
   const [initialQuestion, setInitialQuestion] = useState<InterviewQuestion | null>(null);
+  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
 
   // Completed Session Modal State
   const [completedReport, setCompletedReport] = useState<FinalInterviewReport | null>(null);
@@ -139,6 +140,10 @@ export default function DedicatedMockInterviewPage() {
   };
 
   const handleRetakeInterview = () => {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach((t) => t.stop());
+      setCameraStream(null);
+    }
     setShowCompletionPopup(false);
     setCompletedReport(null);
     setActiveSessionId("");
@@ -240,7 +245,8 @@ export default function DedicatedMockInterviewPage() {
         {!isCompilingReport && step === "permission" && activeConfig && (
           <CameraPermissionGate
             roleTitle={activeConfig.roleId.replace(/_/g, " ").toUpperCase()}
-            onPermissionGranted={() => {
+            onPermissionGranted={(stream) => {
+              setCameraStream(stream || null);
               setStep("active");
             }}
             onCancel={() => {
@@ -260,6 +266,7 @@ export default function DedicatedMockInterviewPage() {
               interviewer={activeInterviewer}
               initialQuestion={initialQuestion}
               sessionId={activeSessionId}
+              initialStream={cameraStream}
               onInterviewComplete={handleInterviewComplete}
               onCancelInterview={handleRetakeInterview}
             />

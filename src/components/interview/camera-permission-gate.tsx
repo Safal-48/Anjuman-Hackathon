@@ -21,7 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { FadeIn, SlideUp } from "@/components/animations/motion-wrapper";
 
 interface CameraPermissionGateProps {
-  onPermissionGranted: () => void;
+  onPermissionGranted: (stream?: MediaStream | null) => void;
   onCancel: () => void;
   roleTitle?: string;
 }
@@ -35,6 +35,7 @@ export function CameraPermissionGate({
   const [errorMessage, setErrorMessage] = useState<string>("");
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const isProceedingRef = useRef<boolean>(false);
 
   const requestCameraAccess = async () => {
     setPermissionState("requesting");
@@ -59,7 +60,7 @@ export function CameraPermissionGate({
           height: { ideal: 480, min: 240 },
           facingMode: "user",
         },
-        audio: false, // Audio will be captured by speech recognition independently
+        audio: false,
       });
 
       streamRef.current = stream;
@@ -93,18 +94,16 @@ export function CameraPermissionGate({
   }, [permissionState]);
 
   const handleProceed = () => {
-    // Gracefully release preview stream lock so the interview room AttentionMonitor gets a clean stream
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
-      streamRef.current = null;
-    }
-    onPermissionGranted();
+    isProceedingRef.current = true;
+    const stream = streamRef.current;
+    // Pass live stream directly so the interview room starts instantly with zero hardware delays
+    onPermissionGranted(stream);
   };
 
   useEffect(() => {
     return () => {
-      // Clean up local preview stream if unmounting
-      if (streamRef.current) {
+      // If unmounted without proceeding (e.g. cancelled), clean up local stream
+      if (!isProceedingRef.current && streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop());
         streamRef.current = null;
       }
