@@ -11,7 +11,6 @@ import {
   RotateCcw,
   Loader2,
   Clock,
-  Radio,
   Sliders,
   History,
   Award,
@@ -212,11 +211,6 @@ export default function DedicatedMockInterviewPage() {
                 Reset
               </Button>
             )}
-
-            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-900 border border-white/10 text-xs font-mono text-muted-foreground">
-              <Radio className="h-3 w-3 text-emerald-400 animate-pulse" />
-              <span>Multi-Turn AI Engine</span>
-            </div>
           </div>
         </div>
 
