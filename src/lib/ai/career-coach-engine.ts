@@ -1,5 +1,5 @@
 /**
- * KaushalSetu AI Career Coach Engine
+ * Skillora AI Career Coach Engine
  * Grounded conversational intelligence powered by live student profile telemetry,
  * skill gaps, ATS resume audits, interview metrics, GD transcripts, and job matches.
  */
@@ -182,7 +182,7 @@ export const DEFAULT_STUDENT_CAREER_CONTEXT: StudentCareerContext = {
 
   projects: [
     {
-      title: "KaushalSetu AI Intelligence & Employability Platform",
+      title: "Skillora AI Intelligence & Employability Platform",
       techStack: ["Next.js", "TypeScript", "Tailwind CSS", "Supabase", "PostgreSQL"],
       verifiedProvenance: true,
       impactSummary: "Built multi-agent mock interview, ATS resume parsing, and 7-vector GD simulator.",
@@ -277,7 +277,7 @@ You recently logged **3 recurring mistakes** when handling NULL propagation in \
 1. **00:00 – 05:00 (5 mins) • Concept Refresh:**
    - Review relational set overlap (Inner vs Left vs Full Outer joins).
 2. **05:00 – 20:00 (15 mins) • Hands-on Sandbox Practice:**
-   - Solve 3 interactive join queries on the E-Commerce schema in the KaushalSetu sandbox.
+   - Solve 3 interactive join queries on the E-Commerce schema in the Skillora sandbox.
 3. **20:00 – 30:00 (10 mins) • Verification Diagnostic Probe:**
    - Take the 5-question targeted probe to upgrade your Skill DNA from *42% (Critical Gap)* to *75%+ (Proficient)*.
 
@@ -393,7 +393,7 @@ Configured for: **Safal Sharma** (CS & AI @ IIT BHU) • Target: **Cloud Systems
 | **25:00 – 30:00** | **Skill DNA Auto-Sync** | Telemetry Sync | Platform verifies your new score and updates your Live Skill DNA |
 
 #### 🚀 Instant Launch:
-Click below to start Step 1 directly in the KaushalSetu Interactive Sandbox!`,
+Click below to start Step 1 directly in the Skillora Interactive Sandbox!`,
       groundedContextTags: [
         "Duration: 30 Minutes",
         "Structure: 5m Prep + 13m Code + 7m Quiz + 5m Sync",
@@ -665,7 +665,7 @@ Spend **25 minutes mastering SQL JOINs & Star Schemas first**. Once your SQL sco
       replyText: `### 🎯 Telemetry Audit for: **${context.targetRole}**
 
 
-Based on your live KaushalSetu data, your overall Career Readiness score is **${context.overallCareerReadinessScore}% (Tier 2 Competitive)**. You are already in the top quartile of campus applicants, but here is exactly why you aren't at **Tier-1 Prime Status (88%+)** yet:
+Based on your live Skillora data, your overall Career Readiness score is **${context.overallCareerReadinessScore}% (Tier 2 Competitive)**. You are already in the top quartile of campus applicants, but here is exactly why you aren't at **Tier-1 Prime Status (88%+)** yet:
 
 1. **Critical Skill Deficit in Enterprise Telemetry**:
    - Your **Power BI & Data Visualization** score is currently **48% (Critical Gap)**. Enterprise cloud teams require developers to build KPI observability dashboards.
@@ -718,8 +718,8 @@ Based on your live KaushalSetu data, your overall Career Readiness score is **${
 
 If you have 4–6 hours this week, here is the exact 3-step sequence engineered to yield the highest career readiness ROI:
 
-- **Step 1 [Skill Lab]**: Complete the **Power BI DAX & Telemetry Practice Lab** on KaushalSetu (*Estimated time: 3.5 Hours*).
-- **Step 2 [Project Evidence]**: Connect the telemetry output to your *KaushalSetu Platform* repo as an active monitoring dashboard (*Estimated time: 1.5 Hours*).
+- **Step 1 [Skill Lab]**: Complete the **Power BI DAX & Telemetry Practice Lab** on Skillora (*Estimated time: 3.5 Hours*).
+- **Step 2 [Project Evidence]**: Connect the telemetry output to your *Skillora Platform* repo as an active monitoring dashboard (*Estimated time: 1.5 Hours*).
 - **Step 3 [Resume & Placement]**: Re-scan your resume on the **ATS Resume Studio** to register the missing telemetry keywords.
 
 ### 📈 Why this first?
@@ -1096,7 +1096,7 @@ INNER JOIN Orders o ON c.id = o.customer_id;
 
 Thank you for your question regarding **"${userQuery}"**.
 
-Reviewing your telemetry across KaushalSetu:
+Reviewing your telemetry across Skillora:
 - **Current Target Role**: ${context.targetRole}
 - **Career Readiness Score**: **${context.overallCareerReadinessScore}% (Tier 2 Competitive Candidate)**
 - **Strongest Asset**: High-impact production portfolio (${context.projects.length} verified repos) and solid mock interview performance (**${context.mockInterview.latestScore}%**).
@@ -1141,7 +1141,7 @@ export const INITIAL_COACH_CONVERSATION: CoachMessage[] = [
   {
     id: "msg-welcome-01",
     sender: "coach",
-    text: `### 🤖 Welcome, Safal! I'm your KaushalSetu AI Career Coach.
+    text: `### 🤖 Welcome, Safal! I'm your Skillora AI Career Coach.
 
 I have synchronized your live profile telemetry:
 - **Target Role:** Full-Stack AI & Cloud Systems Engineer

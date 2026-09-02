@@ -76,7 +76,7 @@ export default function DedicatedCareerCoachPage() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-mono font-bold text-cyan-400 uppercase tracking-widest">
-                  KaushalSetu AI Intelligence Core
+                  Skillora AI Intelligence Core
                 </span>
                 <span className="inline-block h-1 w-1 rounded-full bg-cyan-400" />
                 <Badge variant="cyber" size="sm" className="font-mono text-[9px]">
@@ -169,7 +169,7 @@ export default function DedicatedCareerCoachPage() {
 
         {/* Footer Module Links */}
         <div className="pt-6 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-muted-foreground">
-          <p>KaushalSetu Conversational Career Intelligence Suite • Powered by Verified Evidence</p>
+          <p>Skillora Conversational Career Intelligence Suite • Powered by Verified Evidence</p>
           <div className="flex items-center gap-3">
             <Link href="/portfolio" className="hover:text-cyan-400">Portfolio</Link>
             <span>•</span>

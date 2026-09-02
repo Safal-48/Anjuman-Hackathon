@@ -296,7 +296,7 @@ export default function OpportunityDetailPage() {
                       Pre-Submission Readiness Check
                     </span>
                     <p className="text-foreground/80 leading-relaxed">
-                      KaushalSetu performs an automated resume readiness audit against the recruiter&apos;s <strong>70% threshold benchmark</strong> before submission.
+                      Skillora performs an automated resume readiness audit against the recruiter&apos;s <strong>70% threshold benchmark</strong> before submission.
                     </p>
                   </div>
 

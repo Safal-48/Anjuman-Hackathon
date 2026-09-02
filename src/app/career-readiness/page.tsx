@@ -114,7 +114,7 @@ export default function DedicatedCareerReadinessPage() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-mono font-bold text-cyan-400 uppercase tracking-widest">
-                  KaushalSetu Professional Intelligence
+                  Skillora Professional Intelligence
                 </span>
                 <span className="inline-block h-1 w-1 rounded-full bg-cyan-400" />
                 <Badge variant="cyber" size="sm" className="font-mono text-[9px]">
@@ -324,7 +324,7 @@ export default function DedicatedCareerReadinessPage() {
 
         {/* Bottom Footer Actions */}
         <div className="pt-6 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-muted-foreground">
-          <p>KaushalSetu Holistic Career Readiness Suite • Verified & Audited Live</p>
+          <p>Skillora Holistic Career Readiness Suite • Verified & Audited Live</p>
 
           <div className="flex items-center gap-3">
             <Link href="/skills">

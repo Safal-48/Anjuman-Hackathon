@@ -125,7 +125,7 @@ export default function CandidateIntelligencePipelinePage() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-mono font-bold text-violet-400 uppercase tracking-widest">
-                  KaushalSetu Recruiter Command Suite
+                  Skillora Recruiter Command Suite
                 </span>
                 <span className="inline-block h-1 w-1 rounded-full bg-violet-400" />
                 <Badge variant="violet" size="sm" className="font-mono text-[9px]">

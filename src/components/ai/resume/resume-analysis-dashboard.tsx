@@ -104,7 +104,7 @@ export function ResumeAnalysisDashboard({
             <div className="lg:col-span-7 space-y-3">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge variant="cyber" size="sm" className="font-mono text-xs">
-                  KAUSHALSETU ATS AUDIT
+                  Skillora ATS AUDIT
                 </Badge>
                 <span className="text-xs font-mono text-muted-foreground">
                   Candidate: <strong className="text-foreground">{candidateName}</strong>
@@ -333,7 +333,7 @@ export function ResumeAnalysisDashboard({
               </div>
 
               <p className="text-xs text-slate-300">
-                KaushalSetu cross-references the skills claimed on your uploaded resume against your empirical diagnostic assessment results to detect unverified proficiency gaps.
+                Skillora cross-references the skills claimed on your uploaded resume against your empirical diagnostic assessment results to detect unverified proficiency gaps.
               </p>
 
               {/* Comparison Item */}

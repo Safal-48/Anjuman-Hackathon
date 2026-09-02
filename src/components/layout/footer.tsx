@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Mail, Phone, Instagram, ArrowUpRight, Sparkles, Activity, BookOpen, Brain, Zap, Target } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/constants";
 import { Container } from "./container";
-import { KaushalSetuLogo } from "@/components/ui/logo";
+import { SkilloraLogo } from "@/components/ui/logo";
 
 export function Footer() {
   return (
@@ -16,7 +16,7 @@ export function Footer() {
           {/* Brand & Mission Column (Span 2) */}
           <div className="lg:col-span-2 space-y-4">
             <Link href="/" className="inline-block">
-              <KaushalSetuLogo size="md" showTagline={false} />
+              <SkilloraLogo size="md" showTagline={false} />
             </Link>
             
             <div className="space-y-2">

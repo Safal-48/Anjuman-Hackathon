@@ -1,11 +1,11 @@
 /**
- * KaushalSetu AI Resume Analyzer & ATS Readiness Engine
+ * Skillora AI Resume Analyzer & ATS Readiness Engine
  * Problem Statement #26044 (Smart India Hackathon 2026)
  *
  * Implements:
  * - Deterministic, non-hallucinated entity parsing (Contact, Education, Skills, Experience, Projects, Certs)
  * - ATS Readability & Formatting Diagnostic (Multi-column risk, table parsing, header compliance, length)
- * - Explainable 0-100 KaushalSetu Resume Readiness Score (with clear weighted rubric)
+ * - Explainable 0-100 Skillora Resume Readiness Score (with clear weighted rubric)
  * - Quantifiable Impact & Action Verb Telemetry Checker
  * - Real-Time Job-Specific Comparison & Semantic Keyword Match vs Target Job Description
  * - Missing Keywords, Skills Gaps & Section-by-Section Tailored Improvements
@@ -84,7 +84,7 @@ export interface DetailedATSAnalysis {
   }>;
   certifications: string[];
 
-  // Composite KaushalSetu Readiness Score (0-100)
+  // Composite Skillora Readiness Score (0-100)
   overallReadinessScore: number;
   readinessTier: "ATS Ready (Top 10%)" | "Competitive Candidate" | "Needs Optimization" | "Significant Gaps";
   

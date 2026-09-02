@@ -341,7 +341,7 @@ export function InterviewCompletionPopup({
           </p>
         </div>
 
-        {/* 4.5 Connected Learning Action (Feed to KaushalSetu Learning Engine) */}
+        {/* 4.5 Connected Learning Action (Feed to Skillora Learning Engine) */}
         <div className="p-3.5 rounded-2xl bg-rose-950/30 border border-rose-500/40 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-mono font-bold text-rose-300 uppercase tracking-widest flex items-center gap-1.5">

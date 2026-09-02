@@ -28,7 +28,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/auth/auth-context";
 import { loginSchema, LoginInput } from "@/lib/auth/schemas";
 import { FadeIn, SlideUp } from "@/components/animations/motion-wrapper";
-import { KaushalSetuIcon } from "@/components/ui/logo";
+import { SkilloraIcon } from "@/components/ui/logo";
 
 export default function LoginPage() {
   const { login, isLoading } = useAuth();
@@ -71,7 +71,7 @@ export default function LoginPage() {
         <FadeIn>
           <div className="flex flex-col items-center text-center mb-8 space-y-2">
             <div className="flex items-center justify-center mb-1">
-              <KaushalSetuIcon size={52} className="shadow-cyan-500/30 shadow-xl" />
+              <SkilloraIcon size={52} className="shadow-cyan-500/30 shadow-xl" />
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-widest">

@@ -1,5 +1,5 @@
 /**
- * KaushalSetu Candidate Intelligence Engine for Recruiters
+ * Skillora Candidate Intelligence Engine for Recruiters
  * Provides explainable match scoring, binary eligibility auditing,
  * privacy-safe profile masking, and opportunity requirement customization.
  */
@@ -161,12 +161,12 @@ export const CANDIDATE_TALENT_POOL: CandidateProfile[] = [
     ],
     projects: [
       {
-        title: "KaushalSetu AI Intelligence Suite",
+        title: "Skillora AI Intelligence Suite",
         techStack: ["Next.js", "TypeScript", "Tailwind CSS", "PostgreSQL"],
         verifiedProvenance: true,
         repoCommitCount: 148,
         impactSummary: "Built multi-agent mock interview, ATS resume parsing, and 7-vector GD simulator.",
-        demoUrl: "https://kaushalsetu.gov.in",
+        demoUrl: "https://Skillora.gov.in",
       },
       {
         title: "Distributed Stream Ingestion Engine",

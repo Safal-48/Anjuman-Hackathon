@@ -136,7 +136,7 @@ export const CANONICAL_DEMO_STEPS: DemoStep[] = [
     icon: Zap,
     badge: "15-Min Sprint",
     badgeVariant: "cyber",
-    summary: "Instead of a generic 10-hour course, KaushalSetu runs a 7-stage micro-intervention: Concept Brief ➔ Zomato Example ➔ Guided Question ➔ Student Answer ➔ AI Feedback ➔ Adaptive Practice ➔ Mini Assessment.",
+    summary: "Instead of a generic 10-hour course, Skillora runs a 7-stage micro-intervention: Concept Brief ➔ Zomato Example ➔ Guided Question ➔ Student Answer ➔ AI Feedback ➔ Adaptive Practice ➔ Mini Assessment.",
     keyEvidence: "Execution Time: 15 mins • Adaptive Difficulty Branching • Socratic Error Corrections",
     liveRoute: "/learning/intervention",
     routeCta: "Launch Targeted Sprint",
@@ -270,7 +270,7 @@ export function JudgeDemoJourneyModal({ isOpen, onClose }: JudgeDemoJourneyModal
                 HACKATHON JUDGE &amp; RECRUITER PRESENTATION MODE
               </span>
               <h2 className="text-xl font-black text-white font-mono">
-                The Canonical KaushalSetu Student Journey
+                The Canonical Skillora Student Journey
               </h2>
             </div>
           </div>

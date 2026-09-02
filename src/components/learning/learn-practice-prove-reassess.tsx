@@ -54,7 +54,7 @@ export function LearnPracticeProveReassess({
               LEARN ➔ PRACTICE ➔ PROVE ➔ REASSESS
             </h2>
             <p className="text-xs text-slate-300 max-w-2xl">
-              Completing video content never automatically grants &ldquo;Skill Mastered.&rdquo; KaushalSetu requires verified practice, diagnostic testing, and score reassessment before certifying competency.
+              Completing video content never automatically grants &ldquo;Skill Mastered.&rdquo; Skillora requires verified practice, diagnostic testing, and score reassessment before certifying competency.
             </p>
           </div>
 
@@ -252,7 +252,7 @@ export function LearnPracticeProveReassess({
                   <span>SKILL NOT YET PROVEN • AUTOMATIC REMEDIATION SPAWNED</span>
                 </div>
                 <p className="text-slate-300 text-[11px] leading-relaxed">
-                  The student improved from {selectedSession.beforeScore}% to {selectedSession.reassess.finalScore}%, but remains below the 75% target threshold. KaushalSetu automatically generated a secondary targeted intervention:
+                  The student improved from {selectedSession.beforeScore}% to {selectedSession.reassess.finalScore}%, but remains below the 75% target threshold. Skillora automatically generated a secondary targeted intervention:
                 </p>
                 {selectedSession.adaptiveInterventionSpawned && (
                   <div className="p-3 rounded-lg bg-slate-950/80 border border-amber-500/30 flex items-center justify-between gap-3">

@@ -63,8 +63,8 @@ const EcosystemVisualizerCanvas = dynamic(
   }
 );
 
-const KaushalSetuEcosystemVisualizer = dynamic(
-  () => import("@/components/3d/kaushalsetu-ecosystem-visualizer").then((mod) => mod.KaushalSetuEcosystemVisualizer),
+const SkilloraEcosystemVisualizer = dynamic(
+  () => import("@/components/3d/Skillora-ecosystem-visualizer").then((mod) => mod.SkilloraEcosystemVisualizer),
   {
     ssr: false,
     loading: () => <Skeleton className="h-96 w-full rounded-2xl" />,
@@ -300,7 +300,7 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* KaushalSetu Intelligent Ecosystem Section */}
+      {/* Skillora Intelligent Ecosystem Section */}
       <section id="ecosystem-3d" className="py-16 md:py-24 relative">
         <Container size="xl">
           <div className="flex flex-col lg:flex-row items-center gap-12">
@@ -310,7 +310,7 @@ export default function HomePage() {
                 <Badge variant="violet" dot dotColor="violet">
                   Platform Overview
                 </Badge>
-                <span className="text-xs text-muted-foreground font-mono">KaushalSetu Ecosystem</span>
+                <span className="text-xs text-muted-foreground font-mono">Skillora Ecosystem</span>
               </div>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground leading-[1.15]">
                 The Intelligent Bridge Between{" "}
@@ -319,7 +319,7 @@ export default function HomePage() {
                 <span className="text-purple-400">Opportunity</span>
               </h2>
               <p className="text-muted-foreground leading-relaxed text-base sm:text-lg">
-                KaushalSetu unifies students, academia, and industry in one AI-powered ecosystem to assess skills, close gaps, and connect the right talent with the right opportunities.
+                Skillora unifies students, academia, and industry in one AI-powered ecosystem to assess skills, close gaps, and connect the right talent with the right opportunities.
               </p>
 
               <div className="space-y-4 pt-2">
@@ -344,9 +344,9 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right: KaushalSetu Interactive Topology Hub Component */}
+            {/* Right: Skillora Interactive Topology Hub Component */}
             <div className="flex-1 w-full max-w-2xl">
-              <KaushalSetuEcosystemVisualizer />
+              <SkilloraEcosystemVisualizer />
             </div>
           </div>
         </Container>

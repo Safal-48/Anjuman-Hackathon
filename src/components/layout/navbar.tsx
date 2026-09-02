@@ -32,7 +32,7 @@ import {
   Play,
 } from "lucide-react";
 import { Container } from "./container";
-import { KaushalSetuIcon } from "@/components/ui/logo";
+import { SkilloraLogo, SkilloraIcon } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
@@ -174,20 +174,7 @@ export function Navbar() {
           {/* Logo & Brand */}
           <div className="flex items-center gap-3 shrink-0">
             <Link href="/" className="flex items-center gap-3 group">
-              <KaushalSetuIcon size={38} className="shadow-cyan-500/20 shadow-lg group-hover:scale-105 transition-transform" />
-              <div className="flex flex-col">
-                <div className="flex items-center font-extrabold tracking-tight text-lg leading-none">
-                  <span className="text-cyan-400 group-hover:text-cyan-300 transition-colors">
-                    Kaushal
-                  </span>
-                  <span className="text-emerald-400 group-hover:text-emerald-300 transition-colors">
-                    Setu
-                  </span>
-                </div>
-                <span className="text-[9px] font-mono tracking-widest text-slate-400 uppercase mt-1 hidden sm:inline font-semibold">
-                  AI Personalized Learning Assistant
-                </span>
-              </div>
+              <SkilloraLogo size="md" />
             </Link>
           </div>
 

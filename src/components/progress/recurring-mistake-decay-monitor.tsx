@@ -60,7 +60,7 @@ export function RecurringMistakeDecayMonitor({
               Recurring Mistake Memory &amp; Skill Decay Radar
             </h2>
             <p className="text-xs text-slate-400 max-w-2xl">
-              KaushalSetu tracks repeated failure patterns across multiple assessment attempts and models knowledge decay over time, ensuring you retain long-term mastery.
+              Skillora tracks repeated failure patterns across multiple assessment attempts and models knowledge decay over time, ensuring you retain long-term mastery.
             </p>
           </div>
 

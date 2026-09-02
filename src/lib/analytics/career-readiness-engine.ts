@@ -1,5 +1,5 @@
 /**
- * KaushalSetu Career Readiness Intelligence Engine
+ * Skillora Career Readiness Intelligence Engine
  * Computes multi-pillar professional readiness scores, gap telemetry,
  * next-best-action workflows, and personalized learning / opportunity recommendations.
  */
@@ -328,7 +328,7 @@ export function getCareerReadinessProfile(): CareerReadinessProfile {
       {
         id: "learn-power-bi",
         title: "Power BI Enterprise Telemetry & DAX Formulations",
-        provider: "KaushalSetu Interactive Labs",
+        provider: "Skillora Interactive Labs",
         duration: "3.5 Hours",
         level: "Intermediate",
         skillTarget: "Power BI & DAX",
@@ -350,7 +350,7 @@ export function getCareerReadinessProfile(): CareerReadinessProfile {
       {
         id: "learn-gd-mastery",
         title: "Executive GD Rebuttals: The PREP & Synthesizer Framework",
-        provider: "KaushalSetu Placement Studio",
+        provider: "Skillora Placement Studio",
         duration: "1.5 Hours",
         level: "Advanced",
         skillTarget: "Group Dynamics",

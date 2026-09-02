@@ -46,7 +46,7 @@ export function PerformancePriorityEngine({
             Which Weakness Matters <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">Most Right Now?</span>
           </h2>
           <p className="text-xs text-slate-400 mt-1 max-w-2xl">
-            You may have multiple weak concepts, but KaushalSetu determines your exact learning sequence based on Deficit Gap, Goal Relevance, Prerequisite Dependencies, and Recent Failure Trends.
+            You may have multiple weak concepts, but Skillora determines your exact learning sequence based on Deficit Gap, Goal Relevance, Prerequisite Dependencies, and Recent Failure Trends.
           </p>
         </div>
 

@@ -1,5 +1,5 @@
 /**
- * KaushalSetu AI Group Discussion Simulation & Evaluation Engine
+ * Skillora AI Group Discussion Simulation & Evaluation Engine
  * Problem Statement #26044 (Smart India Hackathon 2026)
  *
  * Implements:

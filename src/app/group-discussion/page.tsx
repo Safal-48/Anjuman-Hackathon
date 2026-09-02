@@ -172,7 +172,7 @@ export default function DedicatedGroupDiscussionPage() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-mono font-bold text-cyan-400 uppercase tracking-widest">
-                  KaushalSetu Intelligence Suite
+                  Skillora Intelligence Suite
                 </span>
                 <span className="inline-block h-1 w-1 rounded-full bg-cyan-400" />
                 <Badge variant="cyber" size="sm" className="font-mono text-[9px]">

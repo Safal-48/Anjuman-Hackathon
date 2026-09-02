@@ -347,7 +347,7 @@ export default function DedicatedApplicationReadinessPage() {
 
               {/* Disclaimer */}
               <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-[11px] font-mono text-muted-foreground leading-relaxed">
-                ⚠️ <strong>Disclaimer:</strong> Resume readiness scores reflect AI heuristic alignments for KaushalSetu benchmarks. A score of 70%+ does not guarantee external ATS clearance or recruiter hiring decisions.
+                ⚠️ <strong>Disclaimer:</strong> Resume readiness scores reflect AI heuristic alignments for Skillora benchmarks. A score of 70%+ does not guarantee external ATS clearance or recruiter hiring decisions.
               </div>
 
               {/* Footer Controls */}

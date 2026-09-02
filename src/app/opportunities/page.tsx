@@ -90,7 +90,7 @@ export default function OpportunityMarketplacePage() {
       const res = await fetch(`/api/marketplace/opportunities/${selectedOppForReadiness.id}/apply`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ coverNote: coverNote.trim() || "Applied with verified KaushalSetu Profile" }),
+        body: JSON.stringify({ coverNote: coverNote.trim() || "Applied with verified Skillora Profile" }),
       });
       if (res.ok) {
         alert(`Application for "${selectedOppForReadiness.title}" submitted successfully!`);

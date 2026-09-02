@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { User, Briefcase, GraduationCap, Target, Building2, Sparkles, CheckCircle2 } from "lucide-react";
-import { KaushalSetuIcon } from "@/components/ui/logo";
+import { SkilloraIcon } from "@/components/ui/logo";
 import { cn } from "@/lib/utils";
 
 interface EcosystemNodeProps {
@@ -94,7 +94,7 @@ const NODES = [
   },
 ];
 
-export function KaushalSetuEcosystemVisualizer() {
+export function SkilloraEcosystemVisualizer() {
   const [activeNode, setActiveNode] = React.useState<string | null>(null);
 
   return (
@@ -103,7 +103,7 @@ export function KaushalSetuEcosystemVisualizer() {
       <div className="flex items-center justify-between mb-2">
         <div className="inline-flex items-center gap-2 text-[11px] font-mono tracking-widest text-cyan-400 uppercase">
           <span className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse shadow-glow-sm" />
-          <span>KAUSHALSETU ECOSYSTEM</span>
+          <span>Skillora ECOSYSTEM</span>
         </div>
         <span className="text-[10px] font-mono text-muted-foreground/60 hidden sm:inline">
           Interactive Topology
@@ -223,14 +223,14 @@ export function KaushalSetuEcosystemVisualizer() {
             {/* Central Content */}
             <foreignObject x="-65" y="-65" width="130" height="130" className="pointer-events-none">
               <div className="flex flex-col items-center justify-center h-full text-center px-1">
-                <KaushalSetuIcon size={36} className="mb-1 drop-shadow-md" />
-                <span className="font-extrabold text-[13px] tracking-tight text-white leading-none">
-                  Kaushal<span className="text-emerald-400">Setu</span>
+                <SkilloraIcon size={36} className="mb-1 drop-shadow-md" />
+                <span className="font-extrabold text-[13px] tracking-tight text-white leading-none font-mono">
+                  Skill<span className="bg-gradient-to-r from-cyan-400 to-violet-400 bg-clip-text text-transparent">ora</span>
                 </span>
                 <span className="text-[7px] font-mono tracking-widest text-cyan-300 uppercase mt-1.5 leading-tight font-semibold">
-                  CONNECTING POTENTIAL
+                  LEARN SMART • IMPROVE
                   <br />
-                  CREATING FUTURES
+                  OWN YOUR FUTURE
                 </span>
               </div>
             </foreignObject>
@@ -364,4 +364,4 @@ export function KaushalSetuEcosystemVisualizer() {
   );
 }
 
-export default KaushalSetuEcosystemVisualizer;
+export default SkilloraEcosystemVisualizer;

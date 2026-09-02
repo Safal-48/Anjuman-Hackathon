@@ -247,7 +247,7 @@ export function OpportunityRequirementsDrawer({
               className="w-full accent-cyan-400"
             />
             <span className="text-[10px] text-muted-foreground block">
-              Default KaushalSetu application threshold: 70%
+              Default Skillora application threshold: 70%
             </span>
           </div>
 

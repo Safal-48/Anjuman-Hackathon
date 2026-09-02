@@ -72,7 +72,7 @@ export function EvidenceBasedProgressMatrix({
               Learning ➔ Practicing ➔ Proven Skills
             </h2>
             <p className="text-xs text-slate-400 max-w-2xl">
-              Course completion never guarantees competency. KaushalSetu requires validated sandbox practice and diagnostic test proof before certifying any skill.
+              Course completion never guarantees competency. Skillora requires validated sandbox practice and diagnostic test proof before certifying any skill.
             </p>
           </div>
 

@@ -664,7 +664,7 @@ export default function DedicatedGDResultsPage() {
         {/* Footer Actions */}
         <div className="pt-6 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-[11px] text-muted-foreground font-mono">
-            Evaluated by KaushalSetu Multi-Agent GD Intelligence Core.
+            Evaluated by Skillora Multi-Agent GD Intelligence Core.
           </p>
 
           <div className="flex items-center gap-3">

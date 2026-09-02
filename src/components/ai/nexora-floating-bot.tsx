@@ -49,11 +49,11 @@ export function NexoraFloatingBot() {
     {
       id: "welcome-1",
       sender: "assistant",
-      text: "👋 Namaste! I am **Nexora.ai**, your AI Career & Skill Intelligence Assistant for **KaushalSetu**.\n\n🎙️ **ElevenLabs Human Voice & Bilingual Enabled (English & हिन्दी)!**\n\nAsk me anything about:\n- 🎯 **Skill-Gap Diagnostics & Assessment**\n- 🗺️ **Personalized Career Roadmaps** (Full Stack, AI/ML, Cloud)\n- ⚡ **Explainable AI Opportunity Matching**\n- 🎙️ **Bilingual Mock Interview Simulator**\n- 🏛️ **College & Recruiter Features**",
+      text: "👋 Namaste! I am **Nexora.ai**, your AI Career & Skill Intelligence Assistant for **Skillora**.\n\n🎙️ **ElevenLabs Human Voice & Bilingual Enabled (English & हिन्दी)!**\n\nAsk me anything about:\n- 🎯 **Skill-Gap Diagnostics & Assessment**\n- 🗺️ **Personalized Career Roadmaps** (Full Stack, AI/ML, Cloud)\n- ⚡ **Explainable AI Opportunity Matching**\n- 🎙️ **Bilingual Mock Interview Simulator**\n- 🏛️ **College & Recruiter Features**",
       timestamp: "Just now",
-      citations: ["KaushalSetu Core Architecture • SIH PS #26044"],
+      citations: ["Skillora Core Architecture • SIH PS #26044"],
       suggestedPrompts: [
-        "How does KaushalSetu work?",
+        "How does Skillora work?",
         "Generate 3-month AI Roadmap",
         "What is Explainable Matching?",
         "Benefits for Colleges & Academia",
@@ -334,10 +334,10 @@ export function NexoraFloatingBot() {
       {
         id: `welcome-${Date.now()}`,
         sender: "assistant",
-        text: "✨ Chat cleared! I am **Nexora.ai**. How can I help your career journey on **KaushalSetu** today?",
+        text: "✨ Chat cleared! I am **Nexora.ai**. How can I help your career journey on **Skillora** today?",
         timestamp: "Just now",
         suggestedPrompts: [
-          "How does KaushalSetu work?",
+          "How does Skillora work?",
           "Generate 3-month AI Roadmap",
           "What is Explainable Matching?",
           "Benefits for Colleges & Academia",
@@ -417,7 +417,7 @@ export function NexoraFloatingBot() {
                     </span>
                   </div>
                   <p className="text-[11px] text-muted-foreground mt-0.5">
-                    KaushalSetu Intelligence Assistant
+                    Skillora Intelligence Assistant
                   </p>
                 </div>
               </div>
@@ -660,7 +660,7 @@ export function NexoraFloatingBot() {
                     <span className="flex items-center gap-1 text-cyan-400/80">
                       <Mic className="h-3 w-3" /> Voice & Text (Bilingual EN/HI)
                     </span>
-                    <span>Powered by KaushalSetu RAG</span>
+                    <span>Powered by Skillora RAG</span>
                   </div>
                 </div>
               </>

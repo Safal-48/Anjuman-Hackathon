@@ -151,7 +151,7 @@ export function CoachMessageBubble({
           <div className="flex items-center justify-between gap-4 border-b border-white/[0.08] pb-2 mb-2">
             <div className="flex items-center gap-2">
               <span className={`text-xs font-mono font-bold ${isCoach ? "text-cyan-400" : "text-foreground"}`}>
-                {isCoach ? "KaushalSetu AI Career Coach" : "You (Candidate)"}
+                {isCoach ? "Skillora AI Career Coach" : "You (Candidate)"}
               </span>
               {isCoach && (
                 <Badge variant="cyber" size="sm" className="font-mono text-[9px] px-1.5 py-0">

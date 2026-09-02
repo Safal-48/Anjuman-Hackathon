@@ -28,7 +28,7 @@ import { useAuth } from "@/lib/auth/auth-context";
 import { registerSchema, RegisterInput } from "@/lib/auth/schemas";
 import { PublicRole } from "@/lib/auth/types";
 import { FadeIn, SlideUp } from "@/components/animations/motion-wrapper";
-import { KaushalSetuIcon } from "@/components/ui/logo";
+import { SkilloraIcon } from "@/components/ui/logo";
 import { cn } from "@/lib/utils";
 
 const roleCards: Array<{
@@ -124,7 +124,7 @@ export default function RegisterPage() {
         <FadeIn>
           <div className="flex flex-col items-center text-center mb-8 space-y-2">
             <div className="flex items-center justify-center mb-1">
-              <KaushalSetuIcon size={52} className="shadow-cyan-500/30 shadow-xl" />
+              <SkilloraIcon size={52} className="shadow-cyan-500/30 shadow-xl" />
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-widest">
@@ -281,7 +281,7 @@ export default function RegisterPage() {
                     {...register("agreeTerms")}
                   />
                   <span className="text-[11px] leading-relaxed">
-                    I agree to the SIH 2026 KaushalSetu Terms of Platform Access and verify the accuracy of my academic/institutional affiliation.
+                    I agree to the SIH 2026 Skillora Terms of Platform Access and verify the accuracy of my academic/institutional affiliation.
                   </span>
                 </label>
                 {errors.agreeTerms && (
@@ -303,7 +303,7 @@ export default function RegisterPage() {
             </form>
 
             <div className="pt-4 border-t border-white/[0.08] text-center text-xs text-muted-foreground font-mono">
-              Already have an authorized KaushalSetu identity?{" "}
+              Already have an authorized Skillora identity?{" "}
               <Link href="/login" className="text-cyan-400 hover:text-cyan-300 font-bold underline transition-colors">
                 Sign In to Portal →
               </Link>

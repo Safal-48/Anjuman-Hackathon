@@ -120,7 +120,7 @@ export default function GoalBasedLearningPage() {
                 Goal-Based <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">Learning Paths</span>
               </h1>
               <p className="text-slate-400 text-sm mt-1 max-w-2xl">
-                Set outcome-driven learning objectives. KaushalSetu automatically structures weekly study plans, practice drills, and milestone proofs to ensure you reach your target benchmark.
+                Set outcome-driven learning objectives. Skillora automatically structures weekly study plans, practice drills, and milestone proofs to ensure you reach your target benchmark.
               </p>
             </div>
 
