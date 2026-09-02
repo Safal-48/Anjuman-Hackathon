@@ -567,6 +567,128 @@ In your latest GD on *"Will Generative AI Replace Entry-Level Engineering Jobs?"
     };
   }
 
+  // QUESTION 7: Concept Tutoring: "SQL JOIN" or Natural Hinglish queries like "bhai mujhe sql join simple example ke saath samjha"
+  if (
+    query.includes("sql join") ||
+    query.includes("join") ||
+    query.includes("sql") && query.includes("example") ||
+    query.includes("samjha") && query.includes("join")
+  ) {
+    const isHinglish = query.includes("bhai") || query.includes("samjha") || query.includes("kya") || query.includes("kaise") || query.includes("mujhe");
+    
+    if (isHinglish) {
+      return {
+        replyText: `### 🤖 AI Tutor: SQL JOIN Concept (Hinglish Mode)
+        
+Bhai simple shabdon mein samjho! 💡
+
+**SQL JOIN** ka use hum tab karte hain jab humein 2 ya zyada alag-alag tables ke related data ko ek single result mein combine karna hota hai.
+
+#### 🛒 Real-World Example (E-Commerce):
+1. **Customers Table:**
+   - \`CustomerID\`, \`Name\`, \`City\`
+2. **Orders Table:**
+   - \`OrderID\`, \`CustomerID\`, \`Amount\`
+
+Agar humein dekhna hai ki *"Kis Customer ne kitne amount ka order place kiya?"*, toh hum common key (\`CustomerID\`) ke through **INNER JOIN** lagate hain:
+
+\`\`\`sql
+SELECT Customers.Name, Orders.OrderID, Orders.Amount
+FROM Customers
+INNER JOIN Orders ON Customers.CustomerID = Orders.CustomerID;
+\`\`\`
+
+#### ⚡ Quick Types of JOINs:
+- **INNER JOIN:** Sirf wahi records aate hain jo dono tables mein match karte hain.
+- **LEFT JOIN:** Left table ke saare records + Right table ke matching records.
+- **RIGHT JOIN:** Right table ke saare records + Left table ke matching records.
+- **FULL OUTER JOIN:** Dono tables ke saare records chahe match ho ya na ho.
+
+Ab batao, iska practical diagnostic challenge solve karna chahte ho?`,
+        groundedContextTags: [
+          "Concept: SQL Relational Joins",
+          "Language: Hinglish",
+          "Domain: Database Systems",
+        ],
+        recommendedActions: [
+          {
+            label: "Practice SQL Sandboxes",
+            href: "/learning/resources",
+            module: "Skills",
+            priority: "High",
+            badgeText: "Hands-on Sandbox",
+          },
+          {
+            label: "Take SQL Diagnostic Probe",
+            href: "/assessment",
+            module: "Skills",
+            priority: "Medium",
+            badgeText: "Verify Mastery",
+          },
+        ],
+        suggestedFollowUps: [
+          "Bhai LEFT JOIN aur INNER JOIN mein practical difference batao",
+          "SQL indexing kaise kaam karti hai?",
+          "What should I improve first?",
+        ],
+      };
+    }
+
+    return {
+      replyText: `### 🤖 Socratic AI Tutor: SQL Relational JOINs
+
+A **SQL JOIN** is an operation used to combine rows from two or more tables based on a related column between them.
+
+#### 📊 Visual Analogy:
+Consider two relational tables:
+- **\`Customers\`** (\`id\`, \`name\`, \`email\`)
+- **\`Orders\`** (\`id\`, \`customer_id\`, \`total_price\`)
+
+By executing an **INNER JOIN** on \`Customers.id = Orders.customer_id\`, relational engines construct a unified tuple:
+
+\`\`\`sql
+SELECT 
+    c.name, 
+    o.id AS order_id, 
+    o.total_price
+FROM Customers c
+INNER JOIN Orders o ON c.id = o.customer_id;
+\`\`\`
+
+#### 🔑 Four Core Join Types:
+1. **INNER JOIN**: Returns records that have matching values in both tables.
+2. **LEFT (OUTER) JOIN**: Returns all records from the left table, and matched records from the right table (NULL if no match).
+3. **RIGHT (OUTER) JOIN**: Returns all records from the right table, and matched records from the left table.
+4. **FULL (OUTER) JOIN**: Returns all records when there is a match in either left or right table.`,
+      groundedContextTags: [
+        "Concept: SQL Joins",
+        "Language: English",
+        "Domain: Database Architecture",
+      ],
+      recommendedActions: [
+        {
+          label: "Open SQL Learning Resources",
+          href: "/learning/resources",
+          module: "Skills",
+          priority: "High",
+          badgeText: "Curated Queue",
+        },
+        {
+          label: "Launch Skill Assessment",
+          href: "/assessment",
+          module: "Skills",
+          priority: "Medium",
+          badgeText: "Verify Skill DNA",
+        },
+      ],
+      suggestedFollowUps: [
+        "Explain SQL indexing optimization strategies",
+        "What is the difference between LEFT JOIN and RIGHT JOIN?",
+        "What should I improve first?",
+      ],
+    };
+  }
+
   // DEFAULT / GENERAL QUERY RESPONSE
   return {
     replyText: `### 🧭 AI Career Coach Assessment

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { useForm, useFieldArray, FieldErrors } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,59 +17,113 @@ import {
   FileText,
   Briefcase,
   Target,
-  FolderGit2,
+  Brain,
   Award,
   AlertCircle,
   FileCheck2,
-  RefreshCw,
+  Languages,
+  Clock,
+  Zap,
+  BookOpen,
+  HelpCircle,
+  Layers,
+  Flame,
+  MessageSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { GlassCard } from "@/components/ui/card";
 import { studentOnboardingSchema, StudentOnboardingInput } from "@/lib/auth/schemas";
 import { useAuth } from "@/lib/auth/auth-context";
 import { OnboardingLayout } from "./onboarding-layout";
 
+// Quick Preset Options for Smart Learning Profile
+const primaryGoalPresets = [
+  "Learn Python",
+  "Master SQL",
+  "Learn Data Science",
+  "Prepare for Exams",
+  "Prepare for Placements",
+  "Build Projects",
+  "Prepare for Internship",
+  "Become a Data Analyst",
+  "Become a Software Developer",
+  "Learn AI/ML",
+];
+
 const popularSkills = [
   "Python",
+  "SQL",
+  "C++",
+  "Java",
+  "JavaScript",
   "React",
   "TypeScript",
-  "Next.js",
+  "Excel",
+  "Power BI",
+  "Statistics",
   "Machine Learning",
   "PyTorch",
   "Docker",
-  "PostgreSQL",
-  "Three.js",
-  "Rust",
-  "Kubernetes",
-  "Cybersecurity",
+  "System Design",
 ];
 
-const popularInterests = [
-  "Artificial Intelligence",
-  "Autonomous Systems",
-  "FinTech",
-  "Healthcare Tech",
-  "Cloud Architecture",
-  "Edge Computing",
+const motivationOptions = [
+  "Placements",
+  "Internship",
+  "Grades / GPA",
+  "Exams",
+  "Job Switch",
+  "Building Production Projects",
+  "Competitive Programming",
 ];
 
-function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-}
+const learningStyles = [
+  { id: "Videos", label: "Video Deep Dives", icon: "🎬", desc: "Visual breakdowns & architectural concept animations" },
+  { id: "Reading", label: "Structured Reading", icon: "📖", desc: "Concise cheat sheets, documentation & case studies" },
+  { id: "Practice", label: "Hands-on Practice", icon: "⚡", desc: "Interactive sandboxes & live coding challenges" },
+  { id: "Projects", label: "Production Projects", icon: "🛠️", desc: "End-to-end portfolio-grade project milestones" },
+  { id: "Quizzes", label: "Diagnostic Quizzes", icon: "🎯", desc: "Fast retention probes & adaptive spaced repetition" },
+  { id: "Interactive", label: "Interactive Simulations", icon: "🕹️", desc: "3D visualizers, visual algorithms & graph step-throughs" },
+  { id: "AI Tutor", label: "Socratic AI Tutor", icon: "🤖", desc: "Real-time conversational mentor with step-by-step guidance" },
+];
+
+const languageExamples: Record<
+  "English" | "Hindi" | "Hinglish" | "English + Hindi",
+  { explanation: string; query: string; queryResponse: string }
+> = {
+  English: {
+    explanation: "A SQL JOIN combines related records from multiple tables based on a common key.",
+    query: "Explain SQL JOIN with a simple real-world example.",
+    queryResponse: "Think of an Orders table and a Customers table linked by CustomerID. A JOIN pairs each order with the customer who placed it.",
+  },
+  Hindi: {
+    explanation: "JOIN का उपयोग multiple tables के related records को एक common key के आधार पर combine करने के लिए किया जाता है।",
+    query: "मुझे SQL JOIN एक आसान उदाहरण के साथ समझाओ।",
+    queryResponse: "मान लीजिए आपके पास Customers और Orders की दो टेबल हैं। JOIN की मदद से आप देख सकते हैं कि किस कस्टमर ने कौन सा ऑर्डर दिया है।",
+  },
+  Hinglish: {
+    explanation: "JOIN basically multiple tables ke related data ko ek common key ke basis par ek saath combine karta hai.",
+    query: "Bhai mujhe SQL JOIN simple example ke saath samjha.",
+    queryResponse: "Bhai simple hai! Ek Customers table hai aur ek Orders table. JOIN use karke hum CustomerID ke through pata karte hain ki kis user ne kya order kiya.",
+  },
+  "English + Hindi": {
+    explanation: "A JOIN combines related records from multiple tables based on a common key. (यानी multiple tables के data को match करके merge करता है।)",
+    query: "Explain SQL JOIN with simple analogy in Hindi/English.",
+    queryResponse: "A JOIN links two tables (e.g. Customers & Orders) via CustomerID. (यानी customer info और order details को एक single view में देखना।)",
+  },
+};
 
 export function StudentOnboarding() {
   const { user, updateOnboarding, isLoading } = useAuth();
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [newSkill, setNewSkill] = useState("");
-  const [newInterest, setNewInterest] = useState("");
-  const [newCert, setNewCert] = useState("");
   const [serverError, setServerError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Resume File Upload State
+  // Resume upload state
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [fileUploadError, setFileUploadError] = useState<string | null>(null);
@@ -80,26 +134,30 @@ export function StudentOnboarding() {
     setValue,
     watch,
     trigger,
-    control,
     formState: { errors },
   } = useForm<StudentOnboardingInput>({
     resolver: zodResolver(studentOnboardingSchema),
     defaultValues: {
       fullName: user?.fullName || "",
-      education: "",
-      institution: "",
+      education: "B.Tech Computer Science & Engineering",
+      institution: "Indian Institute of Technology / NIT",
       academicYear: "3rd Year",
-      skills: ["React", "TypeScript", "Python"],
-      interests: ["Artificial Intelligence"],
-      careerGoal: "",
+      academicLevel: "Undergraduate",
+      branch: "Computer Science & Engineering",
+      semester: "Semester 5",
+      primaryLearningGoal: "Learn Python",
+      currentLevel: "Intermediate",
+      skills: ["Python", "SQL", "React"],
+      interests: ["Artificial Intelligence", "System Architecture"],
+      careerGoal: "AI Systems Engineer / Full-Stack Architect",
+      availableLearningTime: "1 hour",
+      preferredLearningStyle: ["Interactive", "AI Tutor", "Practice"],
+      difficultyPreference: "Balanced",
+      preferredLearningTime: "Evening",
+      motivation: ["Placements", "Projects"],
+      preferredLanguage: "Hinglish",
       experience: "",
-      projects: [
-        {
-          title: "",
-          description: "",
-          link: "",
-        },
-      ],
+      projects: [],
       certifications: [],
       resumeUrl: "",
       resumeFileName: "",
@@ -107,16 +165,16 @@ export function StudentOnboarding() {
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "projects",
-  });
-
   const currentSkills = watch("skills") || [];
-  const currentInterests = watch("interests") || [];
-  const currentCerts = watch("certifications") || [];
+  const selectedGoal = watch("primaryLearningGoal");
+  const currentLevel = watch("currentLevel");
+  const currentStyles = watch("preferredLearningStyle") || [];
+  const currentMotivations = watch("motivation") || [];
+  const selectedLanguage = watch("preferredLanguage") || "Hinglish";
+  const selectedDifficulty = watch("difficultyPreference");
+  const selectedAvailableTime = watch("availableLearningTime");
+  const selectedPreferredTime = watch("preferredLearningTime");
   const resumeFileName = watch("resumeFileName");
-  const resumeFileSize = watch("resumeFileSize");
 
   const addSkill = (skill: string) => {
     const trimmed = skill.trim();
@@ -135,330 +193,294 @@ export function StudentOnboarding() {
     );
   };
 
-  const addInterest = (interest: string) => {
-    const trimmed = interest.trim();
-    if (trimmed && !currentInterests.includes(trimmed)) {
-      setValue("interests", [...currentInterests, trimmed], { shouldValidate: true });
-      setNewInterest("");
-      setServerError(null);
+  const toggleLearningStyle = (styleId: string) => {
+    if (currentStyles.includes(styleId)) {
+      setValue(
+        "preferredLearningStyle",
+        currentStyles.filter((s) => s !== styleId)
+      );
+    } else {
+      setValue("preferredLearningStyle", [...currentStyles, styleId]);
     }
   };
 
-  const removeInterest = (interestToRemove: string) => {
-    setValue(
-      "interests",
-      currentInterests.filter((i) => i !== interestToRemove),
-      { shouldValidate: true }
-    );
-  };
-
-  const addCert = () => {
-    const trimmed = newCert.trim();
-    if (trimmed && !currentCerts.includes(trimmed)) {
-      setValue("certifications", [...currentCerts, trimmed], { shouldValidate: true });
-      setNewCert("");
+  const toggleMotivation = (mot: string) => {
+    if (currentMotivations.includes(mot)) {
+      setValue(
+        "motivation",
+        currentMotivations.filter((m) => m !== mot)
+      );
+    } else {
+      setValue("motivation", [...currentMotivations, mot]);
     }
   };
 
-  const removeCert = (certToRemove: string) => {
-    setValue(
-      "certifications",
-      currentCerts.filter((c) => c !== certToRemove)
-    );
-  };
-
-  // Resume File Upload Handlers
-  const handleProcessFile = (file: File) => {
-    setFileUploadError(null);
-    const validTypes = [
-      "application/pdf",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "application/msword",
-    ];
-    const isExtensionValid = /\.(pdf|docx|doc)$/i.test(file.name);
-
-    if (!validTypes.includes(file.type) && !isExtensionValid) {
-      setFileUploadError("Please upload a valid PDF or Word document (.pdf, .docx).");
-      return;
-    }
-
-    if (file.size > 10 * 1024 * 1024) {
-      setFileUploadError("File size exceeds 10MB limit. Please upload a smaller document.");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      const dataUrl = reader.result as string;
-      setValue("resumeUrl", dataUrl, { shouldValidate: true });
-      setValue("resumeFileName", file.name, { shouldValidate: true });
-      setValue("resumeFileSize", formatFileSize(file.size), { shouldValidate: true });
-      setServerError(null);
-    };
-    reader.onerror = () => {
-      setFileUploadError("Failed to read file. Please try again.");
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      handleProcessFile(e.target.files[0]);
-    }
-  };
-
-  const handleClearResume = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setValue("resumeFileName", "", { shouldValidate: true });
-    setValue("resumeUrl", "", { shouldValidate: true });
-    setValue("resumeFileSize", "", { shouldValidate: true });
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  };
-
+  // Step Validation
   const handleNextStep = async () => {
-    setServerError(null);
+    let isValid = false;
     if (step === 1) {
-      const isValid = await trigger(["fullName", "education", "institution", "academicYear"]);
-      if (isValid) {
-        setStep(2);
-      } else {
-        setServerError("Please complete the required academic profile fields above.");
-      }
+      isValid = await trigger(["fullName", "primaryLearningGoal", "careerGoal"]);
     } else if (step === 2) {
-      const isValid = await trigger(["skills", "interests", "careerGoal"]);
-      if (isValid) {
-        setStep(3);
-      } else {
-        setServerError("Please ensure you have selected at least 1 skill, 1 interest, and your career ambition.");
-      }
+      isValid = await trigger(["skills", "currentLevel"]);
+    } else if (step === 3) {
+      isValid = await trigger(["education", "institution", "academicYear", "availableLearningTime"]);
+    } else if (step === 4) {
+      isValid = await trigger(["preferredLearningStyle", "difficultyPreference"]);
+    } else {
+      isValid = true;
+    }
+
+    if (isValid) {
+      setStep((prev) => Math.min(prev + 1, 5));
     }
   };
 
-  const onFormError = (formErrors: FieldErrors<StudentOnboardingInput>) => {
-    const errorKeys = Object.keys(formErrors);
-    if (errorKeys.length > 0) {
-      const errorMsg =
-        errors.fullName?.message ||
-        errors.education?.message ||
-        errors.institution?.message ||
-        errors.skills?.message ||
-        errors.interests?.message ||
-        errors.careerGoal?.message ||
-        "Please check the form for missing or invalid fields.";
-      setServerError(errorMsg);
-    }
+  const handlePrevStep = () => {
+    setStep((prev) => Math.max(prev - 1, 1));
   };
 
   const onSubmit = async (data: StudentOnboardingInput) => {
-    setServerError(null);
-    setIsSubmitting(true);
-
     try {
-      // Clean empty projects so user is never blocked by blank entries
-      const cleanedProjects = (data.projects || []).filter(
-        (p) => (p.title && p.title.trim().length > 0) || (p.description && p.description.trim().length > 0)
-      );
+      setIsSubmitting(true);
+      setServerError(null);
 
-      const cleanedData: StudentOnboardingInput = {
-        ...data,
-        projects: cleanedProjects,
-      };
-
-      const res = await updateOnboarding({
+      await updateOnboarding({
         role: "student",
-        data: cleanedData,
+        data: {
+          ...data,
+          readinessScore: 78,
+        },
       });
 
-      if (res.success) {
-        // Immediate smooth transition to dashboard command center
-        router.push("/dashboard");
-        router.refresh();
-        setTimeout(() => {
-          window.location.href = "/dashboard";
-        }, 600);
-      } else {
-        setIsSubmitting(false);
-        setServerError(res.error || "Failed to finalize student profile. Please retry.");
-      }
-    } catch (err: unknown) {
+      router.push("/dashboard");
+    } catch (err: any) {
+      setServerError(err.message || "Failed to initialize learning profile.");
       setIsSubmitting(false);
-      const msg = err instanceof Error ? err.message : "Unexpected error saving profile";
-      setServerError(msg);
     }
   };
 
   const stepTitles = [
-    "Academic Profile",
-    "Skills & Ambition",
-    "Experience & Projects",
+    "Primary Learning Goal & Career Ambition",
+    "Self-Declared Skill DNA & Level",
+    "Academic Background & Study Time Budget",
+    "Learning Modality & Difficulty Preference",
+    "🌐 Language Personalization & AI Tutor Mode",
   ];
-
-  const handleAutoFillDemo = () => {
-    setValue("fullName", user?.fullName || "Aarav Sharma", { shouldValidate: true });
-    setValue("education", "B.Tech Computer Science & AI", { shouldValidate: true });
-    setValue("institution", "Indian Institute of Technology", { shouldValidate: true });
-    setValue("academicYear", "3rd Year", { shouldValidate: true });
-    setValue("skills", ["React", "TypeScript", "Python", "PyTorch", "Next.js", "Docker"], { shouldValidate: true });
-    setValue("interests", ["Artificial Intelligence", "Autonomous Systems", "Cloud Architecture"], { shouldValidate: true });
-    setValue("careerGoal", "Principal AI Systems & Distributed Machine Learning Engineer", { shouldValidate: true });
-    setValue("experience", "6-month research internship at NVIDIA AI Research Labs focusing on TensorRT inference graphs and CUDA kernel performance optimization.", { shouldValidate: true });
-    setValue("projects", [
-      {
-        title: "Neural Vision Telemetry Core",
-        description: "Edge computing real-time vision pipeline processing 120 FPS camera streams with sub-10ms inference latency.",
-        link: "https://github.com/tech-titan/vision-telemetry",
-      },
-    ], { shouldValidate: true });
-    setValue("certifications", ["AWS Certified Solutions Architect - Associate", "DeepLearning.AI Generative AI with LLMs"], { shouldValidate: true });
-    setValue("resumeFileName", "Aarav_Sharma_AI_Resume.pdf", { shouldValidate: true });
-    setValue("resumeFileSize", "1.2 MB", { shouldValidate: true });
-    setValue("resumeUrl", "https://drive.google.com/aarav-ai-resume.pdf", { shouldValidate: true });
-    setServerError(null);
-  };
 
   return (
     <OnboardingLayout
       role="student"
       currentStep={step}
-      totalSteps={3}
+      totalSteps={5}
       stepTitles={stepTitles}
     >
-      <div className="flex items-center justify-between p-3 mb-2 rounded-xl bg-cyan-950/30 border border-cyan-500/20 backdrop-blur-sm">
-        <div className="flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-cyan-400 animate-pulse" />
-          <span className="text-xs text-slate-300 font-medium">Want to test quickly?</span>
-        </div>
-        <Button
-          type="button"
-          variant="glass"
-          size="sm"
-          onClick={handleAutoFillDemo}
-          className="text-xs text-cyan-300 border-cyan-500/30 hover:bg-cyan-500/20 shadow-glow-sm"
-        >
-          ⚡ Auto-Fill Demo Profile
-        </Button>
-      </div>
-
-      <form onSubmit={handleSubmit(onSubmit, onFormError)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {serverError && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="p-4 rounded-xl bg-rose-500/15 border border-rose-500/40 text-rose-300 text-sm flex items-start gap-3 shadow-lg shadow-rose-950/40"
-          >
-            <AlertCircle className="h-5 w-5 shrink-0 text-rose-400 mt-0.5" />
-            <div>
-              <p className="font-semibold text-rose-200">Attention Required</p>
-              <p className="text-xs text-rose-300/90 mt-0.5">{serverError}</p>
-            </div>
-          </motion.div>
+          <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-mono flex items-center gap-2">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            <span>{serverError}</span>
+          </div>
         )}
 
         <AnimatePresence mode="wait">
-          {/* STEP 1: Academic Profile */}
+          {/* ========================================================================= */}
+          {/* STEP 1: PRIMARY LEARNING GOAL & MOTIVATION                                */}
+          {/* ========================================================================= */}
           {step === 1 && (
             <motion.div
-              key="step1"
+              key="step-1"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
-              className="space-y-5"
+              transition={{ duration: 0.2 }}
+              className="space-y-6"
             >
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Full Name <span className="text-rose-400">*</span>
+              <div className="p-4 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-xs font-mono flex items-center gap-2">
+                <Target className="h-4 w-4 shrink-0 text-cyan-400" />
+                <span>Step 1 of 5: What is your primary learning mission today?</span>
+              </div>
+
+              <div>
+                <label className="text-xs font-mono text-slate-300 block mb-1.5 font-bold">
+                  Your Full Name <span className="text-rose-400">*</span>
                 </label>
                 <Input
-                  placeholder="e.g. Aarav Sharma"
                   {...register("fullName")}
+                  placeholder="e.g. Rahul Sharma"
+                  className="bg-slate-900/60 border-white/10 text-white"
                 />
                 {errors.fullName && (
-                  <p className="text-xs text-rose-400 font-medium">{errors.fullName.message}</p>
+                  <p className="text-xs text-rose-400 mt-1">{errors.fullName.message}</p>
                 )}
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Current Degree & Major <span className="text-rose-400">*</span>
+              {/* Primary Learning Goal Chips */}
+              <div>
+                <label className="text-xs font-mono text-slate-300 block mb-2 font-bold">
+                  Select Your Primary Learning Goal <span className="text-rose-400">*</span>
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {primaryGoalPresets.map((goal) => {
+                    const isSelected = selectedGoal === goal;
+                    return (
+                      <button
+                        key={goal}
+                        type="button"
+                        onClick={() => setValue("primaryLearningGoal", goal, { shouldValidate: true })}
+                        className={`p-2.5 rounded-xl text-xs font-mono font-medium transition-all text-left flex items-center justify-between border ${
+                          isSelected
+                            ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/50 shadow-glow-sm"
+                            : "bg-slate-900/50 text-slate-300 border-white/[0.08] hover:bg-slate-800"
+                        }`}
+                      >
+                        <span className="truncate">{goal}</span>
+                        {isSelected && <CheckCircle2 className="h-3.5 w-3.5 text-cyan-400 shrink-0" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Custom Goal / Career Goal */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-mono text-slate-300 block mb-1.5 font-bold">
+                    Target Role / Career Goal <span className="text-rose-400">*</span>
                   </label>
                   <Input
-                    placeholder="e.g. B.Tech Computer Science & AI"
-                    {...register("education")}
+                    {...register("careerGoal")}
+                    placeholder="e.g. AI Systems Engineer, Cloud Architect, Data Analyst"
+                    className="bg-slate-900/60 border-white/10 text-white text-xs"
                   />
-                  {errors.education && (
-                    <p className="text-xs text-rose-400 font-medium">{errors.education.message}</p>
+                  {errors.careerGoal && (
+                    <p className="text-xs text-rose-400 mt-1">{errors.careerGoal.message}</p>
                   )}
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Academic Year / Standing <span className="text-rose-400">*</span>
+                {/* Primary Motivation */}
+                <div>
+                  <label className="text-xs font-mono text-slate-300 block mb-1.5 font-bold">
+                    Primary Motivations
                   </label>
-                  <select
-                    className="flex h-10 w-full rounded-lg border border-white/10 bg-slate-900/50 px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-cyan-500"
-                    {...register("academicYear")}
-                  >
-                    <option value="1st Year">1st Year (Freshman)</option>
-                    <option value="2nd Year">2nd Year (Sophomore)</option>
-                    <option value="3rd Year">3rd Year (Junior)</option>
-                    <option value="4th Year">4th Year (Senior)</option>
-                    <option value="Postgraduate / Masters">Postgraduate / Masters</option>
-                    <option value="PhD Candidate">PhD Candidate</option>
-                  </select>
-                  {errors.academicYear && (
-                    <p className="text-xs text-rose-400 font-medium">{errors.academicYear.message}</p>
-                  )}
+                  <div className="flex flex-wrap gap-1.5">
+                    {motivationOptions.map((mot) => {
+                      const isSel = currentMotivations.includes(mot);
+                      return (
+                        <button
+                          key={mot}
+                          type="button"
+                          onClick={() => toggleMotivation(mot)}
+                          className={`px-2.5 py-1 rounded-lg text-[11px] font-mono transition-all border ${
+                            isSel
+                              ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
+                              : "bg-slate-900/40 text-slate-400 border-white/[0.06] hover:text-white"
+                          }`}
+                        >
+                          {mot}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Institution / University Name <span className="text-rose-400">*</span>
-                </label>
-                <Input
-                  placeholder="e.g. Indian Institute of Technology / National Institute of Tech"
-                  leftIcon={<GraduationCap className="h-4 w-4" />}
-                  {...register("institution")}
-                />
-                {errors.institution && (
-                  <p className="text-xs text-rose-400 font-medium">{errors.institution.message}</p>
-                )}
-              </div>
-
-              <div className="pt-4 flex justify-end">
-                <Button
-                  type="button"
-                  variant="glow"
-                  onClick={handleNextStep}
-                  rightIcon={<ArrowRight className="h-4 w-4" />}
-                >
-                  Continue to Skills & Ambition
-                </Button>
               </div>
             </motion.div>
           )}
 
-          {/* STEP 2: Skills & Ambition */}
+          {/* ========================================================================= */}
+          {/* STEP 2: SELF-DECLARED SKILL DNA & LEVEL                                  */}
+          {/* ========================================================================= */}
           {step === 2 && (
             <motion.div
-              key="step2"
+              key="step-2"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.2 }}
               className="space-y-6"
             >
-              {/* Technical Skills */}
-              <div className="space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center justify-between">
-                  <span>Technical Skills & Stack <span className="text-rose-400">*</span></span>
-                  <span className="text-[11px] text-cyan-400">{currentSkills.length} selected</span>
+              <div className="p-4 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-300 text-xs font-mono flex items-center justify-between">
+                <span className="flex items-center gap-2">
+                  <Brain className="h-4 w-4 text-violet-400 shrink-0" />
+                  Step 2 of 5: Self-Declared Skill Inventory & Baseline Level
+                </span>
+                <Badge variant="amber" size="sm" className="font-mono text-[9px]">
+                  Unverified Status
+                </Badge>
+              </div>
+
+              {/* Current Self-Declared Level */}
+              <div>
+                <label className="text-xs font-mono text-slate-300 block mb-2 font-bold">
+                  Current Self-Declared Technical Level <span className="text-rose-400">*</span>
                 </label>
+                <div className="grid grid-cols-3 gap-3">
+                  {(["Beginner", "Intermediate", "Advanced"] as const).map((lvl) => {
+                    const isSel = currentLevel === lvl;
+                    return (
+                      <button
+                        key={lvl}
+                        type="button"
+                        onClick={() => setValue("currentLevel", lvl, { shouldValidate: true })}
+                        className={`p-3 rounded-xl border text-center transition-all ${
+                          isSel
+                            ? "bg-cyan-500/20 border-cyan-500/50 text-cyan-300 shadow-glow-sm"
+                            : "bg-slate-900/50 border-white/[0.08] text-slate-400 hover:text-white"
+                        }`}
+                      >
+                        <div className="font-bold font-mono text-sm">{lvl}</div>
+                        <div className="text-[10px] text-slate-400 mt-1">
+                          {lvl === "Beginner" && "Foundations & Syntax"}
+                          {lvl === "Intermediate" && "Production & Projects"}
+                          {lvl === "Advanced" && "System Design & Optimization"}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Existing Skills with "Self-Declared" Badge */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-xs font-mono text-slate-300 font-bold">
+                    Select Your Existing Skills <span className="text-rose-400">*</span>
+                  </label>
+                  <span className="text-[10px] font-mono text-amber-400">
+                    * All items marked Self-Declared until tested
+                  </span>
+                </div>
+
+                {/* Popular Skill Chips */}
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {popularSkills.map((sk) => {
+                    const isAdded = currentSkills.includes(sk);
+                    return (
+                      <button
+                        key={sk}
+                        type="button"
+                        onClick={() => (isAdded ? removeSkill(sk) : addSkill(sk))}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all border flex items-center gap-1.5 ${
+                          isAdded
+                            ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/40"
+                            : "bg-slate-900/40 text-slate-400 border-white/[0.06] hover:text-white"
+                        }`}
+                      >
+                        <span>{sk}</span>
+                        {isAdded ? (
+                          <span className="text-[9px] px-1 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                            Self-Declared
+                          </span>
+                        ) : (
+                          <Plus className="h-3 w-3 opacity-60" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Custom Skill Input */}
                 <div className="flex gap-2">
                   <Input
-                    placeholder="Type a skill and press Add (e.g. Next.js, PyTorch)..."
                     value={newSkill}
                     onChange={(e) => setNewSkill(e.target.value)}
                     onKeyDown={(e) => {
@@ -467,485 +489,404 @@ export function StudentOnboarding() {
                         addSkill(newSkill);
                       }
                     }}
+                    placeholder="Add custom skill (e.g. GraphQL, NextAuth, Kafka)..."
+                    className="bg-slate-900/60 border-white/10 text-white text-xs"
                   />
-                  <Button
-                    type="button"
-                    variant="cyber"
-                    onClick={() => addSkill(newSkill)}
-                    leftIcon={<Plus className="h-4 w-4" />}
-                  >
-                    Add
-                  </Button>
-                </div>
-
-                {/* Selected Skills Chips */}
-                <div className="flex flex-wrap gap-1.5 pt-1 min-h-[32px]">
-                  {currentSkills.map((skill) => (
-                    <span
-                      key={skill}
-                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 shadow-sm shadow-cyan-950/40"
-                    >
-                      <span>{skill}</span>
-                      <button
-                        type="button"
-                        onClick={() => removeSkill(skill)}
-                        className="hover:text-rose-400 text-cyan-400/80 transition-colors"
-                      >
-                        ×
-                      </button>
-                    </span>
-                  ))}
-                </div>
-
-                {/* Popular Skill Suggestions */}
-                <div className="pt-2">
-                  <span className="text-[11px] text-muted-foreground font-mono block mb-1.5">
-                    Quick Suggestions:
-                  </span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {popularSkills.map((s) => (
-                      <button
-                        key={s}
-                        type="button"
-                        onClick={() => addSkill(s)}
-                        className="text-[11px] px-2.5 py-1 rounded-md bg-white/[0.03] hover:bg-cyan-500/10 border border-white/10 hover:border-cyan-500/30 text-muted-foreground hover:text-cyan-300 transition-all"
-                      >
-                        + {s}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                {errors.skills && (
-                  <p className="text-xs text-rose-400 font-medium">{errors.skills.message}</p>
-                )}
-              </div>
-
-              {/* Interests */}
-              <div className="space-y-2 pt-2 border-t border-white/[0.06]">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center justify-between">
-                  <span>Domains of Interest <span className="text-rose-400">*</span></span>
-                  <span className="text-[11px] text-violet-400">{currentInterests.length} selected</span>
-                </label>
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Add an interest area..."
-                    value={newInterest}
-                    onChange={(e) => setNewInterest(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        addInterest(newInterest);
-                      }
-                    }}
-                  />
-                  <Button
-                    type="button"
-                    variant="cyber"
-                    onClick={() => addInterest(newInterest)}
-                    leftIcon={<Plus className="h-4 w-4" />}
-                  >
-                    Add
-                  </Button>
-                </div>
-
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {currentInterests.map((item) => (
-                    <span
-                      key={item}
-                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-violet-500/15 border border-violet-500/40 text-violet-300 shadow-sm shadow-violet-950/40"
-                    >
-                      <span>{item}</span>
-                      <button
-                        type="button"
-                        onClick={() => removeInterest(item)}
-                        className="hover:text-rose-400 text-violet-400/80 transition-colors"
-                      >
-                        ×
-                      </button>
-                    </span>
-                  ))}
-                </div>
-
-                <div className="pt-2">
-                  <span className="text-[11px] text-muted-foreground font-mono block mb-1.5">
-                    Suggested Domains:
-                  </span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {popularInterests.map((item) => (
-                      <button
-                        key={item}
-                        type="button"
-                        onClick={() => addInterest(item)}
-                        className="text-[11px] px-2.5 py-1 rounded-md bg-white/[0.03] hover:bg-violet-500/10 border border-white/10 hover:border-violet-500/30 text-muted-foreground hover:text-violet-300 transition-all"
-                      >
-                        + {item}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                {errors.interests && (
-                  <p className="text-xs text-rose-400 font-medium">{errors.interests.message}</p>
-                )}
-              </div>
-
-              {/* Career Goal */}
-              <div className="space-y-1.5 pt-2 border-t border-white/[0.06]">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                  <Target className="h-3.5 w-3.5 text-cyan-400" />
-                  <span>Primary Career Goal / Ambition <span className="text-rose-400">*</span></span>
-                </label>
-                <textarea
-                  rows={2}
-                  className="w-full rounded-lg border border-white/10 bg-slate-900/50 p-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-cyan-500 transition-all"
-                  placeholder="e.g. Aspiring to build frontier distributed AI infrastructure and lead engineering teams in scalable enterprise systems."
-                  {...register("careerGoal")}
-                />
-                {errors.careerGoal && (
-                  <p className="text-xs text-rose-400 font-medium">{errors.careerGoal.message}</p>
-                )}
-              </div>
-
-              <div className="pt-4 flex justify-between">
-                <Button
-                  type="button"
-                  variant="glass"
-                  onClick={() => setStep(1)}
-                  leftIcon={<ArrowLeft className="h-4 w-4" />}
-                >
-                  Back
-                </Button>
-                <Button
-                  type="button"
-                  variant="glow"
-                  onClick={handleNextStep}
-                  rightIcon={<ArrowRight className="h-4 w-4" />}
-                >
-                  Continue to Experience & Projects
-                </Button>
-              </div>
-            </motion.div>
-          )}
-
-          {/* STEP 3: Experience, Projects & Resume */}
-          {step === 3 && (
-            <motion.div
-              key="step3"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
-              className="space-y-6"
-            >
-              {/* Experience Summary */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                  <Briefcase className="h-3.5 w-3.5 text-cyan-400" />
-                  <span>Experience Summary / Internship Background (Optional)</span>
-                </label>
-                <textarea
-                  rows={2}
-                  className="w-full rounded-lg border border-white/10 bg-slate-900/50 p-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-cyan-500 transition-all"
-                  placeholder="e.g. Fresher with extensive coursework and project work OR 6-month software engineering intern."
-                  {...register("experience")}
-                />
-                {errors.experience && (
-                  <p className="text-xs text-rose-400 font-medium">{errors.experience.message}</p>
-                )}
-              </div>
-
-              {/* Projects List */}
-              <div className="space-y-3 pt-2 border-t border-white/[0.06]">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                    <FolderGit2 className="h-3.5 w-3.5 text-cyan-400" />
-                    <span>Featured Projects (Optional)</span>
-                  </label>
                   <Button
                     type="button"
                     variant="cyber"
                     size="sm"
-                    onClick={() => append({ title: "", description: "", link: "" })}
-                    leftIcon={<Plus className="h-3.5 w-3.5" />}
-                  >
-                    Add Project
-                  </Button>
-                </div>
-
-                <div className="space-y-4">
-                  {fields.map((field, index) => (
-                    <div
-                      key={field.id}
-                      className="p-4 rounded-xl bg-black/30 border border-white/[0.08] space-y-3 relative transition-all hover:border-cyan-500/30"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-mono text-cyan-400 font-semibold">
-                          Project #{index + 1}
-                        </span>
-                        {fields.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={() => remove(index)}
-                            className="text-muted-foreground hover:text-rose-400 text-xs flex items-center gap-1 transition-colors"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                            <span>Remove</span>
-                          </button>
-                        )}
-                      </div>
-
-                      <div className="space-y-1">
-                        <Input
-                          placeholder="Project Title (e.g. Distributed Neural Cache Engine)"
-                          {...register(`projects.${index}.title` as const)}
-                        />
-                        {errors.projects?.[index]?.title && (
-                          <p className="text-xs text-rose-400 font-medium">
-                            {errors.projects[index]?.title?.message}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="space-y-1">
-                        <textarea
-                          rows={2}
-                          className="w-full rounded-lg border border-white/10 bg-slate-900/50 p-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-cyan-500"
-                          placeholder="Project description and key technologies used..."
-                          {...register(`projects.${index}.description` as const)}
-                        />
-                        {errors.projects?.[index]?.description && (
-                          <p className="text-xs text-rose-400 font-medium">
-                            {errors.projects[index]?.description?.message}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="space-y-1">
-                        <Input
-                          placeholder="Project or Repository URL (e.g. https://github.com/...)"
-                          {...register(`projects.${index}.link` as const)}
-                        />
-                        {errors.projects?.[index]?.link && (
-                          <p className="text-xs text-rose-400 font-medium">
-                            {errors.projects[index]?.link?.message}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Certifications */}
-              <div className="space-y-2 pt-2 border-t border-white/[0.06]">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                  <Award className="h-3.5 w-3.5 text-cyan-400" />
-                  <span>Certifications & Honors (Optional)</span>
-                </label>
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="e.g. AWS Certified Solutions Architect, Google Cloud Associate..."
-                    value={newCert}
-                    onChange={(e) => setNewCert(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        addCert();
-                      }
-                    }}
-                  />
-                  <Button
-                    type="button"
-                    variant="cyber"
-                    onClick={addCert}
-                    leftIcon={<Plus className="h-4 w-4" />}
+                    onClick={() => addSkill(newSkill)}
                   >
                     Add
                   </Button>
                 </div>
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {currentCerts.map((cert) => (
-                    <span
-                      key={cert}
-                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 shadow-sm shadow-emerald-950/40"
-                    >
-                      <span>{cert}</span>
-                      <button
-                        type="button"
-                        onClick={() => removeCert(cert)}
-                        className="hover:text-rose-400 text-emerald-400/80 transition-colors"
-                      >
-                        ×
-                      </button>
-                    </span>
-                  ))}
-                </div>
-              </div>
 
-              {/* Interactive Resume Upload & Dropzone */}
-              <div className="space-y-2 pt-2 border-t border-white/[0.06]">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center justify-between">
-                  <span className="flex items-center gap-1.5">
-                    <FileText className="h-3.5 w-3.5 text-cyan-400" />
-                    <span>Resume / CV Document (Recommended)</span>
-                  </span>
-                  {resumeFileName && (
-                    <span className="text-xs text-emerald-400 font-mono flex items-center gap-1">
-                      <FileCheck2 className="h-3.5 w-3.5" />
-                      Attached
-                    </span>
-                  )}
-                </label>
-
-                {/* Hidden File Input */}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".pdf,.docx,.doc,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword"
-                  className="hidden"
-                  onChange={handleFileChange}
-                />
-
-                {/* Drag and Drop Container */}
-                <div
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setIsDragging(true);
-                  }}
-                  onDragLeave={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setIsDragging(false);
-                  }}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setIsDragging(false);
-                    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                      handleProcessFile(e.dataTransfer.files[0]);
-                    }
-                  }}
-                  onClick={() => fileInputRef.current?.click()}
-                  className={`relative p-6 rounded-2xl border-2 border-dashed transition-all cursor-pointer flex flex-col items-center justify-center text-center group ${
-                    isDragging
-                      ? "border-cyan-400 bg-cyan-500/10 shadow-lg shadow-cyan-500/20 scale-[1.01]"
-                      : resumeFileName
-                      ? "border-emerald-500/40 bg-emerald-950/20 hover:border-emerald-400/60"
-                      : "border-white/20 bg-slate-950/50 hover:border-cyan-500/50 hover:bg-slate-900/60"
-                  }`}
-                >
-                  {resumeFileName ? (
-                    <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-4 p-2">
-                      <div className="flex items-center gap-3.5 text-left">
-                        <div className="h-12 w-12 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center shrink-0 shadow-md shadow-cyan-950/50">
-                          <FileText className="h-6 w-6 text-cyan-400" />
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-sm font-semibold text-foreground truncate max-w-[220px] sm:max-w-xs">
-                            {resumeFileName}
-                          </p>
-                          <div className="flex items-center gap-2 mt-1">
-                            {resumeFileSize && (
-                              <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-white/10 text-muted-foreground">
-                                {resumeFileSize}
-                              </span>
-                            )}
-                            <span className="text-[11px] font-medium text-emerald-400 flex items-center gap-1">
-                              <CheckCircle2 className="h-3 w-3" />
-                              Ready for ATS Matching
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2 shrink-0">
-                        <Button
-                          type="button"
-                          variant="cyber"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            fileInputRef.current?.click();
-                          }}
-                          leftIcon={<RefreshCw className="h-3.5 w-3.5" />}
-                        >
-                          Replace File
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="text-rose-400 hover:text-rose-300 hover:bg-rose-500/10"
-                          onClick={handleClearResume}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
+                {/* Selected Skills Review Box */}
+                <div className="mt-3 p-3 rounded-xl bg-slate-950/70 border border-white/[0.08] min-h-[50px] flex flex-wrap gap-2">
+                  {currentSkills.length === 0 ? (
+                    <span className="text-xs text-slate-500 font-mono">No skills selected yet.</span>
                   ) : (
-                    <>
-                      <div className="h-12 w-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center mb-3 group-hover:scale-110 group-hover:border-cyan-400 transition-all shadow-md shadow-cyan-950/30">
-                        <Upload className="h-6 w-6 text-cyan-400 group-hover:text-cyan-300 transition-colors" />
-                      </div>
-                      <p className="text-sm text-foreground font-semibold">
-                        Click to upload Resume or Drag & Drop here
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1 max-w-sm">
-                        Accepted formats: <span className="text-cyan-300 font-mono">PDF, DOCX, DOC</span> (Up to 10MB)
-                      </p>
-                      <div className="mt-3">
-                        <Button
+                    currentSkills.map((sk) => (
+                      <span
+                        key={sk}
+                        className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-slate-900 border border-cyan-500/30 text-xs font-mono text-cyan-300"
+                      >
+                        <span>{sk}</span>
+                        <Badge variant="amber" size="sm" className="text-[8px] px-1 py-0 h-3.5">
+                          Self-Declared
+                        </Badge>
+                        <button
                           type="button"
-                          variant="glass"
-                          size="sm"
-                          className="pointer-events-none text-xs border-cyan-500/30 text-cyan-300"
+                          onClick={() => removeSkill(sk)}
+                          className="text-slate-400 hover:text-rose-400"
                         >
-                          Browse Document from Computer
-                        </Button>
-                      </div>
-                    </>
+                          ✕
+                        </button>
+                      </span>
+                    ))
                   )}
                 </div>
-
-                {fileUploadError && (
-                  <p className="text-xs text-rose-400 font-medium mt-1">{fileUploadError}</p>
-                )}
-
-                {/* Optional Document URL Fallback */}
-                <div className="pt-2">
-                  <Input
-                    placeholder="Or enter public resume URL (e.g. Google Drive, LinkedIn, Portfolio)..."
-                    {...register("resumeUrl")}
-                  />
-                </div>
-              </div>
-
-              {/* Step Navigation & Submission */}
-              <div className="pt-4 flex justify-between items-center">
-                <Button
-                  type="button"
-                  variant="glass"
-                  onClick={() => {
-                    setServerError(null);
-                    setStep(2);
-                  }}
-                  leftIcon={<ArrowLeft className="h-4 w-4" />}
-                >
-                  Back
-                </Button>
-                <Button
-                  type="submit"
-                  variant="glow"
-                  size="lg"
-                  isLoading={isLoading || isSubmitting}
-                  rightIcon={<CheckCircle2 className="h-4 w-4" />}
-                >
-                  {isSubmitting ? "Activating Command Center..." : "Complete Onboarding & Enter Command Center"}
-                </Button>
               </div>
             </motion.div>
           )}
+
+          {/* ========================================================================= */}
+          {/* STEP 3: ACADEMIC BACKGROUND & TIME BUDGET                                 */}
+          {/* ========================================================================= */}
+          {step === 3 && (
+            <motion.div
+              key="step-3"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.2 }}
+              className="space-y-6"
+            >
+              <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-mono flex items-center gap-2">
+                <GraduationCap className="h-4 w-4 text-emerald-400 shrink-0" />
+                <span>Step 3 of 5: Academic Details & Available Study Budget</span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-mono text-slate-300 block mb-1.5 font-bold">
+                    Institution / University Name <span className="text-rose-400">*</span>
+                  </label>
+                  <Input
+                    {...register("institution")}
+                    placeholder="e.g. Delhi Technological University, NIT Trichy"
+                    className="bg-slate-900/60 border-white/10 text-white text-xs"
+                  />
+                  {errors.institution && (
+                    <p className="text-xs text-rose-400 mt-1">{errors.institution.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="text-xs font-mono text-slate-300 block mb-1.5 font-bold">
+                    Degree & Branch <span className="text-rose-400">*</span>
+                  </label>
+                  <Input
+                    {...register("education")}
+                    placeholder="e.g. B.Tech Computer Science"
+                    className="bg-slate-900/60 border-white/10 text-white text-xs"
+                  />
+                  {errors.education && (
+                    <p className="text-xs text-rose-400 mt-1">{errors.education.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="text-xs font-mono text-slate-300 block mb-1.5 font-bold">
+                    Academic Year <span className="text-rose-400">*</span>
+                  </label>
+                  <select
+                    {...register("academicYear")}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-xs text-white focus:outline-none focus:border-cyan-500/50"
+                  >
+                    <option value="1st Year">1st Year</option>
+                    <option value="2nd Year">2nd Year</option>
+                    <option value="3rd Year">3rd Year</option>
+                    <option value="4th Year / Final Year">4th Year / Final Year</option>
+                    <option value="Graduated / Alumni">Graduated / Alumni</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-xs font-mono text-slate-300 block mb-1.5 font-bold">
+                    Current Semester
+                  </label>
+                  <select
+                    {...register("semester")}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-xs text-white focus:outline-none focus:border-cyan-500/50"
+                  >
+                    <option value="Semester 1">Semester 1</option>
+                    <option value="Semester 2">Semester 2</option>
+                    <option value="Semester 3">Semester 3</option>
+                    <option value="Semester 4">Semester 4</option>
+                    <option value="Semester 5">Semester 5</option>
+                    <option value="Semester 6">Semester 6</option>
+                    <option value="Semester 7">Semester 7</option>
+                    <option value="Semester 8">Semester 8</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Available Daily Learning Time */}
+              <div>
+                <label className="text-xs font-mono text-slate-300 block mb-2 font-bold">
+                  Daily Available Learning Time
+                </label>
+                <div className="grid grid-cols-5 gap-2">
+                  {(["15 min", "30 min", "1 hour", "2 hours", "3+ hours"] as const).map((time) => {
+                    const isSel = selectedAvailableTime === time;
+                    return (
+                      <button
+                        key={time}
+                        type="button"
+                        onClick={() => setValue("availableLearningTime", time)}
+                        className={`p-2.5 rounded-xl border text-center transition-all ${
+                          isSel
+                            ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300 shadow-glow-sm"
+                            : "bg-slate-900/50 border-white/[0.08] text-slate-400 hover:text-white"
+                        }`}
+                      >
+                        <Clock className="h-3.5 w-3.5 mx-auto mb-1 text-emerald-400" />
+                        <span className="text-xs font-mono font-bold">{time}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Preferred Time of Day */}
+              <div>
+                <label className="text-xs font-mono text-slate-300 block mb-2 font-bold">
+                  Preferred Time Slot for Study
+                </label>
+                <div className="grid grid-cols-5 gap-2">
+                  {(["Morning", "Afternoon", "Evening", "Night", "Flexible"] as const).map((slot) => {
+                    const isSel = selectedPreferredTime === slot;
+                    return (
+                      <button
+                        key={slot}
+                        type="button"
+                        onClick={() => setValue("preferredLearningTime", slot)}
+                        className={`p-2 rounded-xl border text-center transition-all text-xs font-mono ${
+                          isSel
+                            ? "bg-cyan-500/20 border-cyan-500/50 text-cyan-300"
+                            : "bg-slate-900/50 border-white/[0.08] text-slate-400 hover:text-white"
+                        }`}
+                      >
+                        {slot}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* STEP 4: PREFERRED LEARNING STYLE & DIFFICULTY ENGINE                      */}
+          {/* ========================================================================= */}
+          {step === 4 && (
+            <motion.div
+              key="step-4"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.2 }}
+              className="space-y-6"
+            >
+              <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-mono flex items-center gap-2">
+                <BookOpen className="h-4 w-4 text-amber-400 shrink-0" />
+                <span>Step 4 of 5: Modality Preferences & Adaptive Difficulty Tuning</span>
+              </div>
+
+              {/* Learning Style Multi-Select */}
+              <div>
+                <label className="text-xs font-mono text-slate-300 block mb-2 font-bold">
+                  Select Your Preferred Learning Styles (Choose 1 or more)
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {learningStyles.map((style) => {
+                    const isSelected = currentStyles.includes(style.id);
+                    return (
+                      <button
+                        key={style.id}
+                        type="button"
+                        onClick={() => toggleLearningStyle(style.id)}
+                        className={`p-3 rounded-xl border text-left transition-all flex items-start gap-3 ${
+                          isSelected
+                            ? "bg-cyan-500/20 border-cyan-500/50 shadow-glow-sm"
+                            : "bg-slate-900/50 border-white/[0.08] hover:bg-slate-800"
+                        }`}
+                      >
+                        <span className="text-xl">{style.icon}</span>
+                        <div className="space-y-0.5">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-white font-mono">{style.label}</span>
+                            {isSelected && <CheckCircle2 className="h-3.5 w-3.5 text-cyan-400" />}
+                          </div>
+                          <p className="text-[11px] text-slate-400 leading-snug">{style.desc}</p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Difficulty Preference */}
+              <div>
+                <label className="text-xs font-mono text-slate-300 block mb-2 font-bold">
+                  Adaptive Difficulty Preference
+                </label>
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { id: "Easy Start", desc: "Build momentum with foundational concepts & gentle analogies." },
+                    { id: "Balanced", desc: "Equal balance of core concept depth and challenging practical drills." },
+                    { id: "Challenge Me", desc: "Fast-track into rigorous edge cases, systems design & performance proofs." },
+                  ].map((diff) => {
+                    const isSel = selectedDifficulty === diff.id;
+                    return (
+                      <button
+                        key={diff.id}
+                        type="button"
+                        onClick={() => setValue("difficultyPreference", diff.id as any)}
+                        className={`p-3.5 rounded-xl border text-left transition-all ${
+                          isSel
+                            ? "bg-amber-500/20 border-amber-500/50 shadow-glow-sm text-amber-300"
+                            : "bg-slate-900/50 border-white/[0.08] text-slate-400 hover:text-white"
+                        }`}
+                      >
+                        <div className="font-bold font-mono text-xs">{diff.id}</div>
+                        <p className="text-[10px] text-slate-400 mt-1 leading-snug">{diff.desc}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* STEP 5: 🌐 LANGUAGE PERSONALIZATION & AI TUTOR DEMO                      */}
+          {/* ========================================================================= */}
+          {step === 5 && (
+            <motion.div
+              key="step-5"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.2 }}
+              className="space-y-6"
+            >
+              <div className="p-4 rounded-xl bg-gradient-to-r from-cyan-950/40 via-slate-900/60 to-emerald-950/30 border border-cyan-500/30 text-xs font-mono flex items-center justify-between">
+                <span className="flex items-center gap-2 text-cyan-300 font-bold">
+                  <Languages className="h-4 w-4 text-cyan-400 shrink-0" />
+                  Step 5 of 5: Language Personalization & AI Tutor Mode
+                </span>
+                <Badge variant="cyber" size="sm" className="font-mono text-[9px]">
+                  Bilingual Voice AI
+                </Badge>
+              </div>
+
+              {/* Language Selection Radios */}
+              <div>
+                <label className="text-xs font-mono text-slate-300 block mb-2 font-bold">
+                  Select Your AI Tutor Teaching Language <span className="text-rose-400">*</span>
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  {(["English", "Hindi", "Hinglish", "English + Hindi"] as const).map((lang) => {
+                    const isSel = selectedLanguage === lang;
+                    return (
+                      <button
+                        key={lang}
+                        type="button"
+                        onClick={() => setValue("preferredLanguage", lang)}
+                        className={`p-3 rounded-xl border text-center transition-all ${
+                          isSel
+                            ? "bg-cyan-500/20 border-cyan-500/50 text-cyan-300 shadow-glow-sm"
+                            : "bg-slate-900/50 border-white/[0.08] text-slate-400 hover:text-white"
+                        }`}
+                      >
+                        <div className="font-bold font-mono text-xs">{lang}</div>
+                        <span className="text-[10px] text-slate-400 block mt-0.5">
+                          {lang === "English" && "Pure English"}
+                          {lang === "Hindi" && "शुद्ध हिन्दी"}
+                          {lang === "Hinglish" && "Natural Indian Hinglish"}
+                          {lang === "English + Hindi" && "Dual Concept Translation"}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Live Teaching Demonstration Box */}
+              <GlassCard className="p-4 rounded-2xl border border-cyan-500/30 bg-slate-900/40 space-y-3">
+                <div className="flex items-center justify-between text-xs font-mono border-b border-white/[0.08] pb-2">
+                  <span className="text-cyan-400 font-bold flex items-center gap-1.5">
+                    <Sparkles className="h-3.5 w-3.5" />
+                    Live AI Tutor Teaching Sample ({selectedLanguage})
+                  </span>
+                  <span className="text-slate-400 text-[10px]">Concept: SQL JOIN</span>
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-950/80 border border-white/[0.05] text-xs leading-relaxed text-slate-200 font-sans">
+                  "{languageExamples[selectedLanguage].explanation}"
+                </div>
+
+                {/* Simulated Student Query & Response */}
+                <div className="space-y-2 pt-1">
+                  <div className="flex items-start gap-2 text-xs font-mono text-cyan-300 bg-cyan-950/30 p-2.5 rounded-lg border border-cyan-500/20">
+                    <MessageSquare className="h-3.5 w-3.5 text-cyan-400 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-[10px] text-slate-400 block uppercase">Sample Student Query:</span>
+                      <span>"{languageExamples[selectedLanguage].query}"</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2 text-xs font-mono text-emerald-300 bg-emerald-950/30 p-2.5 rounded-lg border border-emerald-500/20">
+                    <Brain className="h-3.5 w-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-[10px] text-slate-400 block uppercase">AI Tutor Response:</span>
+                      <span>"{languageExamples[selectedLanguage].queryResponse}"</span>
+                    </div>
+                  </div>
+                </div>
+
+                <p className="text-[11px] text-slate-400 font-mono pt-1">
+                  💡 <strong>Note:</strong> You can speak or type in natural mixed queries like <em>"Bhai mujhe SQL JOIN simple example ke saath samjha"</em> anytime!
+                </p>
+              </GlassCard>
+            </motion.div>
+          )}
         </AnimatePresence>
+
+        {/* Navigation Action Buttons */}
+        <div className="flex items-center justify-between pt-6 border-t border-white/[0.08]">
+          {step > 1 ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handlePrevStep}
+              className="gap-2 border-white/10 hover:border-cyan-500/30 text-xs font-mono"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              Previous Step
+            </Button>
+          ) : (
+            <div />
+          )}
+
+          {step < 5 ? (
+            <Button
+              type="button"
+              variant="cyber"
+              size="sm"
+              onClick={handleNextStep}
+              className="gap-2 text-xs font-mono"
+            >
+              Next Step
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              variant="cyber"
+              size="sm"
+              disabled={isSubmitting}
+              className="gap-2 text-xs font-mono shadow-glow"
+            >
+              {isSubmitting ? "Generating AI Study Plan..." : "Initialize Learning Profile & Launch"}
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Button>
+          )}
+        </div>
       </form>
     </OnboardingLayout>
   );

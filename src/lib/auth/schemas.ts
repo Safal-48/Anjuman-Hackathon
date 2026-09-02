@@ -41,6 +41,17 @@ export const studentOnboardingSchema = z.object({
   skills: z.array(z.string()).min(1, "Select or add at least 1 technical skill"),
   interests: z.array(z.string()).min(1, "Add at least 1 field of interest"),
   careerGoal: z.string().min(2, "Please share a brief career goal or ambition"),
+  primaryLearningGoal: z.string().min(2, "Primary learning goal is required"),
+  currentLevel: z.enum(["Beginner", "Intermediate", "Advanced"]),
+  academicLevel: z.string(),
+  branch: z.string(),
+  semester: z.string(),
+  availableLearningTime: z.enum(["15 min", "30 min", "1 hour", "2 hours", "3+ hours"]),
+  preferredLearningStyle: z.array(z.string()),
+  difficultyPreference: z.enum(["Easy Start", "Balanced", "Challenge Me"]),
+  preferredLearningTime: z.enum(["Morning", "Afternoon", "Evening", "Night", "Flexible"]),
+  motivation: z.array(z.string()),
+  preferredLanguage: z.enum(["English", "Hindi", "Hinglish", "English + Hindi"]),
   experience: z.string().optional().or(z.literal("")),
   projects: z.array(
     z.object({
@@ -48,8 +59,8 @@ export const studentOnboardingSchema = z.object({
       description: z.string().optional().or(z.literal("")),
       link: z.string().optional().or(z.literal("")),
     })
-  ),
-  certifications: z.array(z.string()),
+  ).optional(),
+  certifications: z.array(z.string()).optional(),
   resumeUrl: z.string().optional().or(z.literal("")),
   resumeFileName: z.string().optional().or(z.literal("")),
   resumeFileSize: z.string().optional().or(z.literal("")),

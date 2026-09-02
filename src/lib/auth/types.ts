@@ -10,6 +10,17 @@ export interface StudentProfileData {
   skills: string[];
   interests: string[];
   careerGoal: string;
+  primaryLearningGoal?: string;
+  currentLevel?: "Beginner" | "Intermediate" | "Advanced";
+  academicLevel?: string;
+  branch?: string;
+  semester?: string;
+  availableLearningTime?: "15 min" | "30 min" | "1 hour" | "2 hours" | "3+ hours" | string;
+  preferredLearningStyle?: string[];
+  difficultyPreference?: "Easy Start" | "Balanced" | "Challenge Me";
+  preferredLearningTime?: "Morning" | "Afternoon" | "Evening" | "Night" | "Flexible" | string;
+  motivation?: string[];
+  preferredLanguage?: "English" | "Hindi" | "Hinglish" | "English + Hindi";
   experience?: string;
   projects?: Array<{
     title?: string;
