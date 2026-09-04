@@ -116,11 +116,11 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-4.5rem)] py-12 flex items-center justify-center">
+    <div className="relative min-h-[calc(100vh-4.5rem)] py-8 sm:py-12 flex items-center justify-center w-full max-w-full overflow-hidden">
       {/* Ambient background glow aura */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none -z-10" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] max-w-full bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none -z-10" />
 
-      <Container size="md" className="relative z-10 max-w-2xl">
+      <Container size="md" className="relative z-10 max-w-2xl px-4 sm:px-6">
         <FadeIn>
           <div className="flex flex-col items-center text-center mb-8 space-y-2">
             <div className="flex items-center justify-center mb-1">

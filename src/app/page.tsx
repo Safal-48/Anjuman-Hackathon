@@ -113,16 +113,16 @@ export default function HomePage() {
   };
 
   return (
-    <div className="relative pb-24">
+    <div className="relative pb-24 w-full max-w-full overflow-x-hidden">
       {/* Hero Section with Warp Field Background */}
-      <section className="relative pt-16 md:pt-24 pb-20 overflow-hidden min-h-[80vh] flex flex-col justify-center">
+      <section className="relative pt-16 md:pt-24 pb-20 overflow-hidden min-h-[80vh] flex flex-col justify-center w-full max-w-full">
         {/* Hero Ambient Depth & Glow Overlay */}
         <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none select-none">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/20 to-background/70 pointer-events-none" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.08)_0%,transparent_70%)] pointer-events-none" />
         </div>
 
-        <Container size="xl" className="relative z-10">
+        <Container size="xl" className="relative z-10 w-full max-w-7xl px-4 sm:px-6">
           <div className="flex flex-col items-center text-center max-w-4xl mx-auto space-y-6">
             {/* Main Headline */}
             <SlideUp delay={0.1}>

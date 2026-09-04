@@ -171,8 +171,8 @@ export function GlobalWarpBackground() {
         style={{
           position: "absolute",
           inset: 0,
-          width: "100vw",
-          height: "100vh",
+          width: "100%",
+          height: "100%",
           opacity: 0.75,
         }}
       />

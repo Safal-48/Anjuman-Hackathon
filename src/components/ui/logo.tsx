@@ -78,7 +78,7 @@ export function SkilloraLogo({
           {showTagline && (
             <span
               className={cn(
-                "font-mono tracking-wider text-muted-foreground uppercase mt-1 whitespace-nowrap text-[9px] text-cyan-300/80",
+                "hidden sm:block font-mono tracking-wider text-muted-foreground uppercase mt-1 whitespace-nowrap text-[9px] text-cyan-300/80",
                 currentSize.tagline
               )}
             >

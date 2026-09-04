@@ -71,10 +71,25 @@
 @layer base {
   * {
     @apply border-border;
+    box-sizing: border-box;
+  }
+  html {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    touch-action: pan-y;
   }
   body {
     @apply bg-background text-foreground antialiased selection:bg-cyan-500/30 selection:text-cyan-200;
     font-feature-settings: "rlig" 1, "calt" 1;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    position: relative;
+  }
+  main {
+    width: 100%;
+    max-width: 100%;
     overflow-x: hidden;
   }
 }

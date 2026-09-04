@@ -403,28 +403,28 @@ export function Navbar() {
           </nav>
 
           {/* Right Action Bar */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             <NotificationBell />
 
             {isAuthenticated ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2">
                 <Link href="/profile">
-                  <Button variant="outline" size="sm" className="gap-2 border-white/10 hover:border-cyan-500/40">
+                  <Button variant="outline" size="sm" className="gap-1.5 border-white/10 hover:border-cyan-500/40 px-2.5 sm:px-3">
                     <User className="h-3.5 w-3.5 text-cyan-400" />
-                    <span className="hidden sm:inline font-mono text-xs">{user?.fullName || "Student Profile"}</span>
+                    <span className="hidden sm:inline font-mono text-xs">{user?.fullName || "Profile"}</span>
                   </Button>
                 </Link>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={logout}
-                  className="text-slate-400 hover:text-rose-400 hover:bg-rose-500/10"
+                  className="text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 h-8 w-8 sm:h-9 sm:w-9"
                 >
                   <LogOut className="h-4 w-4" />
                 </Button>
               </div>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="hidden sm:flex items-center gap-2">
                 <Link href="/login">
                   <Button variant="ghost" size="sm" className="font-mono text-xs text-slate-300 hover:text-white">
                     Log In
@@ -442,6 +442,7 @@ export function Navbar() {
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               className="xl:hidden p-2 rounded-xl text-slate-300 hover:text-white bg-slate-900/60 border border-white/10"
+              aria-label="Toggle navigation menu"
             >
               {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
@@ -451,6 +452,24 @@ export function Navbar() {
         {/* Mobile Navigation Drawer */}
         {mobileOpen && (
           <div className="xl:hidden py-4 border-t border-white/[0.08] space-y-4 animate-in fade-in slide-in-from-top-3 duration-200">
+            {!isAuthenticated && (
+              <div className="grid grid-cols-2 gap-2 pb-2 border-b border-white/[0.06]">
+                <Link
+                  href="/login"
+                  onClick={() => setMobileOpen(false)}
+                  className="p-2.5 rounded-xl bg-slate-900/80 border border-white/10 text-xs font-mono font-bold text-center text-slate-200"
+                >
+                  Log In
+                </Link>
+                <Link
+                  href="/register"
+                  onClick={() => setMobileOpen(false)}
+                  className="p-2.5 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-xs font-mono font-bold text-center text-cyan-300"
+                >
+                  Register →
+                </Link>
+              </div>
+            )}
             <div className="grid grid-cols-2 gap-2">
               <Link
                 href={isAuthenticated ? "/dashboard" : "/"}
