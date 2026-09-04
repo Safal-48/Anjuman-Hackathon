@@ -1,8 +1,4 @@
--- ==============================================================================
--- TECH-TITAN (SIH 2026 - Problem Statement 26044)
--- Skill Intelligence & Assessment Schema Migration
--- Standardized Assessment Question Bank, Session Persistence, & Gap Calculation
--- ==============================================================================
+
 
 -- 1. ASSESSMENT QUESTIONS TABLE
 CREATE TABLE IF NOT EXISTS public.assessment_questions (

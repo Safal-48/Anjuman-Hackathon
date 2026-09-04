@@ -22,8 +22,8 @@ export const NEXORA_KNOWLEDGE_BASE: RAGDocument[] = [
       "Skillora", "what is", "kya hai", "about", "mission", "vision", "technova",
       "objective", "overview", "Skillora", "platform", "purpose", "tagline"
     ],
-    citation: "Skillora Core Architecture • Team TechNova",
-    content: `Skillora is an adaptive AI-powered personalized learning, skill intelligence, and mentorship ecosystem engineered by Team TechNova.
+    citation: "Skillora Core Architecture",
+    content: `Skillora is an adaptive AI-powered personalized learning, skill intelligence, and mentorship ecosystem.
 Tagline: "Connecting Skills • Bridging Opportunities" | "Bridging Skills with Opportunity."
 Core Purpose: To eliminate the massive disconnect between academic curricula and industry hiring demands by providing transparent, skill-first assessments, personalized adaptive learning roadmaps, and explainable AI opportunity matching for students, colleges, and recruiters.`
   },
@@ -160,7 +160,7 @@ Core Purpose: To eliminate the massive disconnect between academic curricula and
 - 📸 Instagram: @skilloraedu26 (Profile: https://www.instagram.com/skilloraedu26?igsi=MTVpdmk1cHQ0bHl3bQ==)
 - 📧 Email: skilloraedu26@gmail.com
 - 📱 Phone / WhatsApp: +91 93228 33495
-- 📍 Organization: Team TechNova (Skillora AI Learning Ecosystem)`
+- 📍 Organization: Skillora AI Learning Ecosystem`
   }
 ];
 
@@ -539,7 +539,7 @@ export function generateNexoraRAGResponse(
       `- 📸 **Instagram**: [@skilloraedu26](https://www.instagram.com/skilloraedu26?igsi=MTVpdmk1cHQ0bHl3bQ==)\n` +
       `- 📧 **Email**: [skilloraedu26@gmail.com](mailto:skilloraedu26@gmail.com)\n` +
       `- 📱 **Phone / WhatsApp**: [+91 93228 33495](tel:+919322833495)\n\n` +
-      `*Skillora • Engineered by Team TechNova*`;
+      `*Skillora • AI Personalized Learning Ecosystem*`;
 
     return {
       reply,

@@ -8,7 +8,7 @@ export const SITE_CONFIG = {
     year: "2026",
     problemStatementId: "26044",
     category: "Software / AI & Emerging Technologies",
-    teamName: "TechNova",
+    teamName: "Skillora",
   },
   contact: {
     email: "skilloraedu26@gmail.com",

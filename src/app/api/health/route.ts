@@ -13,7 +13,7 @@ export async function GET() {
       latencyMs: Date.now() - startTime,
       project: {
         name: SITE_CONFIG.name,
-        team: "TechNova",
+        team: "Skillora",
         category: "Autonomous AI Personalized Learning Ecosystem",
       },
       services: {
