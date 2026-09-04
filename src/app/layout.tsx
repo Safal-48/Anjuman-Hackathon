@@ -32,7 +32,6 @@ export const metadata: Metadata = {
   keywords: [
     "Skillora",
     "Skillora AI",
-    "TechNova",
     "Autonomous AI Personalized Learning Ecosystem",
     "Adaptive Learning Ecosystem",
     "Skill DNA",
@@ -40,8 +39,8 @@ export const metadata: Metadata = {
     "Employability & Mentorship Platform",
     "AI Career Copilot",
   ],
-  authors: [{ name: "TechNova" }],
-  creator: "TechNova",
+  authors: [{ name: "Skillora" }],
+  creator: "Skillora",
   icons: {
     icon: "/favicon.ico",
   },

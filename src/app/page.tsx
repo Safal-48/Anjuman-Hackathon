@@ -123,12 +123,12 @@ export default function HomePage() {
         </div>
 
         <Container size="xl" className="relative z-10 w-full max-w-7xl px-4 sm:px-6">
-          <div className="flex flex-col items-center text-center max-w-4xl mx-auto space-y-6">
+          <div className="flex flex-col items-center text-center max-w-4xl mx-auto space-y-4 sm:space-y-6">
             {/* Main Headline */}
             <SlideUp delay={0.1}>
-              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground leading-[1.35] sm:leading-[1.28]">
-                <span>Empowering Careers with</span>
-                <span className="block mt-3 sm:mt-4 pt-1 bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent">
+              <h1 className="text-[25px] min-[360px]:text-[27px] min-[410px]:text-[31px] sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground leading-[1.18] sm:leading-[1.2]">
+                <span className="block whitespace-nowrap">Empowering Careers with</span>
+                <span className="block mt-1 sm:mt-3 bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent">
                   {SITE_CONFIG.name}
                 </span>
               </h1>
@@ -136,19 +136,19 @@ export default function HomePage() {
 
             {/* Sub-headline */}
             <SlideUp delay={0.2}>
-              <p className="text-base sm:text-xl text-muted-foreground max-w-2xl leading-relaxed">
+              <p className="text-xs min-[380px]:text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl leading-relaxed px-1 sm:px-0">
                 {SITE_CONFIG.description}
               </p>
             </SlideUp>
 
             {/* CTAs */}
             <SlideUp delay={0.3}>
-              <div className="flex flex-wrap items-center justify-center gap-5 pt-3">
-                <Link href="/register" className="group">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-2 w-full max-w-xs sm:max-w-none mx-auto">
+                <Link href="/register" className="group w-full sm:w-auto">
                   <Button
                     variant="glow"
                     size="lg"
-                    className="relative px-8 py-6 text-base font-bold shadow-[0_0_30px_rgba(6,182,212,0.35)] hover:shadow-[0_0_45px_rgba(6,182,212,0.65)] transition-all duration-300 hover:scale-105 active:scale-95 group overflow-hidden rounded-2xl"
+                    className="w-full sm:w-auto px-6 sm:px-8 py-5 sm:py-6 text-sm sm:text-base font-bold shadow-[0_0_30px_rgba(6,182,212,0.35)] hover:shadow-[0_0_45px_rgba(6,182,212,0.65)] transition-all duration-300 hover:scale-105 active:scale-95 group overflow-hidden rounded-2xl justify-center"
                     rightIcon={
                       <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5" />
                     }
@@ -156,11 +156,11 @@ export default function HomePage() {
                     <span className="relative z-10">Get Started / Register</span>
                   </Button>
                 </Link>
-                <Link href="/login" className="group">
+                <Link href="/login" className="group w-full sm:w-auto">
                   <Button
                     variant="glass"
                     size="lg"
-                    className="px-8 py-6 text-base font-bold border-white/15 bg-slate-900/70 hover:bg-slate-800/90 hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.25)] transition-all duration-300 hover:scale-105 active:scale-95 group rounded-2xl"
+                    className="w-full sm:w-auto px-6 sm:px-8 py-5 sm:py-6 text-sm sm:text-base font-bold border-white/15 bg-slate-900/70 hover:bg-slate-800/90 hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.25)] transition-all duration-300 hover:scale-105 active:scale-95 group rounded-2xl justify-center"
                     leftIcon={
                       <Lock className="h-4 w-4 text-cyan-400 transition-transform duration-300 group-hover:scale-110 group-hover:text-cyan-300" />
                     }
@@ -173,8 +173,8 @@ export default function HomePage() {
           </div>
 
           {/* Platform Pillars & Intelligence Grid */}
-          <div className="mt-16">
-            <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="mt-10 sm:mt-16">
+            <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-5">
               <StaggerItem>
                 <GlowBorder
                   borderRadius={18}

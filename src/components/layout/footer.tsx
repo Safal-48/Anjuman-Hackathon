@@ -244,9 +244,6 @@ export function Footer() {
                 Tap any channel below to directly launch the respective app, email, or dialer.
               </p>
             </div>
-            <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 font-semibold self-start sm:self-auto">
-              Team TechNova
-            </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -329,7 +326,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-muted-foreground">
           <div className="flex items-center gap-2">
-            <span>© 2026 Skillora. Engineered by Team TechNova.</span>
+            <span>© 2026 Skillora. All rights reserved.</span>
           </div>
           <div className="flex items-center gap-4">
             <span className="text-cyan-400">ASSESS → UNDERSTAND → PRIORITIZE → LEARN → PRACTICE → PROVE → REASSESS → ADAPT</span>

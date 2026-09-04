@@ -127,10 +127,6 @@ export default function RegisterPage() {
               <SkilloraIcon size={52} className="shadow-cyan-500/30 shadow-xl" />
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-widest">
-                Team TechNova
-              </span>
-              <span className="h-1 w-1 rounded-full bg-cyan-400" />
               <Badge variant="cyber" size="sm" className="font-mono text-[9px]">
                 AI Learning Ecosystem
               </Badge>
