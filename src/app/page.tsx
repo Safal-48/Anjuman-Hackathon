@@ -143,34 +143,31 @@ export default function HomePage() {
 
             {/* CTAs */}
             <SlideUp delay={0.3}>
-              <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-                <Link href="/register">
+              <div className="flex flex-wrap items-center justify-center gap-5 pt-3">
+                <Link href="/register" className="group">
                   <Button
                     variant="glow"
                     size="lg"
-                    rightIcon={<ArrowRight className="h-4 w-4" />}
+                    className="relative px-8 py-6 text-base font-bold shadow-[0_0_30px_rgba(6,182,212,0.35)] hover:shadow-[0_0_45px_rgba(6,182,212,0.65)] transition-all duration-300 hover:scale-105 active:scale-95 group overflow-hidden rounded-2xl"
+                    rightIcon={
+                      <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5" />
+                    }
                   >
-                    Get Started / Register
+                    <span className="relative z-10">Get Started / Register</span>
                   </Button>
                 </Link>
-                <Link href="/login">
+                <Link href="/login" className="group">
                   <Button
                     variant="glass"
                     size="lg"
-                    leftIcon={<Lock className="h-4 w-4 text-cyan-400" />}
+                    className="px-8 py-6 text-base font-bold border-white/15 bg-slate-900/70 hover:bg-slate-800/90 hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.25)] transition-all duration-300 hover:scale-105 active:scale-95 group rounded-2xl"
+                    leftIcon={
+                      <Lock className="h-4 w-4 text-cyan-400 transition-transform duration-300 group-hover:scale-110 group-hover:text-cyan-300" />
+                    }
                   >
                     Sign In to Portal
                   </Button>
                 </Link>
-                <a href="#architecture">
-                  <Button
-                    variant="cyber"
-                    size="lg"
-                    leftIcon={<Layers className="h-4 w-4" />}
-                  >
-                    Architecture
-                  </Button>
-                </a>
               </div>
             </SlideUp>
           </div>
