@@ -126,9 +126,9 @@ export default function HomePage() {
           <div className="flex flex-col items-center text-center max-w-4xl mx-auto space-y-6">
             {/* Main Headline */}
             <SlideUp delay={0.1}>
-              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground leading-[1.24] sm:leading-[1.22]">
-                Empowering Careers with{" "}
-                <span className="inline-block mt-1 sm:mt-2 bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent">
+              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground leading-[1.35] sm:leading-[1.28]">
+                <span>Empowering Careers with</span>
+                <span className="block mt-3 sm:mt-4 pt-1 bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent">
                   {SITE_CONFIG.name}
                 </span>
               </h1>
