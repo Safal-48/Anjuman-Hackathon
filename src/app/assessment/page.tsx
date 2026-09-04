@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/lib/auth/auth-context";
 import { AssessmentQuestion, AssessmentSession } from "@/lib/supabase/types";
 import { ASSESSMENT_SUBJECTS, AssessmentSubject } from "@/lib/skills/assessment-repository";
+import { stopAllCameraStreams } from "@/lib/camera/camera-stream-manager";
 
 export default function AssessmentPage() {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
@@ -22,6 +23,9 @@ export default function AssessmentPage() {
   const loadSubjectQuestions = async (subject: AssessmentSubject, level: string = "intermediate") => {
     setIsLoading(true);
     setSelectedSubject(subject);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    }
 
     try {
       const [questionsRes, sessionRes] = await Promise.all([
@@ -53,7 +57,15 @@ export default function AssessmentPage() {
     });
   };
 
+  // Ensure camera hardware turns off when user navigates away from Assessment
+  useEffect(() => {
+    return () => {
+      stopAllCameraStreams();
+    };
+  }, []);
+
   const handleSubmitAssessment = async (targetRoleId?: string) => {
+    stopAllCameraStreams();
     await fetch("/api/assessment/submit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -62,8 +74,12 @@ export default function AssessmentPage() {
   };
 
   const handleBackToSubjectSelection = () => {
+    stopAllCameraStreams();
     setSelectedSubject(null);
     setQuestions([]);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    }
   };
 
   if (authLoading) {

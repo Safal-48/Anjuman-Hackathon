@@ -30,6 +30,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { OpportunityEntity } from "@/lib/supabase/types";
 import { useAuth } from "@/lib/auth/auth-context";
 import { ApplicationReadinessModal } from "@/components/marketplace/application-readiness-modal";
+import { ApplicationSuccessModal } from "@/components/marketplace/application-success-modal";
 import { FadeIn, SlideUp } from "@/components/animations/motion-wrapper";
 
 export default function OpportunityDetailPage() {
@@ -43,6 +44,7 @@ export default function OpportunityDetailPage() {
   const [isApplying, setIsApplying] = useState(false);
   const [hasApplied, setHasApplied] = useState(false);
   const [showReadinessModal, setShowReadinessModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
     async function loadOpportunity() {
@@ -74,6 +76,7 @@ export default function OpportunityDetailPage() {
       if (res.ok) {
         setHasApplied(true);
         setShowReadinessModal(false);
+        setShowSuccessModal(true);
       }
     } catch (err) {
       console.error("Application failed:", err);
@@ -343,6 +346,13 @@ export default function OpportunityDetailPage() {
             isSubmitting={isApplying}
           />
         )}
+
+        {/* High-End Cyberpunk Application Success Modal */}
+        <ApplicationSuccessModal
+          isOpen={showSuccessModal}
+          opportunity={opportunity}
+          onClose={() => setShowSuccessModal(false)}
+        />
       </Container>
     </div>
   );

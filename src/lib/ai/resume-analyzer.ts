@@ -48,6 +48,18 @@ export interface ResumeSectionItem {
   feedback: string;
 }
 
+export interface ATSActionableFix {
+  id: string;
+  category: "IMPACT TELEMETRY" | "TECHNICAL DEPTH" | "ACTION VERBS" | "ATS COMPLIANCE" | "PORTFOLIO & LINKS" | "LEADERSHIP & OWNERSHIP";
+  title: string;
+  priority: "High Priority" | "Medium Priority" | "Critical Impact";
+  impactScore: string;
+  description: string;
+  beforeExample: string;
+  afterExample: string;
+  template: string;
+}
+
 export interface DetailedATSAnalysis {
   // Candidate Info
   candidateName: string;
@@ -103,6 +115,7 @@ export interface DetailedATSAnalysis {
   formattingIssues: string[];
   missingInformation: string[];
   actionableImprovements: string[];
+  structuredActionableFixes: ATSActionableFix[];
 
   // Job Comparison (if target role / JD provided)
   jobComparison?: {
@@ -446,12 +459,113 @@ export function analyzeResumeATS(
   if (extractedSoft.length === 0) missingInformation.push("No soft skills or cross-functional leadership indicators detected.");
   if (education.length === 0 || !education[0].gpa) missingInformation.push("Missing degree GPA / percentage.");
 
-  // Actionable Improvements
-  const actionableImprovements: string[] = [
-    "Adopt the Google 'XYZ Formula': Accomplished [X], as measured by [Y], by doing [Z].",
-    "Add explicit technology badges under each project title (e.g. 'Tech Stack: Next.js, PostgreSQL, Docker').",
-    "Ensure all bullet points start with strong action verbs ('Architected', 'Optimized', 'Engineered').",
-  ];
+  // Dynamic, Executive-Grade Actionable Improvements Generation
+  const structuredActionableFixes: ATSActionableFix[] = [];
+  const actionableImprovements: string[] = [];
+
+  // Fix 1: Impact Quantification / Google's XYZ Formula
+  if (metricsFoundGlobal.length < 3) {
+    const fix: ATSActionableFix = {
+      id: "impact_telemetry",
+      category: "IMPACT TELEMETRY",
+      title: "Quantify Technical Impact with Verified Telemetry (Google's X-Y-Z Formula)",
+      priority: "Critical Impact",
+      impactScore: "+18% ATS Ranking",
+      description: "Recruiters and enterprise ATS screening algorithms heavily prioritize empirical outcomes over task listings. Rephrase your achievements to clearly highlight the quantifiable impact (e.g., latency reduction, throughput, user volume, or cost optimization).",
+      beforeExample: "Built backend APIs in Node.js and improved database query speed.",
+      afterExample: "Architected 12+ asynchronous REST microservices using Node.js & PostgreSQL, reducing p99 API latency by 42% for 50,000+ daily active users.",
+      template: "Accomplished [X: System/Feature] as measured by [Y: Quantifiable Metric %, ms, or scale] by doing [Z: Engineering Solution].",
+    };
+    structuredActionableFixes.push(fix);
+    actionableImprovements.push("Adopt Google's 'X-Y-Z' Formula: 'Accomplished [X], as measured by [Y] (e.g., 35% latency drop, 10k RPS), by implementing [Z]'.");
+  }
+
+  // Fix 2: Technical Stack Badges & Architectural Grouping
+  const fixTechStack: ATSActionableFix = {
+    id: "tech_stack_badging",
+    category: "TECHNICAL DEPTH",
+    title: "Embed Explicit Technical Stack Badges Across Projects & Work Experience",
+    priority: "High Priority",
+    impactScore: "+14% Keyword Alignment",
+    description: "Modern ATS parsers match technologies within specific experience contexts. Structure each project and experience entry with a clear 'Tech Stack' header to maximize keyword density and readability.",
+    beforeExample: "E-Commerce App: Created shopping cart and user login features with React and MongoDB.",
+    afterExample: "Cloud Commerce Platform [Tech Stack: Next.js 14, TypeScript, Prisma, Redis, Docker]: Engineered real-time checkout pipeline processing 1,200 transactions/min with Stripe webhook reconciliation.",
+    template: "[Project Title] | Live Demo: [URL] | Tech Stack: [Language, Framework, Database, Cloud / DevOps]",
+  };
+  structuredActionableFixes.push(fixTechStack);
+  actionableImprovements.push("Inject structured technology badges under each project (e.g., 'Tech Stack: Next.js 14, TypeScript, PostgreSQL, Docker') for contextual keyword extraction.");
+
+  // Fix 3: Action Verbs & Eliminating Passive Voice
+  const fixActionVerbs: ATSActionableFix = {
+    id: "action_verbs",
+    category: "ACTION VERBS",
+    title: "Replace Passive Duty Descriptions with High-Impact Executive Action Verbs",
+    priority: "High Priority",
+    impactScore: "+12% Executive Tone",
+    description: "Eliminate passive phrases such as 'Worked on', 'Assisted with', or 'Responsible for'. Initiate every bullet point with powerful engineering action verbs like 'Architected', 'Engineered', 'Optimized', 'Spearheaded', and 'Decoupled'.",
+    beforeExample: "Responsible for fixing frontend bugs and helped in deploying the website.",
+    afterExample: "Engineered scalable React UI components, resolved 35+ critical performance bottlenecks, and automated deployment via GitHub Actions CI/CD pipelines.",
+    template: "[Executive Action Verb: Architected / Engineered / Spearheaded] + [Target Component / System] + [Quantitative Business/Technical Outcome]",
+  };
+  structuredActionableFixes.push(fixActionVerbs);
+  actionableImprovements.push("Lead every bullet point with strong executive action verbs ('Architected', 'Spearheaded', 'Optimized', 'Engineered') and eliminate passive duty phrases.");
+
+  // Fix 4: Verifiable Code Evidence (Public GitHub / Portfolio Links)
+  if (!githubMatch || !portfolioMatch) {
+    const fixPortfolio: ATSActionableFix = {
+      id: "verifiable_proof",
+      category: "PORTFOLIO & LINKS",
+      title: "Establish Verifiable Engineering Proof via Public Repositories & Live Demos",
+      priority: "High Priority",
+      impactScore: "+15% Recruiter Credibility",
+      description: "Technical recruiters and hiring managers favor candidates who provide immediate, verifiable access to source code and hosted applications. Add active GitHub repository URLs and live deployment links to your project section.",
+      beforeExample: "Real-Time Chat App (No public codebase or demo link provided).",
+      afterExample: "Real-Time Distributed Chat Core (GitHub: github.com/user/chat-core | Live: chat.titan.dev) [Next.js, WebSockets, Redis Streams]",
+      template: "[Project Title] | Codebase: github.com/[user]/[repo] | Live Demo: [https://project-url.com]",
+    };
+    structuredActionableFixes.push(fixPortfolio);
+    actionableImprovements.push("Include clickable public GitHub repository links and live deployed URLs (Vercel/AWS) for each featured project to provide verifiable code evidence.");
+  }
+
+  // Fix 5: Job-Specific Semantic Keyword Optimization (if target JD provided)
+  if (targetJobDescription && targetJobDescription.requiredSkills.length > 0) {
+    const required = targetJobDescription.requiredSkills || [];
+    const missingSkills = required.filter(
+      (r) => !extractedTech.some((e) => e.toLowerCase() === r.toLowerCase())
+    );
+    if (missingSkills.length > 0) {
+      const fixKeywords: ATSActionableFix = {
+        id: "semantic_keywords",
+        category: "ATS COMPLIANCE",
+        title: `Inject Targeted Semantic Keywords for '${targetJobDescription.title}'`,
+        priority: "Critical Impact",
+        impactScore: "+22% ATS Keyword Match",
+        description: `Your resume currently lacks critical keywords expected for ${targetJobDescription.title}. Seamlessly weave missing technologies (${missingSkills.slice(0, 3).join(", ")}) into your relevant experience bullets and technical skills catalog.`,
+        beforeExample: `Demonstrated general full-stack engineering skills.`,
+        afterExample: `Engineered high-scale microservices leveraging ${missingSkills.slice(0, 2).join(" & ")}, ensuring seamless integration within containerized Kubernetes clusters.`,
+        template: `Leveraged [${missingSkills[0] || "Target Skill"}] to build [Feature/System], improving [Operational Metric] by [X%].`,
+      };
+      structuredActionableFixes.push(fixKeywords);
+      actionableImprovements.push(`Incorporate target role keywords (${missingSkills.slice(0, 3).join(", ")}) into your project bullets to boost keyword match for ${targetJobDescription.title}.`);
+    }
+  }
+
+  // Fallback / Extra: Leadership & Cross-Functional Collaboration
+  if (extractedSoft.length === 0 || structuredActionableFixes.length < 4) {
+    const fixLeadership: ATSActionableFix = {
+      id: "leadership_ownership",
+      category: "LEADERSHIP & OWNERSHIP",
+      title: "Demonstrate Cross-Functional Engineering Leadership & Agile Ownership",
+      priority: "Medium Priority",
+      impactScore: "+10% Holistic Evaluation",
+      description: "Highlight cross-functional collaboration, technical mentorship, and Agile sprint contributions to demonstrate maturity and team readiness beyond individual coding tasks.",
+      beforeExample: "Attended daily scrum standups and worked with other developers.",
+      afterExample: "Spearheaded bi-weekly Agile sprint retrospectives, mentored 2 junior developers on TypeScript design patterns, and conducted 30+ peer code reviews.",
+      template: "Spearheaded [Cross-functional initiative/sprint], collaborating with [Product/Design/DevOps] to deliver [Feature] with [X% improved velocity].",
+    };
+    structuredActionableFixes.push(fixLeadership);
+    actionableImprovements.push("Highlight cross-functional leadership, peer code reviews, and Agile ownership to showcase senior-level engineering collaboration.");
+  }
 
   // 7. Job-Specific Comparison (if target job or JD provided)
   let jobComparison: DetailedATSAnalysis["jobComparison"] = undefined;
@@ -522,6 +636,7 @@ export function analyzeResumeATS(
     formattingIssues,
     missingInformation,
     actionableImprovements,
+    structuredActionableFixes,
     jobComparison,
   };
 }

@@ -51,6 +51,9 @@ export class AttentionEngine {
   private deviationStartTime: number | null = null;
   private faceLostStartTime: number | null = null;
   private lastAlertRecoveryTime: number = 0;
+  private centerConsecutiveFrames: number = 0;
+  private lastViolationTime: number = 0;
+  private lastAlertedDirection: HeadDirection = "CENTER";
 
   // Metrics accumulation
   private events: AttentionEvent[] = [];
@@ -261,19 +264,24 @@ export class AttentionEngine {
     const frameCenterX = this.baselineX || (width / 2);
     const frameCenterY = this.baselineY || (height * 0.45);
 
-    // Compute relative displacement from the student's calibrated resting position
-    const yawOffset = (this.smoothX - frameCenterX) / (width * 0.35);
-    const pitchOffset = (this.smoothY - frameCenterY) / (height * 0.35);
+    // Compute relative displacement from calibrated baseline
+    // 0.25 denominator yields clear offsets for real head movement
+    const yawOffset = (this.smoothX - frameCenterX) / (width * 0.25);
+    const pitchOffset = (this.smoothY - frameCenterY) / (height * 0.25);
 
     let direction: HeadDirection = "CENTER";
     const absYaw = Math.abs(yawOffset);
     const absPitch = Math.abs(pitchOffset);
 
-    // Clear and responsive directional classification
-    if (absYaw > ATTENTION_CONFIG.HEAD_YAW_THRESHOLD && absYaw >= absPitch) {
-      direction = yawOffset > 0 ? "RIGHT" : "LEFT";
-    } else if (absPitch > ATTENTION_CONFIG.HEAD_PITCH_THRESHOLD) {
-      direction = pitchOffset > 0 ? "DOWN" : "UP";
+    // Responsive and accurate directional detection for LEFT, RIGHT, UP, DOWN
+    if (absYaw > ATTENTION_CONFIG.HEAD_YAW_THRESHOLD || absPitch > ATTENTION_CONFIG.HEAD_PITCH_THRESHOLD) {
+      if (absYaw >= absPitch) {
+        // Video is mirrored on the client: when candidate moves to their left,
+        // centroid in camera coordinates moves right (yawOffset > 0)
+        direction = yawOffset > 0 ? "LEFT" : "RIGHT";
+      } else {
+        direction = pitchOffset > 0 ? "DOWN" : "UP";
+      }
     }
 
     return {
@@ -292,11 +300,12 @@ export class AttentionEngine {
   }
 
   /**
-   * Handles 5.0s grace period, alert cooldowns, and visual warnings
+   * Handles grace period, alert cooldowns, and visual warnings
    */
   private updateStateMachine(result: DetectionResult, now: number, dt: number) {
-    // 1. Handle Face Lost (with 5.0s grace period)
+    // 1. Handle Face Lost
     if (!result.faceDetected) {
+      this.centerConsecutiveFrames = 0;
       if (!this.faceLostStartTime) {
         this.faceLostStartTime = now;
       } else if (now - this.faceLostStartTime > ATTENTION_CONFIG.FACE_LOST_DURATION_MS) {
@@ -315,48 +324,71 @@ export class AttentionEngine {
     // Face detected: reset face lost timer
     this.faceLostStartTime = null;
 
-    // 2. Handle Orientation Deviation (with generous 5.0s grace period for natural movements)
+    // 2. Handle Orientation Deviation (Left, Right, Up, Down)
     if (result.direction !== "CENTER") {
+      this.centerConsecutiveFrames = 0;
       this.currentDirection = result.direction;
 
       if (!this.deviationStartTime) {
         this.deviationStartTime = now;
-      } else if (now - this.deviationStartTime > ATTENTION_CONFIG.HEAD_TURN_DURATION_MS) {
-        // Sustained deviation past 5.0s grace period
+      } else if (now - this.deviationStartTime >= ATTENTION_CONFIG.HEAD_TURN_DURATION_MS) {
+        // Sustained deviation past duration threshold
         if (!this.isAlertActive) {
-          if (now - this.lastAlertRecoveryTime > ATTENTION_CONFIG.ALERT_COOLDOWN_MS) {
-            this.isAlertActive = true;
-            this.currentStatus = "DEVIATION_WARNING";
-            this.currentAlertStart = now;
+          // Initial alert trigger for this deviation
+          this.isAlertActive = true;
+          this.currentStatus = "DEVIATION_WARNING";
+          this.currentAlertStart = now;
+          this.lastViolationTime = now;
+          this.lastAlertedDirection = result.direction;
+          this.alertCount++;
+          audioAlert.playSoftAttentionChime();
+          this.triggerAlert(true, `Head movement detected: ${result.direction}. ${ATTENTION_CONFIG.LABELS.LOOK_AT_SCREEN}`);
+          this.logEvent("HEAD_ORIENTATION_ALERT", result.direction);
+        } else {
+          // Alert is ALREADY active: check if candidate is moving across directions or still looking away!
+          const isDirectionChange = result.direction !== this.lastAlertedDirection && (now - this.lastViolationTime >= 600);
+          const isSustainedViolation = (now - this.lastViolationTime >= 1200);
+
+          if (isDirectionChange || isSustainedViolation) {
+            this.lastViolationTime = now;
+            this.lastAlertedDirection = result.direction;
             this.alertCount++;
-            audioAlert.playSoftAttentionChime();
-            this.triggerAlert(true, ATTENTION_CONFIG.LABELS.LOOK_AT_SCREEN);
+            audioAlert.playWarningSiren();
+            this.triggerAlert(true, `Repeated head movement detected: ${result.direction}. ${ATTENTION_CONFIG.LABELS.LOOK_AT_SCREEN}`);
             this.logEvent("HEAD_ORIENTATION_ALERT", result.direction);
           }
         }
       }
     } else {
-      // 3. User returned focus to screen (CENTER)
-      this.deviationStartTime = null;
-      this.currentDirection = "CENTER";
+      // 3. Candidate returned focus to screen (CENTER)
+      this.centerConsecutiveFrames++;
+
+      // Reset deviation once stable in center for 2 frames
+      if (this.centerConsecutiveFrames >= 2) {
+        this.deviationStartTime = null;
+        this.currentDirection = "CENTER";
+      }
+
       this.totalFocusedMs += dt;
 
       if (this.isAlertActive || this.currentStatus !== "FOCUSED") {
-        // Automatic recovery
-        this.isAlertActive = false;
-        this.currentStatus = "FOCUSED";
-        this.lastAlertRecoveryTime = now;
+        // Automatic recovery after 3 consecutive center frames
+        if (this.centerConsecutiveFrames >= 3) {
+          this.isAlertActive = false;
+          this.currentStatus = "FOCUSED";
+          this.lastAlertRecoveryTime = now;
 
-        if (this.currentAlertStart) {
-          const alertDuration = (now - this.currentAlertStart) / 1000;
-          this.totalAlertMs += now - this.currentAlertStart;
-          this.longestAlertMs = Math.max(this.longestAlertMs, now - this.currentAlertStart);
-          this.logEvent("ATTENTION_RECOVERED", "CENTER", alertDuration);
-          this.currentAlertStart = null;
+          if (this.currentAlertStart) {
+            const alertDuration = (now - this.currentAlertStart) / 1000;
+            this.totalAlertMs += now - this.currentAlertStart;
+            this.longestAlertMs = Math.max(this.longestAlertMs, now - this.currentAlertStart);
+            this.logEvent("ATTENTION_RECOVERED", "CENTER", alertDuration);
+            this.currentAlertStart = null;
+          }
+
+          this.triggerAlert(false, "");
+          this.notifyStatus("FOCUSED", "CENTER");
         }
-
-        this.triggerAlert(false, "");
-        this.notifyStatus("FOCUSED", "CENTER");
       }
     }
   }

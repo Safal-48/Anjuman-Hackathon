@@ -24,6 +24,7 @@ import { GlassCard } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { stopAllCameraStreams, stopCameraStream } from "@/lib/camera/camera-stream-manager";
 import { InterviewSetupModal } from "@/components/ai/interview/interview-setup-modal";
 import { CameraPermissionGate } from "@/components/interview/camera-permission-gate";
 import { InterviewSessionRoom } from "@/components/ai/interview/interview-session-room";
@@ -75,6 +76,13 @@ export default function DedicatedMockInterviewPage() {
     loadAttempts();
   }, []);
 
+  // Ensure camera streams are 100% terminated on unmount or route exit
+  useEffect(() => {
+    return () => {
+      stopAllCameraStreams();
+    };
+  }, []);
+
   // Handle Launching a New Session (Moves to Camera & Attention Permission Gate)
   const handleStartInterview = async (config: InterviewConfig) => {
     setIsInitializing(true);
@@ -108,6 +116,13 @@ export default function DedicatedMockInterviewPage() {
     evaluations: SingleQuestionEvaluation[],
     attentionSummary?: any
   ) => {
+    // Immediately shut down camera hardware
+    stopAllCameraStreams();
+    if (cameraStream) {
+      stopCameraStream(cameraStream);
+      setCameraStream(null);
+    }
+
     if (!activeConfig || !activeSessionId) return;
 
     setIsCompilingReport(true);
@@ -139,8 +154,9 @@ export default function DedicatedMockInterviewPage() {
   };
 
   const handleRetakeInterview = () => {
+    stopAllCameraStreams();
     if (cameraStream) {
-      cameraStream.getTracks().forEach((t) => t.stop());
+      stopCameraStream(cameraStream);
       setCameraStream(null);
     }
     setShowCompletionPopup(false);
@@ -153,6 +169,11 @@ export default function DedicatedMockInterviewPage() {
   };
 
   const handleNavigateToResults = () => {
+    stopAllCameraStreams();
+    if (cameraStream) {
+      stopCameraStream(cameraStream);
+      setCameraStream(null);
+    }
     if (completedReport) {
       router.push(`/mock-interview/results/${completedReport.sessionId}`);
     }

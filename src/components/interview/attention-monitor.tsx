@@ -23,6 +23,7 @@ import {
   AttentionSummary,
   ATTENTION_CONFIG,
 } from "@/lib/attention/attention-config";
+import { registerCameraStream, stopCameraStream } from "@/lib/camera/camera-stream-manager";
 
 interface AttentionMonitorProps {
   /** Optional pre-acquired live MediaStream from permission gate */
@@ -39,6 +40,10 @@ interface AttentionMonitorProps {
   className?: string;
   /** Compact display mode for mobile or small split screens */
   compact?: boolean;
+  /** Active warning count (0, 1, 2) */
+  warningCount?: number;
+  /** Whether the assessment is frozen due to violations */
+  isFrozen?: boolean;
 }
 
 export function AttentionMonitor({
@@ -49,6 +54,8 @@ export function AttentionMonitor({
   isSessionActive = true,
   className = "",
   compact = false,
+  warningCount = 0,
+  isFrozen = false,
 }: AttentionMonitorProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -68,6 +75,7 @@ export function AttentionMonitor({
   // Setup and attach engine to the active video element
   const bindStreamToVideo = useCallback((stream: MediaStream) => {
     streamRef.current = stream;
+    registerCameraStream(stream);
     setPermissionState("granted");
 
     const video = videoRef.current;
@@ -123,42 +131,58 @@ export function AttentionMonitor({
     }
   }, [onAlertChange, onStatusChange]);
 
+  // Comprehensive camera shutdown helper
+  const stopCamera = useCallback(() => {
+    if (engineRef.current) {
+      const summary = engineRef.current.stop();
+      onSummaryReady?.(summary);
+      engineRef.current = null;
+    }
+
+    if (streamRef.current) {
+      stopCameraStream(streamRef.current);
+      streamRef.current = null;
+    }
+
+    if (videoRef.current) {
+      try {
+        videoRef.current.pause();
+        videoRef.current.srcObject = null;
+      } catch {
+        // Ignore
+      }
+    }
+  }, [onSummaryReady]);
+
   // Initialize or re-acquire camera stream with automatic retry
   const startCamera = useCallback(async (retryCount: number = 0) => {
-    if (!isMountedRef.current) return;
+    if (!isMountedRef.current || !isSessionActive) return;
 
-    // 1. If an initial active stream is passed from the permission gate, use it directly (0ms delay!)
-    if (initialStream && initialStream.active && initialStream.getVideoTracks().length > 0) {
-      bindStreamToVideo(initialStream);
-      return;
-    }
-
-    // 2. Check if streamRef already holds an active stream
-    if (streamRef.current && streamRef.current.active && streamRef.current.getVideoTracks().some(t => t.readyState === "live")) {
-      bindStreamToVideo(streamRef.current);
-      return;
-    }
-
-    if (typeof window === "undefined" || !navigator.mediaDevices?.getUserMedia) {
-      setPermissionState("denied");
-      setStatus("UNAVAILABLE");
-      return;
-    }
-
-    setPermissionState("requesting");
     try {
+      if (initialStream && initialStream.active) {
+        bindStreamToVideo(initialStream);
+        return;
+      }
+
+      if (typeof window === "undefined" || !navigator.mediaDevices?.getUserMedia) {
+        setPermissionState("denied");
+        setStatus("UNAVAILABLE");
+        return;
+      }
+
+      setPermissionState("requesting");
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
-          width: { ideal: 640 },
-          height: { ideal: 480 },
+          width: { ideal: 320, min: 240 },
+          height: { ideal: 240, min: 180 },
+          frameRate: { ideal: 15, max: 20 },
           facingMode: "user",
-          frameRate: { ideal: 24, max: 30 },
         },
         audio: false,
       });
 
       if (!isMountedRef.current) {
-        stream.getTracks().forEach((track) => track.stop());
+        stopCameraStream(stream);
         return;
       }
 
@@ -177,22 +201,41 @@ export function AttentionMonitor({
       setPermissionState("denied");
       setStatus("UNAVAILABLE");
     }
-  }, [bindStreamToVideo, initialStream]);
+  }, [bindStreamToVideo, initialStream, isSessionActive]);
 
-  // Main lifecycle: start camera on mount, clean up on unmount
+  // Main lifecycle: start camera on mount if session active, stop on unmount
   useEffect(() => {
     isMountedRef.current = true;
-    startCamera(0);
+    if (isSessionActive) {
+      startCamera(0);
+    }
 
     return () => {
       isMountedRef.current = false;
-      if (engineRef.current) {
-        const summary = engineRef.current.stop();
-        onSummaryReady?.(summary);
-        engineRef.current = null;
-      }
+      stopCamera();
     };
-  }, [startCamera, onSummaryReady]);
+  }, [startCamera, stopCamera, isSessionActive]);
+
+  // Stop camera if session becomes inactive
+  useEffect(() => {
+    if (!isSessionActive) {
+      stopCamera();
+    }
+  }, [isSessionActive, stopCamera]);
+
+  // Automatically shut down camera tracks when page/tab is navigated away or hidden
+  useEffect(() => {
+    const handlePageHide = () => {
+      stopCamera();
+    };
+    window.addEventListener("pagehide", handlePageHide);
+    window.addEventListener("beforeunload", handlePageHide);
+
+    return () => {
+      window.removeEventListener("pagehide", handlePageHide);
+      window.removeEventListener("beforeunload", handlePageHide);
+    };
+  }, [stopCamera]);
 
   // Ensure video element plays the live stream as soon as DOM video attaches
   useEffect(() => {
@@ -307,6 +350,19 @@ export function AttentionMonitor({
           <span className="text-[10px] font-mono font-bold tracking-wider text-slate-200 uppercase">
             Attention Monitor
           </span>
+          {isFrozen ? (
+            <span className="px-1.5 py-0.5 rounded bg-rose-500/30 border border-rose-500 text-rose-300 text-[9px] font-mono font-bold animate-pulse">
+              FROZEN 🔒
+            </span>
+          ) : warningCount > 0 ? (
+            <span className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-bold border ${
+              warningCount === 1
+                ? "bg-amber-500/20 border-amber-500/50 text-amber-300"
+                : "bg-rose-500/20 border-rose-500/50 text-rose-300 animate-pulse"
+            }`}>
+              {warningCount}/2 WARN
+            </span>
+          ) : null}
         </div>
 
         <div className="flex items-center gap-1">
@@ -406,15 +462,20 @@ export function AttentionMonitor({
 
           {/* Deviation Alert Overlay (Shows bright warning & red flashing banner when looking away) */}
           {isAlert && (
-            <div className="absolute inset-0 bg-rose-950/50 border-2 border-rose-500 flex items-center justify-center p-2 text-center animate-pulse">
-              <div className="space-y-1.5 p-2 rounded-xl bg-slate-950/80 border border-rose-500/80 shadow-2xl backdrop-blur-md">
+            <div className="absolute inset-0 bg-rose-950/60 border-2 border-rose-500 flex items-center justify-center p-2 text-center animate-pulse">
+              <div className="space-y-1.5 p-2.5 rounded-xl bg-slate-950/90 border border-rose-500/90 shadow-2xl backdrop-blur-md max-w-[95%]">
                 <AlertTriangle className="h-6 w-6 text-rose-400 mx-auto animate-bounce" />
-                <p className="text-[11px] font-mono font-bold text-rose-200 uppercase tracking-tight">
-                  Please Look Towards Screen
+                <p className="text-[11px] font-mono font-extrabold text-rose-200 uppercase tracking-tight">
+                  PLEASE SEE FORWARD / DON&apos;T MOVE
                 </p>
-                <p className="text-[9px] font-mono text-rose-300/80">
-                  Focus detected away from camera
+                <p className="text-[9px] font-mono text-rose-300/90">
+                  {direction !== "CENTER" ? `Head turned ${direction} - Face the screen` : "Keep your head facing forward"}
                 </p>
+                {warningCount > 0 && (
+                  <p className="text-[9px] font-mono font-bold text-amber-300">
+                    Warnings Issued: {warningCount}/2
+                  </p>
+                )}
               </div>
             </div>
           )}

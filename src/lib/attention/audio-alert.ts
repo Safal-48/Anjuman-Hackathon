@@ -80,6 +80,65 @@ class AudioAlertManager {
       // Audio playback restrictions safely handled
     }
   }
+
+  /**
+   * Play an urgent warning sound when candidate turns their head
+   */
+  public playWarningSiren() {
+    if (!this.isEnabled) return;
+    try {
+      const ctx = this.initContext();
+      if (!ctx) return;
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(440, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.25);
+
+      gain.gain.setValueAtTime(0.15, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.35);
+    } catch {
+      // Audio restrictions handled
+    }
+  }
+
+  /**
+   * Play a deep lockout alarm when the screen freezes
+   */
+  public playLockoutAlert() {
+    if (!this.isEnabled) return;
+    try {
+      const ctx = this.initContext();
+      if (!ctx) return;
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = "square";
+      osc.frequency.setValueAtTime(220, ctx.currentTime);
+      osc.frequency.setValueAtTime(160, ctx.currentTime + 0.2);
+
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.6);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.6);
+    } catch {
+      // Audio restrictions handled
+    }
+  }
 }
 
 export const audioAlert = new AudioAlertManager();
+

@@ -33,7 +33,7 @@ import {
 import { GlassCard } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { DetailedATSAnalysis } from "@/lib/ai/resume-analyzer";
+import { DetailedATSAnalysis, ATSActionableFix } from "@/lib/ai/resume-analyzer";
 import { FadeIn, SlideUp } from "@/components/animations/motion-wrapper";
 
 interface ResumeAnalysisDashboardProps {
@@ -47,6 +47,8 @@ export function ResumeAnalysisDashboard({
 }: ResumeAnalysisDashboardProps) {
   const [activeTab, setActiveTab] = useState<"overview" | "job_match" | "entities" | "optimization">("overview");
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [copiedFixKey, setCopiedFixKey] = useState<string | null>(null);
+  const [fixCategoryFilter, setFixCategoryFilter] = useState<string>("ALL");
 
   const {
     candidateName,
@@ -66,7 +68,8 @@ export function ResumeAnalysisDashboard({
     strengths,
     formattingIssues,
     missingInformation,
-    actionableImprovements,
+    actionableImprovements = [],
+    structuredActionableFixes = [],
     jobComparison,
   } = analysis;
 
@@ -680,37 +683,107 @@ export function ResumeAnalysisDashboard({
       )}
 
       {/* ========================================================================= */}
-      {/* TAB 4: ACTIONABLE RECOMMENDATIONS                                         */}
+      {/* TAB 4: ACTIONABLE RECOMMENDATIONS (CLEAN & SIMPLE)                        */}
       {/* ========================================================================= */}
-      {activeTab === "optimization" && (
-        <SlideUp>
-          <GlassCard className="p-6 space-y-5 border-cyan-500/20" glow>
-            <div className="flex items-center gap-2">
-              <Zap className="h-5 w-5 text-cyan-400" />
-              <h3 className="text-base font-bold text-foreground">
-                Step-by-Step ATS Optimization Plan
-              </h3>
-            </div>
+      {activeTab === "optimization" && (() => {
+        // Fallback or mapped list of clean actionable improvements
+        const items = structuredActionableFixes.length > 0
+          ? structuredActionableFixes.map((f, i) => ({
+              title: f.title.replace(/^Quantify Technical Impact with Verified Telemetry \(/, "Use ").replace(/\)$/, ""),
+              description: f.description,
+              example: f.afterExample,
+            }))
+          : [
+              {
+                title: "Apply Google's 'XYZ' Impact Formula",
+                description: "Frame your achievements with measurable results: Accomplished [X], as measured by [Y] (e.g. 35% latency drop, 10k+ users), by implementing [Z] instead of generic task descriptions.",
+                example: "Architected REST microservices with Node.js & PostgreSQL, reducing p99 API latency by 42% for 50,000+ users.",
+              },
+              {
+                title: "Add Explicit Tech Stack Badges",
+                description: "Add clear technology badges under each project title (e.g. 'Tech Stack: Next.js, TypeScript, PostgreSQL, Docker') so ATS bots and recruiters can instantly spot your core stack.",
+                example: "Tech Stack: Next.js 14, TypeScript, PostgreSQL, Docker, Redis",
+              },
+              {
+                title: "Lead Bullets with Strong Action Verbs",
+                description: "Ensure all bullet points start with strong action verbs ('Architected', 'Optimized', 'Engineered', 'Spearheaded') and avoid passive phrases like 'worked on' or 'helped with'.",
+                example: "Optimized database query response times by 30% through index tuning and Redis caching.",
+              },
+            ];
 
-            <div className="space-y-4 text-xs">
-              {actionableImprovements.map((imp, i) => (
-                <div
-                  key={i}
-                  className="p-4 rounded-2xl bg-slate-900/90 border border-white/10 flex items-start gap-3.5"
-                >
-                  <span className="h-6 w-6 rounded-xl bg-cyan-500/20 text-cyan-300 font-mono text-xs font-bold flex items-center justify-center shrink-0">
-                    {i + 1}
-                  </span>
-                  <div className="space-y-1">
-                    <span className="font-bold text-foreground text-sm">Actionable Fix #{i + 1}</span>
-                    <p className="text-muted-foreground leading-relaxed font-mono">{imp}</p>
-                  </div>
+        return (
+          <SlideUp>
+            <GlassCard className="p-6 sm:p-8 space-y-6 border-cyan-500/20" glow>
+              <div className="flex items-center gap-2.5">
+                <div className="h-8 w-8 rounded-xl bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 flex items-center justify-center">
+                  <Zap className="h-4 w-4" />
                 </div>
-              ))}
-            </div>
-          </GlassCard>
-        </SlideUp>
-      )}
+                <div>
+                  <h3 className="text-base sm:text-lg font-bold text-foreground">
+                    Step-by-Step ATS Optimization Plan
+                  </h3>
+                  <p className="text-xs text-muted-foreground font-mono">
+                    Clear, actionable fixes to improve your ATS score and impress recruiters.
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                {items.map((item, i) => (
+                  <div
+                    key={i}
+                    className="p-4 sm:p-5 rounded-2xl bg-slate-900/90 border border-white/10 hover:border-cyan-500/30 transition-all flex items-start gap-4 group relative"
+                  >
+                    {/* Number Badge */}
+                    <span className="h-7 w-7 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 font-mono text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+                      {i + 1}
+                    </span>
+
+                    {/* Content */}
+                    <div className="space-y-2 flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="font-bold text-foreground text-sm sm:text-base">
+                          Actionable Fix #{i + 1}: <span className="text-cyan-300 font-medium">{item.title}</span>
+                        </span>
+
+                        <button
+                          type="button"
+                          onClick={() => handleCopyBullet(item.example || item.description, i)}
+                          className="text-xs font-mono text-muted-foreground hover:text-cyan-300 flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 transition-colors shrink-0"
+                          title="Copy example"
+                        >
+                          {copiedIndex === i ? (
+                            <>
+                              <Check className="h-3.5 w-3.5 text-emerald-400" />
+                              <span className="text-emerald-400">Copied</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="h-3.5 w-3.5" />
+                              <span>Copy Example</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        {item.description}
+                      </p>
+
+                      {item.example && (
+                        <div className="p-2.5 rounded-xl bg-black/40 border border-white/5 text-[11px] font-mono text-cyan-200/90 flex items-start gap-2">
+                          <span className="text-cyan-400 shrink-0">💡 Example:</span>
+                          <span className="italic truncate sm:whitespace-normal">&ldquo;{item.example}&rdquo;</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </GlassCard>
+          </SlideUp>
+        );
+      })()}
     </div>
   );
 }

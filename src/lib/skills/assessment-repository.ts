@@ -7,6 +7,7 @@ import {
 } from "@/lib/supabase/types";
 import { computeAssessmentScores, calculateExplainableGaps } from "@/lib/skills/scoring-engine";
 import { getUserById, DEMO_USERS } from "@/lib/auth/session";
+import { getSubjectQuestionsBank } from "@/lib/skills/assessment-questions-bank";
 
 export interface AssessmentSubject {
   id: string;
@@ -33,8 +34,8 @@ export const ASSESSMENT_SUBJECTS: AssessmentSubject[] = [
     gradient: "from-cyan-500/20 to-blue-600/20",
     accentColor: "text-cyan-400",
     skillsCovered: ["React / Next.js", "TypeScript", "Node.js REST APIs", "DOM & Web Performance", "State Management"],
-    questionCount: 10,
-    estimatedMinutes: 15,
+    questionCount: 15,
+    estimatedMinutes: 10,
     difficulty: "Adaptive",
     recommendedRoles: ["Full-Stack Engineer", "Frontend Architect", "React Developer"],
   },
@@ -47,8 +48,8 @@ export const ASSESSMENT_SUBJECTS: AssessmentSubject[] = [
     gradient: "from-violet-500/20 to-purple-600/20",
     accentColor: "text-violet-400",
     skillsCovered: ["Python & PyTorch", "LLM Orchestration", "Neural Networks", "Embeddings & Vectors", "Model Optimization"],
-    questionCount: 10,
-    estimatedMinutes: 15,
+    questionCount: 15,
+    estimatedMinutes: 10,
     difficulty: "Adaptive",
     recommendedRoles: ["AI Platform Engineer", "ML Engineer", "Data Scientist"],
   },
@@ -61,8 +62,8 @@ export const ASSESSMENT_SUBJECTS: AssessmentSubject[] = [
     gradient: "from-emerald-500/20 to-teal-600/20",
     accentColor: "text-emerald-400",
     skillsCovered: ["SQL Queries & Joins", "Aggregations & HAVING", "Index Optimization", "ACID & Transactions", "Window Functions"],
-    questionCount: 10,
-    estimatedMinutes: 15,
+    questionCount: 15,
+    estimatedMinutes: 10,
     difficulty: "Adaptive",
     recommendedRoles: ["Database Engineer", "Data Analyst", "Backend Engineer"],
   },
@@ -75,8 +76,8 @@ export const ASSESSMENT_SUBJECTS: AssessmentSubject[] = [
     gradient: "from-amber-500/20 to-orange-600/20",
     accentColor: "text-amber-400",
     skillsCovered: ["Graph Traversal (BFS/DFS)", "Big-O Analysis", "Dynamic Programming", "Trees & Heaps", "Hash Tables"],
-    questionCount: 10,
-    estimatedMinutes: 15,
+    questionCount: 15,
+    estimatedMinutes: 10,
     difficulty: "Adaptive",
     recommendedRoles: ["Software Engineer", "Systems Engineer", "Product Engineer"],
   },
@@ -89,8 +90,8 @@ export const ASSESSMENT_SUBJECTS: AssessmentSubject[] = [
     gradient: "from-sky-500/20 to-indigo-600/20",
     accentColor: "text-sky-400",
     skillsCovered: ["Docker & Containers", "Kubernetes Pod Orchestration", "CI/CD Pipelines", "Raft Consensus", "Microservices"],
-    questionCount: 10,
-    estimatedMinutes: 15,
+    questionCount: 15,
+    estimatedMinutes: 10,
     difficulty: "Adaptive",
     recommendedRoles: ["DevOps Engineer", "Cloud Solutions Architect", "SRE"],
   },
@@ -103,8 +104,8 @@ export const ASSESSMENT_SUBJECTS: AssessmentSubject[] = [
     gradient: "from-rose-500/20 to-pink-600/20",
     accentColor: "text-rose-400",
     skillsCovered: ["OWASP Top 10", "JWT & Auth Flaws", "SQL Injection / XSS", "Cryptography & TLS", "Zero Trust Access"],
-    questionCount: 10,
-    estimatedMinutes: 15,
+    questionCount: 15,
+    estimatedMinutes: 10,
     difficulty: "Adaptive",
     recommendedRoles: ["Security Engineer", "AppSec Specialist", "SOC Analyst"],
   },
@@ -117,8 +118,8 @@ export const ASSESSMENT_SUBJECTS: AssessmentSubject[] = [
     gradient: "from-fuchsia-500/20 to-rose-600/20",
     accentColor: "text-fuchsia-400",
     skillsCovered: ["Pandas & DataFrames", "Statistical Distributions", "Feature Engineering", "Data Cleaning", "Data Visualization"],
-    questionCount: 10,
-    estimatedMinutes: 15,
+    questionCount: 15,
+    estimatedMinutes: 10,
     difficulty: "Adaptive",
     recommendedRoles: ["Data Scientist", "Business Intelligence Analyst", "Analytics Engineer"],
   },
@@ -131,8 +132,8 @@ export const ASSESSMENT_SUBJECTS: AssessmentSubject[] = [
     gradient: "from-blue-500/20 to-cyan-600/20",
     accentColor: "text-blue-400",
     skillsCovered: ["React Native & Flutter", "Kotlin / Swift", "Mobile State Management", "Offline SQLite Sync", "App Performance"],
-    questionCount: 10,
-    estimatedMinutes: 15,
+    questionCount: 15,
+    estimatedMinutes: 10,
     difficulty: "Adaptive",
     recommendedRoles: ["Mobile Engineer", "React Native Developer", "iOS/Android Architect"],
   },
@@ -145,8 +146,8 @@ export const ASSESSMENT_SUBJECTS: AssessmentSubject[] = [
     gradient: "from-amber-500/20 to-yellow-600/20",
     accentColor: "text-amber-400",
     skillsCovered: ["Solidity & Smart Contracts", "EVM Gas Optimization", "Reentrancy & Security Audits", "Cryptographic Signatures", "DeFi Protocols"],
-    questionCount: 10,
-    estimatedMinutes: 15,
+    questionCount: 15,
+    estimatedMinutes: 10,
     difficulty: "Adaptive",
     recommendedRoles: ["Smart Contract Engineer", "Web3 Developer", "Blockchain Security Auditor"],
   },
@@ -159,8 +160,8 @@ export const ASSESSMENT_SUBJECTS: AssessmentSubject[] = [
     gradient: "from-indigo-500/20 to-violet-600/20",
     accentColor: "text-indigo-400",
     skillsCovered: ["Microservices Design", "Distributed Caching (Redis)", "Event Streaming (Kafka)", "Database Sharding", "CAP & PACELC Theorem"],
-    questionCount: 10,
-    estimatedMinutes: 15,
+    questionCount: 15,
+    estimatedMinutes: 10,
     difficulty: "Adaptive",
     recommendedRoles: ["Principal Architect", "Senior Backend Engineer", "Distributed Systems Specialist"],
   },
@@ -173,8 +174,8 @@ export const ASSESSMENT_SUBJECTS: AssessmentSubject[] = [
     gradient: "from-emerald-500/20 to-green-600/20",
     accentColor: "text-emerald-400",
     skillsCovered: ["RAG Retrieval Architectures", "Vector DBs (Pinecone/pgvector)", "Prompt Engineering & Guardrails", "Autonomous AI Agents", "LLM Fine-Tuning"],
-    questionCount: 10,
-    estimatedMinutes: 15,
+    questionCount: 15,
+    estimatedMinutes: 10,
     difficulty: "Adaptive",
     recommendedRoles: ["GenAI Engineer", "LLM Application Architect", "AI Solutions Engineer"],
   },
@@ -187,8 +188,8 @@ export const ASSESSMENT_SUBJECTS: AssessmentSubject[] = [
     gradient: "from-teal-500/20 to-cyan-600/20",
     accentColor: "text-teal-400",
     skillsCovered: ["Embedded C / C++", "FreeRTOS & Concurrency", "MQTT / CoAP Protocols", "I2C / SPI Sensor Buses", "Edge AI Inference"],
-    questionCount: 10,
-    estimatedMinutes: 15,
+    questionCount: 15,
+    estimatedMinutes: 10,
     difficulty: "Adaptive",
     recommendedRoles: ["Embedded Firmware Engineer", "IoT Systems Architect", "Edge Device Developer"],
   },
@@ -201,8 +202,8 @@ export const ASSESSMENT_SUBJECTS: AssessmentSubject[] = [
     gradient: "from-lime-500/20 to-emerald-600/20",
     accentColor: "text-lime-400",
     skillsCovered: ["Playwright & Cypress E2E", "API Testing (Postman)", "CI/CD Automated Test Matrix", "Load Testing (k6/JMeter)", "Unit Testing (Jest)"],
-    questionCount: 10,
-    estimatedMinutes: 15,
+    questionCount: 15,
+    estimatedMinutes: 10,
     difficulty: "Adaptive",
     recommendedRoles: ["QA Automation Engineer", "SDET", "Performance Test Architect"],
   },
@@ -215,8 +216,8 @@ export const ASSESSMENT_SUBJECTS: AssessmentSubject[] = [
     gradient: "from-purple-500/20 to-pink-600/20",
     accentColor: "text-purple-400",
     skillsCovered: ["Unity / Unreal Engine", "C# & C++ Scripting", "3D Vectors & Quaternions", "HLSL / GLSL Shaders", "Physics Optimization"],
-    questionCount: 10,
-    estimatedMinutes: 15,
+    questionCount: 15,
+    estimatedMinutes: 10,
     difficulty: "Adaptive",
     recommendedRoles: ["Game Developer", "Graphics Programmer", "Unity/Unreal Technical Artist"],
   },
@@ -229,8 +230,8 @@ export const ASSESSMENT_SUBJECTS: AssessmentSubject[] = [
     gradient: "from-orange-500/20 to-amber-600/20",
     accentColor: "text-orange-400",
     skillsCovered: ["SLIs, SLOs & Error Budgets", "Prometheus & Grafana Metrics", "Distributed Tracing (OTel)", "Chaos Engineering & Failover", "Incident Runbooks"],
-    questionCount: 10,
-    estimatedMinutes: 15,
+    questionCount: 15,
+    estimatedMinutes: 10,
     difficulty: "Adaptive",
     recommendedRoles: ["SRE", "Observability Engineer", "Infrastructure Operations Lead"],
   },
@@ -243,10 +244,150 @@ export const ASSESSMENT_SUBJECTS: AssessmentSubject[] = [
     gradient: "from-sky-500/20 to-blue-600/20",
     accentColor: "text-sky-400",
     skillsCovered: ["Apache Spark Compute", "Apache Airflow DAGs", "Data Lakes & Delta Lake", "Kafka Stream Processing", "Snowflake & dbt Modeling"],
-    questionCount: 10,
-    estimatedMinutes: 15,
+    questionCount: 15,
+    estimatedMinutes: 10,
     difficulty: "Adaptive",
     recommendedRoles: ["Data Engineer", "Data Platform Architect", "Big Data Specialist"],
+  },
+  {
+    id: "devsecops",
+    title: "DevSecOps & Secure CI/CD Engineering",
+    tagline: "SAST/DAST, Container Hardening, Vault Secrets, Shift-Left & Supply Chain",
+    category: "Security Operations",
+    iconName: "ShieldCheck",
+    gradient: "from-red-500/20 to-rose-600/20",
+    accentColor: "text-red-400",
+    skillsCovered: ["SAST & DAST Pipelines", "Container Security & Cosign", "HashiCorp Vault", "SBOM & Supply Chain", "OPA Gatekeeper"],
+    questionCount: 15,
+    estimatedMinutes: 10,
+    difficulty: "Adaptive",
+    recommendedRoles: ["DevSecOps Engineer", "Cloud Security Architect", "AppSec Lead"],
+  },
+  {
+    id: "computer_vision",
+    title: "Computer Vision & Deep Learning",
+    tagline: "YOLO, Object Detection, Semantic Segmentation, OpenCV, ViT & NeRF",
+    category: "Artificial Intelligence",
+    iconName: "Eye",
+    gradient: "from-emerald-500/20 to-cyan-600/20",
+    accentColor: "text-emerald-400",
+    skillsCovered: ["YOLO & Object Detection", "Semantic Segmentation", "OpenCV Image Pipelines", "Vision Transformers (ViT)", "Pose Estimation"],
+    questionCount: 15,
+    estimatedMinutes: 10,
+    difficulty: "Adaptive",
+    recommendedRoles: ["Computer Vision Engineer", "Perception Engineer", "Deep Learning Scientist"],
+  },
+  {
+    id: "nlp_speech",
+    title: "NLP, Speech AI & Transformers",
+    tagline: "BERT, Whisper ASR, TTS Vocoders, Tokenization, Embeddings & Attention",
+    category: "Artificial Intelligence",
+    iconName: "MessageSquareCode",
+    gradient: "from-indigo-500/20 to-blue-600/20",
+    accentColor: "text-indigo-400",
+    skillsCovered: ["Transformer Attention", "Subword Tokenization (BPE)", "Whisper Speech-to-Text", "Named Entity Recognition", "Vector Embeddings"],
+    questionCount: 15,
+    estimatedMinutes: 10,
+    difficulty: "Adaptive",
+    recommendedRoles: ["NLP Engineer", "Speech AI Scientist", "Conversational AI Architect"],
+  },
+  {
+    id: "cloud_security",
+    title: "Cloud Security & Identity Architecture",
+    tagline: "IAM Roles, Zero Trust, KMS Envelope Encryption, CSPM & Threat Detection",
+    category: "Cloud Infrastructure",
+    iconName: "KeyRound",
+    gradient: "from-amber-500/20 to-rose-600/20",
+    accentColor: "text-amber-400",
+    skillsCovered: ["IAM & Cloud Federation", "Zero Trust Architecture", "KMS Envelope Encryption", "GuardDuty & Threat Analysis", "CWPP & CSPM Guardrails"],
+    questionCount: 15,
+    estimatedMinutes: 10,
+    difficulty: "Adaptive",
+    recommendedRoles: ["Cloud Security Specialist", "IAM Solutions Architect", "Cyber Defense Engineer"],
+  },
+  {
+    id: "network_engineering",
+    title: "Enterprise & Cloud Network Engineering",
+    tagline: "BGP, TCP/IP, VPC Peering, CDN Anycast, L4/L7 Load Balancers & QUIC",
+    category: "Network & Systems",
+    iconName: "Network",
+    gradient: "from-cyan-500/20 to-teal-600/20",
+    accentColor: "text-cyan-400",
+    skillsCovered: ["TCP/IP & Handshakes", "BGP Routing & Anycast", "VPC & Subnet Topology", "L4/L7 Load Balancing", "QUIC & HTTP/3"],
+    questionCount: 15,
+    estimatedMinutes: 10,
+    difficulty: "Adaptive",
+    recommendedRoles: ["Network Engineer", "Cloud Infrastructure Lead", "Network Architect"],
+  },
+  {
+    id: "linux_sysadmin",
+    title: "Linux Systems & Kernel Administration",
+    tagline: "systemd, Linux Inodes, cgroups, eBPF/strace, Swappiness & Shell Automation",
+    category: "Operating Systems",
+    iconName: "Terminal",
+    gradient: "from-yellow-500/20 to-amber-600/20",
+    accentColor: "text-yellow-400",
+    skillsCovered: ["systemd Services", "Linux Inodes & Storage", "cgroups & Process Limits", "strace & Kernel Syscalls", "Bash Automation & Hardening"],
+    questionCount: 15,
+    estimatedMinutes: 10,
+    difficulty: "Adaptive",
+    recommendedRoles: ["Linux Systems Administrator", "Infrastructure Engineer", "Systems Architect"],
+  },
+  {
+    id: "microfrontend_uiux",
+    title: "Frontend Architecture & Design Systems",
+    tagline: "Module Federation, Micro-Frontends, WCAG A11y, Design Tokens & Core Web Vitals",
+    category: "Software Engineering",
+    iconName: "LayoutGrid",
+    gradient: "from-fuchsia-500/20 to-purple-600/20",
+    accentColor: "text-fuchsia-400",
+    skillsCovered: ["Webpack Module Federation", "Design Tokens & Atomic Design", "WCAG 2.1 AA Accessibility", "Core Web Vitals (LCP/INP)", "Shadow DOM Isolation"],
+    questionCount: 15,
+    estimatedMinutes: 10,
+    difficulty: "Adaptive",
+    recommendedRoles: ["Principal Frontend Architect", "Design Systems Lead", "Staff UI Engineer"],
+  },
+  {
+    id: "mlops_production",
+    title: "MLOps & Production ML Infrastructure",
+    tagline: "Model Registries, Data Drift, Feature Stores, ONNX & Triton Serving",
+    category: "Data Platforms",
+    iconName: "Boxes",
+    gradient: "from-violet-500/20 to-indigo-600/20",
+    accentColor: "text-violet-400",
+    skillsCovered: ["Data & Concept Drift", "Feature Stores (Feast)", "Triton Dynamic Batching", "ONNX Model Quantization", "Continuous Training (CT)"],
+    questionCount: 15,
+    estimatedMinutes: 10,
+    difficulty: "Adaptive",
+    recommendedRoles: ["MLOps Engineer", "Machine Learning Platform Lead", "Production AI Architect"],
+  },
+  {
+    id: "ar_vr_spatial",
+    title: "Spatial Computing & 3D WebXR",
+    tagline: "WebXR, 6DoF Tracking, SLAM, Foveated Rendering, Spatial Audio & Three.js",
+    category: "Interactive Graphics",
+    iconName: "Glasses",
+    gradient: "from-pink-500/20 to-rose-600/20",
+    accentColor: "text-pink-400",
+    skillsCovered: ["6DoF & SLAM Tracking", "WebXR & Three.js", "Foveated & PBR Rendering", "Spatial HRTF Audio", "Motion-to-Photon Latency"],
+    questionCount: 15,
+    estimatedMinutes: 10,
+    difficulty: "Adaptive",
+    recommendedRoles: ["Spatial Computing Engineer", "XR Developer", "WebXR 3D Specialist"],
+  },
+  {
+    id: "fintech_payments",
+    title: "Fintech, Payments & Banking Architecture",
+    tagline: "Double-Entry Ledgers, Idempotency, PCI-DSS, ISO 20022 & Fraud Prevention",
+    category: "Fintech & Finance",
+    iconName: "CreditCard",
+    gradient: "from-emerald-500/20 to-teal-600/20",
+    accentColor: "text-emerald-400",
+    skillsCovered: ["Double-Entry Ledgers", "API Idempotency", "PCI-DSS Compliance", "ISO 20022 Messaging", "Fraud Velocity Checking"],
+    questionCount: 15,
+    estimatedMinutes: 10,
+    difficulty: "Adaptive",
+    recommendedRoles: ["Fintech Backend Engineer", "Payments Systems Architect", "Banking Solutions Lead"],
   },
 ];
 
@@ -864,98 +1005,22 @@ const globalAssessmentStore = global as unknown as {
 };
 
 export async function getAllQuestions(category?: string, subjectId?: string): Promise<AssessmentQuestion[]> {
+  // If subjectId is specified, fetch the dedicated 15-question bank for that subject
+  if (subjectId && subjectId !== "all") {
+    const subjectBank = getSubjectQuestionsBank(subjectId);
+    if (subjectBank && subjectBank.length > 0) {
+      if (category && category !== "all") {
+        return subjectBank.filter((q) => q.category === category);
+      }
+      return subjectBank;
+    }
+  }
+
   if (!globalAssessmentStore._titanQuestions) {
     globalAssessmentStore._titanQuestions = [...DEFAULT_QUESTIONS];
   }
 
   let questions = globalAssessmentStore._titanQuestions;
-
-  // Filter by Subject/Course if provided
-  if (subjectId && subjectId !== "all") {
-    switch (subjectId) {
-      case "web_dev":
-        questions = questions.filter((q) =>
-          q.skillTag.includes("React") ||
-          q.skillTag.includes("TypeScript") ||
-          q.skillTag.includes("Node") ||
-          q.skillTag.includes("Web")
-        );
-        break;
-      case "ai_ml":
-        questions = questions.filter((q) =>
-          q.skillTag.includes("PyTorch") ||
-          q.skillTag.includes("AI") ||
-          q.skillTag.includes("LLM") ||
-          q.skillTag.includes("Embeddings") ||
-          q.skillTag.includes("Python")
-        );
-        break;
-      case "sql_db":
-        questions = questions.filter((q) =>
-          q.skillTag.includes("SQL") ||
-          q.skillTag.includes("Database")
-        );
-        break;
-      case "dsa_core":
-        questions = questions.filter((q) =>
-          q.skillTag.includes("Algorithms") ||
-          q.skillTag.includes("Complexity") ||
-          q.category === "aptitude"
-        );
-        break;
-      case "cloud_devops":
-        questions = questions.filter((q) =>
-          q.skillTag.includes("Distributed") ||
-          q.skillTag.includes("Docker") ||
-          q.skillTag.includes("Kubernetes") ||
-          q.skillTag.includes("Cloud")
-        );
-        break;
-      case "cybersecurity":
-        questions = questions.filter((q) =>
-          q.skillTag.includes("Security") ||
-          q.skillTag.includes("OWASP") ||
-          q.skillTag.includes("Auth")
-        );
-        break;
-      case "data_analytics":
-        questions = questions.filter((q) =>
-          q.skillTag.includes("Data Science") ||
-          q.skillTag.includes("Python") ||
-          q.skillTag.includes("SQL")
-        );
-        break;
-      case "mobile_app":
-        questions = questions.filter((q) => q.skillTag.includes("Mobile"));
-        break;
-      case "blockchain_web3":
-        questions = questions.filter((q) => q.skillTag.includes("Blockchain") || q.skillTag.includes("Web3"));
-        break;
-      case "system_design":
-        questions = questions.filter((q) => q.skillTag.includes("System Design"));
-        break;
-      case "genai_llm":
-        questions = questions.filter((q) => q.skillTag.includes("Generative AI") || q.skillTag.includes("LLM"));
-        break;
-      case "embedded_iot":
-        questions = questions.filter((q) => q.skillTag.includes("Embedded"));
-        break;
-      case "qa_automation":
-        questions = questions.filter((q) => q.skillTag.includes("QA Automation") || q.skillTag.includes("Testing"));
-        break;
-      case "game_dev":
-        questions = questions.filter((q) => q.skillTag.includes("Game Development"));
-        break;
-      case "sre_observability":
-        questions = questions.filter((q) => q.skillTag.includes("Site Reliability") || q.skillTag.includes("SRE"));
-        break;
-      case "data_engineering":
-        questions = questions.filter((q) => q.skillTag.includes("Data Engineering") || q.skillTag.includes("Spark"));
-        break;
-      default:
-        break;
-    }
-  }
 
   if (category && category !== "all") {
     questions = questions.filter((q) => q.category === category);

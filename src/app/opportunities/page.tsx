@@ -25,6 +25,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { OpportunityCard } from "@/components/marketplace/opportunity-card";
 import { CompatibilityBreakdown } from "@/components/marketplace/compatibility-breakdown";
 import { ApplicationReadinessModal } from "@/components/marketplace/application-readiness-modal";
+import { ApplicationSuccessModal } from "@/components/marketplace/application-success-modal";
 import { OpportunityEntity, OpportunityType } from "@/lib/supabase/types";
 import { useAuth } from "@/lib/auth/auth-context";
 import { FadeIn, StaggerContainer, StaggerItem } from "@/components/animations/motion-wrapper";
@@ -44,14 +45,15 @@ export default function OpportunityMarketplacePage() {
   const { user } = useAuth();
   const [opportunities, setOpportunities] = useState<OpportunityEntity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeType, setActiveType] = useState("all");
-  const [locationType, setLocationType] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [activeType, setActiveType] = useState<string>("all");
+  const [locationType, setLocationType] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [minMatch, setMinMatch] = useState<number | undefined>(undefined);
 
-  // Selected Opportunity for Modals
+  // Modal State
   const [selectedOppForModal, setSelectedOppForModal] = useState<OpportunityEntity | null>(null);
   const [selectedOppForReadiness, setSelectedOppForReadiness] = useState<OpportunityEntity | null>(null);
+  const [submittedOppForSuccess, setSubmittedOppForSuccess] = useState<OpportunityEntity | null>(null);
   const [isSubmittingApp, setIsSubmittingApp] = useState(false);
 
   const fetchOpportunities = useCallback(async () => {
@@ -93,8 +95,9 @@ export default function OpportunityMarketplacePage() {
         body: JSON.stringify({ coverNote: coverNote.trim() || "Applied with verified Skillora Profile" }),
       });
       if (res.ok) {
-        alert(`Application for "${selectedOppForReadiness.title}" submitted successfully!`);
+        const submitted = selectedOppForReadiness;
         setSelectedOppForReadiness(null);
+        setSubmittedOppForSuccess(submitted);
       } else {
         alert("Failed to submit application. Please try again.");
       }
@@ -256,6 +259,13 @@ export default function OpportunityMarketplacePage() {
           isSubmitting={isSubmittingApp}
         />
       )}
+
+      {/* High-End Cyberpunk Application Success Modal */}
+      <ApplicationSuccessModal
+        isOpen={Boolean(submittedOppForSuccess)}
+        opportunity={submittedOppForSuccess}
+        onClose={() => setSubmittedOppForSuccess(null)}
+      />
     </div>
   );
 }

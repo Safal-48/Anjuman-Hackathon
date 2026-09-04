@@ -37,6 +37,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { NotificationBell } from "@/components/marketplace/notification-bell";
 import { useAuth } from "@/lib/auth/auth-context";
+import { stopAllCameraStreams } from "@/lib/camera/camera-stream-manager";
 
 export function Navbar() {
   const [scrolled, setScrolled] = React.useState(false);
@@ -44,6 +45,13 @@ export function Navbar() {
   const [openDropdown, setOpenDropdown] = React.useState<string | null>(null);
   const { user, isAuthenticated, logout } = useAuth();
   const pathname = usePathname();
+
+  // Guarantee that leaving camera sections (assessment / mock interview) immediately shuts down all camera hardware
+  React.useEffect(() => {
+    if (pathname !== "/assessment" && !pathname.startsWith("/mock-interview")) {
+      stopAllCameraStreams();
+    }
+  }, [pathname]);
 
   React.useEffect(() => {
     const handleScroll = () => {
