@@ -25,7 +25,6 @@ export const SITE_CONFIG = {
   },
   navItems: [
     { label: "Overview", href: "#overview" },
-    { label: "Architecture", href: "#architecture" },
     { label: "Design System", href: "#design-system" },
     { label: "Ecosystem 3D", href: "#ecosystem-3d" },
     { label: "System Health", href: "#health" },
